@@ -1,0 +1,63 @@
+<div class="login-container d-flex justify-content-center align-items-center h-90m p-5">
+  <div class="card ps-5 pe-5 pt-5">
+    <div class="ms-5 me-5">
+
+      <h2>Bem-vindo à Loopz</h2>
+      <p>Entre na sua conta para continuar</p>
+  
+      <div class="toggle-switch">
+        <button 
+          [class.active]="!isAdmin" 
+          (click)="isAdmin = false"
+        >Usuário</button>
+        <button 
+          [class.active]="isAdmin" 
+          (click)="isAdmin = true"
+        >Administrador</button>
+      </div>
+  
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  
+        <label for="email">E-mail</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email"
+          placeholder="{{ isAdmin ? 'admin@loopz.com' : 'seu@email.com' }}"
+        >
+        <div 
+          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" 
+          class="error-message"
+        >
+          E-mail é obrigatório e deve ser válido.
+        </div>
+        
+        <label for="senha">Senha</label>
+        <input 
+          id="senha" 
+          type="password" 
+          formControlName="senha"
+          placeholder="********"
+        >
+        <div 
+          *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched" 
+          class="error-message"
+        >
+          A senha é obrigatória e deve ter no mínimo 6 caracteres.
+        </div>
+  
+        <button 
+          type="submit" 
+          class="btn-submit"
+        >
+          {{ isAdmin ? 'Entrar como Admin' : 'Entrar' }}
+        </button>
+  
+      </form>
+  
+      <p class="cadastro-link">
+        Não tem uma conta? <a [routerLink]="['/cadastro']">Cadastre-se</a>
+      </p>
+    </div>
+    </div>
+</div>
