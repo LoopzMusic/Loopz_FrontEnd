@@ -9,4 +9,5 @@ export const routes: Routes = [
     { path: 'favoritos', component: Favoritos },
     { path: 'perfil', component: Perfil },
     { path: 'carrinho', component: Carrinho },
+    { path: 'login', component: Login }
 ];
