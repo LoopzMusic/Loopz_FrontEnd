@@ -1,7 +1,7 @@
 <div class="card text-bg-dark">
   <img src="banner-loopz.png" class="card-img" alt="banner-loopz" />
   <div class="card-img-overlay d-flex flex-column justify-content-center align-items-center">
-    <h5 class="card-title">Bem Vindo à Loopz</h5>
+    <h6 class="card-title">Bem Vindo à Loopz</h6>
     <p class="card-text">Instrumentos musicais de qualidade para todos os estilos!</p>
     <div>
       <button class="btn btn-light mt-3" routerLink="#" style="padding: 10px 20px">
@@ -12,7 +12,7 @@
 </div>
 
 <div class="container text-center mt-5">
-  <div>
+  <div class="mb-5" >
     <h4><strong>Recomendados para você</strong></h4>
     <h6>Conheça nossa seleção especial baseado no seu estilo</h6>
   </div>
@@ -25,11 +25,24 @@
         </div>
         }
       </div> -->
+
+        <!-- TA MOSTRANDO O CARD -->
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-card [data]="produtoFake"></app-card>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-card [data]="produtoFake"></app-card>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-4">
+          <app-card [data]="produtoFake"></app-card>
+        </div>
       </div>
     </div>
 
     <div class="explorar-mais">
-      <button class="btn mt-3 explorar-mais-btn" routerLink="#">Explorar Mais</button>
+      <button class="btn mt-5 mb-5 explorar-mais-btn" routerLink="#">Explorar Mais</button>
     </div>
   </div>
 </div>
@@ -96,4 +109,3 @@
     </div>
   </div>
 </div>
-
