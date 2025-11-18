@@ -1,0 +1,43 @@
+// Estilos mínimos - Bootstrap faz quase tudo!
+
+.cadastro-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.cadastro-card {
+  background: white;
+}
+
+.btn-cadastrar {
+  background-color: #6b4423;
+  color: white;
+  border: none;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #5a3a1e;
+    color: white;
+  }
+
+  &:disabled {
+    background-color: #8b6139;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+
+.login-link a {
+  color: #6b4423;
+  
+  &:hover {
+    color: #5a3a1e;
+  }
+}
+
+// Estilo para os ícones SVG dos headers
+.section-header svg {
+  color: #6b4423;
+  flex-shrink: 0;
+}
