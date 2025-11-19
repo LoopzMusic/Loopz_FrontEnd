@@ -36,29 +36,37 @@
   </button>
 
   <!-- Imagem -->
-  <img [src]="data?.image" alt="{{ data?.title }}" class="produto-img" />
+  <img
+    [src]="`http://localhost:8085/produto/${produto.cdProduto}/imagem`"
+    alt="{{ produto.nmProduto }}"
+    class="produto-img"
+  />
 
   <!-- Conteúdo -->
   <div class="produto-body">
     <span class="produto-badge">
-      {{ data?.category }}
+      {{ produto.dsCategoria }}
     </span>
 
     <h5 class="produto-titulo">
-      {{ data?.title }}
+      {{ produto.nmProduto }}
     </h5>
 
-    <div class="produto-rating">
+    <!-- <div class="produto-rating">
       <i class="bi bi-star-fill"></i>
-      <small>{{ data?.rating }} estrelas</small>
-    </div>
+      <small>{{ data.rating }} estrelas</small>
+    </div> -->
 
-    <small class="produto-estoque"> Disponibilidade: {{ data?.stock }} unidades </small>
+    <small class="produto-estoque">
+      Disponibilidade: {{ produto.qtdEstoqueProduto }} unidades
+    </small>
 
-    <h5 class="produto-preco">R$ {{ data?.price }}</h5>
+    <h5 class="produto-preco">R$ {{ produto.vlProduto }}</h5>
 
     <div class="produto-botoes">
-      <button routerLink="/maisDetalhes/${produtoFake.id}" class="btn-detalhes">Ver detalhes</button>
+      <button routerLink="/maisDetalhes/${produtoFake.id}" class="btn-detalhes">
+        Ver detalhes
+      </button>
 
       <button routerLink="" class="btn-adicionar">
         <a routerLink=""
@@ -72,7 +80,8 @@
           >
             <path
               d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l1.25 5h8.22l1.25-5zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"
-            /></svg>
+            />
+          </svg>
         </a>
         Adicionar
       </button>

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Card } from "../../components/card/card";
+import { Card } from '../../components/card/card';
+import { ProdutoService } from '../../services/produto-service';
+import { Produto } from '../../shared/models/Produto';
 
 @Component({
   selector: 'app-tela-inicial',
@@ -8,17 +10,11 @@ import { Card } from "../../components/card/card";
   templateUrl: './tela-inicial.html',
   styleUrl: './tela-inicial.scss',
 })
-export class TelaInicial {
+export class TelaInicial implements OnInit {
+  private produtoService = inject(ProdutoService);
 
-  // CRIANDO UM PRODUTO FAKE PARA O TESTE
-produtoFake = {
-  id: 1,
-  title: 'Violão Clássico Loopz Pro',
-  image: 'violaoloopz.webp',
-  category: 'Loopz',
-  rating: 4.8,
-  stock: 15,
-  price: '899.90'
-};
-
+  ngOnInit(): void {
+    this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
+  }
+  protected produtos: Produto[] = [];
 }

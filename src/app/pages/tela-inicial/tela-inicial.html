@@ -12,38 +12,24 @@
 </div>
 
 <div class="container text-center mt-5">
-  <div class="mb-5" >
+  <div class="mb-5">
     <h4><strong>Recomendados para você</strong></h4>
     <h6>Conheça nossa seleção especial baseado no seu estilo</h6>
   </div>
   <div class="row">
     <div class="col">
-      <div class="row g-3">
-        <!-- @for (content of content; track content.id) {
-        <div class="col-4">
-          <app-card [contents]="content" />
+      <div class="row">
+        @for (produto of produtos; track produto.cdProduto) {
+        <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
+          <app-card [produto]="produto" />
         </div>
         }
-      </div> -->
-
-        <!-- TA MOSTRANDO O CARD -->
-        <div class="col-12 col-md-6 col-lg-4">
-          <app-card [data]="produtoFake"></app-card>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <app-card [data]="produtoFake"></app-card>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <app-card [data]="produtoFake"></app-card>
-        </div>
       </div>
     </div>
+  </div>
 
-    <div class="explorar-mais">
-      <button class="btn mt-5 mb-5 explorar-mais-btn" routerLink="#">Explorar Mais</button>
-    </div>
+  <div class="explorar-mais">
+    <button class="btn mt-5 mb-5 explorar-mais-btn" routerLink="#">Explorar Mais</button>
   </div>
 </div>
 
