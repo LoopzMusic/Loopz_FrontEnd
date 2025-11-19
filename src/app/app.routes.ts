@@ -5,6 +5,7 @@ import { Carrinho } from './pages/carrinho/carrinho';
 import { TelaInicial } from './pages/tela-inicial/tela-inicial';
 import { Login } from './pages/login/login';
 import { MaisDetalhes } from './pages/mais-detalhes/mais-detalhes';
+import { Dashboard } from '././pages/admin/dashboard/dashboard';
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
@@ -13,4 +14,5 @@ export const routes: Routes = [
   { path: 'carrinho', component: Carrinho },
   { path: 'login', component: Login },
   { path: 'maisDetalhes/:id', component: MaisDetalhes },
+  { path: 'admin/dashboard', component: Dashboard }
 ];
