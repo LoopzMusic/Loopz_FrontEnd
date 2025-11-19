@@ -1,6 +1,8 @@
-import { Component, inject, Input, Output } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { CardAvaliacao } from "../../components/card-avaliacao/card-avaliacao";
+import { Component, inject, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
+import { ProdutoService } from '../../services/produto-service';
+import { Produto } from '../../shared/models/Produto';
 
 @Component({
   selector: 'app-mais-detalhes',
@@ -8,22 +10,24 @@ import { CardAvaliacao } from "../../components/card-avaliacao/card-avaliacao";
   templateUrl: './mais-detalhes.html',
   styleUrl: './mais-detalhes.scss',
 })
-export class MaisDetalhes {
-
-  // CRIANDO UMA AVALIAÇÃO FAKE PARA O TESTE
-  avaliacaoFake = {
-    usuario: 'Laura',
-    descricao: 'Violão muito bom!',
-    data: '03/07/2025',
-    estrelas: '5.0'
-  };
-
-  @Input() data: any;
-
+export class MaisDetalhes implements OnInit {
+  private produtoService = inject(ProdutoService);
   private route = inject(ActivatedRoute);
 
-  idProdutoFake = this.route.snapshot.params['id'];
+  produto: Produto = new Produto();
+  // avaliacoes: Avaliacao[] = [];
 
   constructor() {}
-  
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+
+    this.produtoService.buscarProdutoPorId(id).subscribe((response) => {
+      this.produto = response;
+    });
+
+    // this.produtoService.buscarAvaliacoesPorProdutoId(id).subscribe(response => {
+    //   this.avaliacoes = response;
+    // });
+  }
 }

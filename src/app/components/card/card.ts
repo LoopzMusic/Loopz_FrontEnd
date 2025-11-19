@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { RouterLink } from "@angular/router";
+import { Produto } from '../../shared/models/Produto';
 
 @Component({
   selector: 'app-card',
@@ -9,7 +10,6 @@ import { RouterLink } from "@angular/router";
 })
 export class Card {
 
-  // FAKE PARA O TESTE
-@Input() data: any;
+ @Input({ required: true }) produto: Produto = new Produto();
 
 }
