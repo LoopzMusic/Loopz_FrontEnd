@@ -12,6 +12,7 @@ export class TelaInicial {
 
   // CRIANDO UM PRODUTO FAKE PARA O TESTE
 produtoFake = {
+  id: 1,
   title: 'Violão Clássico Loopz Pro',
   image: 'violaoloopz.webp',
   category: 'Loopz',

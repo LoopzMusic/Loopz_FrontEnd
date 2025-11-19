@@ -12,5 +12,5 @@ export const routes: Routes = [
     { path: 'perfil', component: Perfil },
     { path: 'carrinho', component: Carrinho },
     { path: 'login', component: Login },
-    { path: 'maisDetalhes', component: MaisDetalhes }
+    { path: 'maisDetalhes/:id', component: MaisDetalhes }
 ];
