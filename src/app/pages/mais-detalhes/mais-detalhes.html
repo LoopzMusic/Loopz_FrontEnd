@@ -1,76 +1,61 @@
-<div class="produto-container d-flex justify-content-center align-items-center mt-5">
+<div class="container mt-5">
+
+  <!-- CARD DO PRODUTO -->
   <div class="produto-card card p-3 mb-5">
-    <div class="position-relative">
-       <a class="top-0 start-0" routerLink=""
-        ><svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-arrow-left-short"
-          viewBox="0 0 16 16"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5"
-          />
-        </svg>
-        voltar para produtos</a
-      >
-    </div>
-   
+
+    <!-- Voltar -->
+    <a routerLink="" class="mb-3 d-inline-flex align-items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+        class="bi bi-arrow-left-short me-1" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+          d="M12 8a.5.5 0 0 1-.5.5H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5a.5.5 0 0 1 .5.5" />
+      </svg>
+      voltar para produtos
+    </a>
+
     <div class="row g-4">
-      
+
       <!-- COLUNA DA IMAGEM -->
-      <div class="col-md-5 position-relative d-flex justify-content-center">
-        <img
-          [src]="data?.image"
-          alt="{{ data?.title }}"
-          class="produto-img img-fluid rounded shadow"
-        />
+      <div class="col-md-5 justify-content-center">
+        <img [src]="data?.image" alt="{{ data?.title }}" class="produto-img img-fluid rounded shadow" />
       </div>
 
       <!-- COLUNA DO CONTEÚDO -->
       <div class="col-md-7">
         <div class="card-body">
+
           <span class="produto-badge badge bg-light text-dark mb-2">
             {{ data?.category }}
           </span>
 
-          <h3 class="produto-titulo fw-bold">{{ data?.title }}</h3>
+          <h3 class="fw-bold">{{ data?.title }}</h3>
 
-          <!-- Descrição -->
+          <!-- Avaliação -->
           <div class="produto-rating d-flex align-items-center mb-2">
-            <p>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="currentColor"
-                class="bi bi-star-fill estrela"
-                viewBox="0 0 16 16"
-              >
-                <path
-                  d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"
-                />
-              </svg>
-            </p>
-            <span class="ms-2">{{ data?.rating }} ({{ data?.reviews }} avaliações)</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+              class="bi bi-star-fill estrela">
+              <path
+                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+            </svg>
+
+            <span class="ms-2">
+              {{ data?.rating }} ({{ data?.reviews }} avaliações)
+            </span>
           </div>
 
           <p class="mb-1"><strong>Material:</strong> Cedro e Mogno</p>
           <p class="mb-1"><strong>Cor:</strong> Natural</p>
           <p class="mb-1"><strong>Marca:</strong> Loopz</p>
 
-          <p class="produto-estoque fw-semibold">Disponibilidade: {{ data?.stock }} em estoque</p>
+          <p class="fw-semibold">Disponibilidade: {{ data?.stock }}</p>
 
-          <h3 class="produto-preco fw-bold mb-4">R$ {{ data?.price }}</h3>
+          <h3 class="fw-bold mb-4">R$ {{ data?.price }}</h3>
 
-          <!-- Botões de quantidade + botão principal -->
-          <div class="produto-actions d-flex gap-2 mb-3">
+          <!-- Ações -->
+          <div class="d-flex gap-2 mb-3">
             <button class="btn btn-outline-secondary">-</button>
 
-            <input type="text" value="1" class="produto-qtd form-control text-center" />
+            <input type="text" value="1" class="form-control text-center produto-qtd" />
 
             <button class="btn btn-outline-secondary">+</button>
 
@@ -80,8 +65,8 @@
             </button>
           </div>
 
-          <!-- Linha de Favoritar / Compartilhar -->
-          <div class="produto-extra d-flex gap-2">
+          <!-- Favoritar / Compartilhar -->
+          <div class="d-flex gap-2">
             <button class="btn btn-outline-secondary w-50">
               <i class="bi bi-heart me-2"></i> Favoritar
             </button>
@@ -94,14 +79,40 @@
           <hr />
 
           <h5>Descrição</h5>
-          <p class="produto-descricao text-muted">
-            Violão clássico profissional com tampo de cedro maciço e corpo em mogno. Som quente e
-            equilibrado, ideal para apresentações ao vivo e estúdio.
+          <p class="text-muted">
+            Violão clássico profissional com tampo de cedro maciço e corpo em mogno.
+            Som quente e equilibrado, ideal para apresentações ao vivo e estúdio.
           </p>
+
         </div>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="avaliacoes"></div>
+  </div>
+
+  <div class="row">
+    <h3 class="mb-3">Avaliações: </h3>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+     <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+    <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
+      <app-card-avaliacao [avaliacao]="avaliacaoFake"></app-card-avaliacao>
+    </div>
+  </div>
+
+</div>
