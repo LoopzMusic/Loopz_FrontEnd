@@ -6,17 +6,17 @@
         <span class="fw-medium">Dashboard</span>
       </a>
 
-      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'produtos'" (click)="navigateTo('/adm/gerenciar-produtos', 'produtos')">
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'produtos'" (click)="navigateTo('/admin/gerenciar-produtos', 'produtos')">
         <i class="bi bi-box me-3 fs-5"></i>
         <span class="fw-medium">Gerenciar Produtos</span>
       </a>
 
-      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none active-register" [class.active]="activeItem === 'cadastrar'" (click)="navigateTo('/adm/cadastrar-produto', 'cadastrar')">
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none active-register" [class.active]="activeItem === 'cadastrar'" (click)="navigateTo('/admin/cadastrar-produto', 'cadastrar')">
         <i class="bi bi-box-arrow-in-right me-3 fs-5"></i>
         <span class="fw-medium">Cadastrar Produto</span>
       </a>
 
-      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'vendidos'" (click)="navigateTo('/admin/vendidos', 'vendidos')">
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'vendidos'" (click)="navigateTo('/admin/produto-vendido', 'vendidos')">
         <i class="bi bi-bag me-3 fs-5"></i>
         <span class="fw-medium">Produtos Vendidos</span>
       </a>

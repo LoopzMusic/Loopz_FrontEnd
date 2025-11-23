@@ -1,14 +1,11 @@
 <div class="dashboard-container d-flex">
-  <!-- Componente Sidebar -->
   <app-sidebar></app-sidebar>
 
-  <!-- Main Content -->
   <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
     <header class="page-header d-flex justify-content-between align-items-center mb-4">
       <h1 class="fs-3 fw-bold text-dark-gray">Cadastrar Produto</h1>
     </header>
 
-    <!-- Formulário -->
     <div class="card shadow-sm border-0 rounded-3">
       <div class="card-body p-4">
         <h5 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">
@@ -16,7 +13,6 @@
         </h5>
 
         <form [formGroup]="produtoForm" (ngSubmit)="onSubmit()">
-          <!-- Nome do Produto -->
           <div class="mb-3">
             <label for="nomeProduto" class="form-label">
               Nome do Produto <span class="text-danger">*</span>
@@ -35,7 +31,6 @@
           </div>
 
           <div class="row">
-            <!-- Preço -->
             <div class="col-md-6 mb-3">
               <label for="preco" class="form-label">
                 Preço (R$) <span class="text-danger">*</span>
@@ -54,7 +49,6 @@
               </div>
             </div>
 
-            <!-- Quantidade em Estoque -->
             <div class="col-md-6 mb-3">
               <label for="quantidadeEstoque" class="form-label">
                 Quantidade em Estoque <span class="text-danger">*</span>
@@ -74,7 +68,6 @@
           </div>
 
           <div class="row">
-            <!-- Marca -->
             <div class="col-md-6 mb-3">
               <label for="marca" class="form-label">
                 Marca <span class="text-danger">*</span>
@@ -92,7 +85,6 @@
               </div>
             </div>
 
-            <!-- Categoria -->
             <div class="col-md-6 mb-3">
               <label for="categoria" class="form-label">
                 Categoria <span class="text-danger">*</span>
@@ -118,7 +110,6 @@
           </div>
 
           <div class="row">
-            <!-- Material -->
             <div class="col-md-6 mb-3">
               <label for="material" class="form-label">Material</label>
               <input
@@ -130,7 +121,6 @@
               />
             </div>
 
-            <!-- Cor -->
             <div class="col-md-6 mb-3">
               <label for="cor" class="form-label">Cor</label>
               <input
@@ -143,7 +133,6 @@
             </div>
           </div>
 
-          <!-- Descrição -->
           <div class="mb-3">
             <label for="descricao" class="form-label">Descrição</label>
             <textarea
@@ -155,7 +144,6 @@
             ></textarea>
           </div>
 
-          <!-- Imagem do Produto -->
           <div class="mb-4">
             <label for="imagemProduto" class="form-label">Imagem do Produto</label>
             <input
@@ -170,7 +158,6 @@
             </div>
           </div>
 
-          <!-- Botões -->
           <div class="d-flex gap-3">
             <button type="submit" class="btn btn-primary px-4" [disabled]="loading">
               <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
