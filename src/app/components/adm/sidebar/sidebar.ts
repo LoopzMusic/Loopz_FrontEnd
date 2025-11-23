@@ -36,7 +36,7 @@ export class Sidebar {
       this.activeItem = 'cadastrar';
     } else if (url.includes('/admin/gerenciar-produtos')) {
       this.activeItem = 'produtos';
-    } else if (url.includes('/admin/vendidos')) {
+    } else if (url.includes('/admin/produto-vendido')) {
       this.activeItem = 'vendidos';
     } else if (url.includes('/admin/avaliacoes')) {
       this.activeItem = 'avaliacoes';
