@@ -9,12 +9,14 @@
   import { CadastrarProduto } from './pages/admin/cadastrar-produto/cadastrar-produto';
   import { ProdutoVendido } from './pages/admin/produto-vendido/produto-vendido';
 import { Avaliacoes } from './pages/admin/avaliacoes/avaliacoes';
+import { Filtro } from './components/filtro/filtro';
 
   export const routes: Routes = [
     { path: '', component: TelaInicial },
     { path: 'favoritos', component: Favoritos },
     { path: 'perfil', component: Perfil },
     { path: 'carrinho', component: Carrinho },
+    { path: 'filtro/:categoria', component: Filtro },
     { path: 'login', component: Login },
     { path: 'maisDetalhes/:id', component: MaisDetalhes },
     { path: 'admin/dashboard', component: Dashboard },

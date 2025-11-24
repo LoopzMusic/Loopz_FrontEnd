@@ -66,24 +66,11 @@
 
   <div class="collapse navbar-collapse justify-content-center" id="menuCategorias">
     <ul class="navbar-nav mb-2 mb-lg-0 text-center gap-4">
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Todos</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Cordas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Percussão</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Teclas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Sopro</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" routerLink="#">Acessórios</a>
-      </li>
+      <div class="navbar-nav">
+        @for (categoria of categorias; track categoria) {
+        <app-categoria [categoria]="categoria"></app-categoria>
+        }
+      </div>
     </ul>
   </div>
 </nav>
