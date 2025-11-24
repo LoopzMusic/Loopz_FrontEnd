@@ -1,6 +1,3 @@
 export class LoginRequest {
-  constructor(
-    public email = '',
-    public senha = '',
-  ) {}
+  constructor(public dsEmail = '', public dsSenha = '') {}
 }

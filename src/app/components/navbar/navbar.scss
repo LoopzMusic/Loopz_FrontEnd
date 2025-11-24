@@ -1,9 +1,9 @@
 .navbar-loopz {
-    background-color: #54392B;
+  background-color: #54392b;
 }
 
-#borda{
-    border-color: #805c4b !important;
+#borda {
+  border-color: #805c4b !important;
 }
 
 .nav-link {
@@ -11,12 +11,12 @@
 }
 
 .barra-pesquisa {
-    width: 400px;
+  width: 400px;
 }
 
 .icons-navbar {
-     text-decoration: none;
-     color: white;
+  text-decoration: none;
+  color: white;
 }
 
 .navbar-toggler {
@@ -25,4 +25,8 @@
 
 .navbar-toggler-icon {
   filter: invert(100%);
+}
+
+#perfilDropdown::after {
+  display: none;
 }
