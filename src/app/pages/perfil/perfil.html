@@ -1,1 +1,87 @@
-<p>perfil works!</p>
+<!-- @if (usuario) { -->
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">Meu Perfil</h4>
+
+        <button class="btn btn-dark px-4" (click)="editarPerfil()">
+            Editar Informações
+        </button>
+    </div>
+
+    <!-- CARD: INFORMAÇÕES PESSOAIS -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3">
+                <i class="bi bi-person-fill me-1"></i>
+                Informações Pessoais
+            </h6>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Nome Completo</label>
+                    <input class="form-control" [value]="usuario?.nmCliente" disabled />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">CPF</label>
+                    <input class="form-control" [value]="usuario?.nuCPF" disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARD: CONTATO -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3">
+                <i class="bi bi-telephone-fill me-1"></i>
+                Contato
+            </h6>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">E-mail</label>
+                    <input class="form-control" [value]="usuario?.dsEmail" disabled />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Telefone</label>
+                    <input class="form-control" [value]="usuario?.nuTelefone" disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CARD: ENDEREÇO -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h6 class="fw-bold mb-3">
+                <i class="bi bi-geo-alt-fill me-1"></i>
+                Endereço
+            </h6>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Estado</label>
+                    <input class="form-control" [value]="usuario?.dsEstado" disabled />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Cidade</label>
+                    <input class="form-control" [value]="usuario?.dsCidade" disabled />
+                </div>
+
+                <div class="col-md-8">
+                    <label class="form-label">Endereço</label>
+                    <input class="form-control" [value]="usuario?.dsEndereco" disabled />
+                </div>
+
+                <div class="col-md-4">
+                    <label class="form-label">Número</label>
+                    <input class="form-control" [value]="usuario?.nuEndereco" disabled />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- } -->

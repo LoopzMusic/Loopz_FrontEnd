@@ -1,0 +1,35 @@
+<aside class="sidebar text-brown-dark d-flex flex-column w-64 flex-shrink-0 ps-3 pt-2">
+  <div class="card-body">
+    <nav class="sidebar-nav sticky top-24 space-y-2">
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'dashboard'" (click)="navigateTo('/admin/dashboard', 'dashboard')">
+        <i class="bi bi-speedometer2 me-3 fs-5"></i>
+        <span class="fw-medium">Dashboard</span>
+      </a>
+
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'produtos'" (click)="navigateTo('/admin/gerenciar-produtos', 'produtos')">
+        <i class="bi bi-box me-3 fs-5"></i>
+        <span class="fw-medium">Gerenciar Produtos</span>
+      </a>
+
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none active-register" [class.active]="activeItem === 'cadastrar'" (click)="navigateTo('/admin/cadastrar-produto', 'cadastrar')">
+        <i class="bi bi-box-arrow-in-right me-3 fs-5"></i>
+        <span class="fw-medium">Cadastrar Produto</span>
+      </a>
+
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'vendidos'" (click)="navigateTo('/admin/produto-vendido', 'vendidos')">
+        <i class="bi bi-bag me-3 fs-5"></i>
+        <span class="fw-medium">Produtos Vendidos</span>
+      </a>
+
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'avaliacoes'" (click)="navigateTo('/admin/avaliacoes', 'avaliacoes')">
+        <i class="bi bi-star me-3 fs-5"></i>
+        <span class="fw-medium">Avaliações</span>
+      </a>
+
+      <a class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none" [class.active]="activeItem === 'estoque'" (click)="navigateTo('/admin/estoque-baixo', 'estoque-baixo')">
+        <i class="bi bi-inbox-fill me-3 fs-5"></i>
+        <span class="fw-medium">Estoque Baixo</span>
+      </a>
+    </nav>
+  </div>
+</aside>

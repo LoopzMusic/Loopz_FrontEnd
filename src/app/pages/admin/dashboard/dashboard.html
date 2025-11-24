@@ -1,0 +1,54 @@
+<div class="dashboard-container d-flex">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
+    <header class="page-header d-flex justify-content-between align-items-center mb-5">
+      <h1 class="fs-3 fw-bold text-dark-gray">Painel Administrativo</h1>
+    </header>
+
+    <div class="row g-4 mb-5">
+      <div *ngFor="let stat of stats; let i = index" class="col-12 col-sm-6 col-lg-3">
+        <div class="card stat-card h-100 border-0 rounded-3 shadow p-3" [class.alert-danger]="i === 3" [class.shadow-warning]="i === 2" >
+          <div class="card-body p-0">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <span class="stat-title text-uppercase fw-semibold text-muted">{{ stat.title }}</span>
+              <i class="bi fs-4 opacity-50 text-secondary" [class]="i === 3 ? 'bi-exclamation-triangle-fill text-danger' : 'bi-' + stat.icon"></i>
+            </div>
+            <div class="stat-value fs-2 fw-bolder text-dark-gray">{{ stat.value }}</div>
+            <div class="stat-subtitle small text-muted">{{ stat.subtitle }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-lg-6">
+        <section class="card h-100 border-0 rounded-3 shadow p-4">
+          <h2 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">Acesso Rápido</h2>
+          <div class="d-grid gap-3">
+            <div *ngFor="let action of quickActions" class="action-item p-3 border rounded-3 transition-hover" (click)="navigateTo(action.route, '')" >
+              <h3 class="fs-6 fw-semibold text-dark-gray mb-1">{{ action.title }}</h3>
+              <p class="small text-muted mb-0">{{ action.description }}</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-lg-6">
+        <section class="card h-100 border-0 rounded-3 shadow p-4">
+          <h2 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">Atividades Recentes</h2>
+          <div class="d-grid gap-3 activities-list">
+            <div *ngFor="let activity of recentActivities" class="activity-item d-flex p-2 rounded-3 transition-hover-bg" >
+              <div class="activity-indicator rounded-circle me-3 mt-1 flex-shrink-0" [style.background-color]="activity.color" ></div>
+              <div class="activity-content flex-grow-1">
+                <h4 class="fs-6 fw-medium text-dark-gray mb-0">{{ activity.title }}</h4>
+                <p class="small text-muted mb-1">{{ activity.description }}</p>
+                <span class="activity-time badge text-bg-light fw-normal d-none">{{ activity.time }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>

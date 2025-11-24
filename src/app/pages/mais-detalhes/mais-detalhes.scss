@@ -1,0 +1,39 @@
+a {
+    text-decoration: none;
+    color: #54392B;
+}
+
+.produto-img {
+  max-height: 430px;
+  object-fit: contain;
+}
+
+.produto-badge {
+  border: 1px solid #54392B;
+}
+
+.estrela {
+  color: #ffc107;
+}
+
+.produto-qtd {
+  width: 60px !important;
+}
+
+.btn-add {
+  background: #54392B;
+  color: white;
+  flex: 1;
+}
+
+.btn-add:hover {
+  background: #6b4c3d;
+}
+
+.produto-descricao {
+  line-height: 1.4;
+}
+
+.btn-outline-secondary:hover{
+  background-color: #54392B;
+}
