@@ -1,82 +1,76 @@
 <nav class="navbar navbar-expand-lg navbar-loopz">
   <div class="container border-bottom p-2" id="borda">
+
     <a class="navbar-brand" routerLink="">
       <img src="logo_branca_sem_fundo.png" alt="Bootstrap" width="100" height="40" />
     </a>
 
-    <div class="collapse navbar-collapse justify-content-center mb-2" id="navbarSupportedContent">
-      <form class="d-flex" role="search">
-        <input class="form-control me-2 barra-pesquisa" type="search" placeholder="pesquise aqui" aria-label="Search" />
-        <button class="btn btn-outline-light" type="submit">Pesquisar</button>
-      </form>
-    </div>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTopo"
+      aria-controls="navbarTopo" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- ICON: MODO ESCURO -->
-    <div class="icons d-flex gap-2">
-      <a class="me-3 icons-navbar" (click)="mudarTema()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-circle-half"
-          viewBox="0 0 16 16" style="color: white">
-          <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16" />
-        </svg>
-      </a>
+    <div class="collapse navbar-collapse justify-content-between" id="navbarTopo">
+      <div class="d-flex justify-content-center w-100">
+        <form class="d-flex w-50 w-lg-50" role="search">
+          <input class="form-control me-2 barra-pesquisa" type="search" placeholder="pesquise aqui"
+            aria-label="Search" />
+          <button class="btn btn-outline-light" type="submit">Pesquisar</button>
+        </form>
+      </div>
 
-      <!-- ICON: FAVORITOS -->
-      <a class="me-3 icons-navbar" routerLink="/favoritos">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart"
-          viewBox="0 0 16 16" style="color: white">
-          <path
-            d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-        </svg>
-      </a>
+      <div class="icons d-flex gap-3 justify-content-center justify-content-lg-end mt-3 mt-lg-0">
 
-      <!-- ICON: PERFIL -->
-      <a class="me-3 icons-navbar" routerLink="/login">
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-person"
-          viewBox="0 0 16 16" style="color: white">
-          <path
-            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-        </svg>
-        <!-- @if (usuário) {
-        <span>{{usuario.nome}}</span>
-        } else {
-        <span>Entrar</span>
-        } -->
-        <span> nome</span>
-      </a>
+        <a class="icons-navbar" (click)="mudarTema()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-circle-half"
+            viewBox="0 0 16 16" style="color: white">
+            <path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16" />
+          </svg>
+        </a>
 
-      <!-- ICON: CARRINHO -->
-      <a class="me-3 icons-navbar" routerLink="/carrinho">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart"
-          viewBox="0 0 16 16" style="color: white">
-          <path
-            d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-        </svg>
-      </a>
+        <a class="icons-navbar" routerLink="/favoritos">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-heart"
+            viewBox="0 0 16 16" style="color: white">
+            <path
+              d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+          </svg>
+        </a>
+
+        <a class="icons-navbar d-flex gap-1" routerLink="/login">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-person"
+            viewBox="0 0 16 16" style="color: white">
+            <path
+              d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+          </svg>
+          <span>nome</span>
+        </a>
+
+        <a class="icons-navbar" routerLink="/carrinho">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-cart"
+            viewBox="0 0 16 16" style="color: white">
+            <path
+              d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+          </svg>
+        </a>
+      </div>
+
     </div>
   </div>
 </nav>
 
 <nav class="navbar navbar-expand-lg navbar-loopz pt-0 shadow">
-  <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+  <button class="navbar-toggler ms-3" type="button" data-bs-toggle="collapse" data-bs-target="#menuCategorias"
+    aria-controls="menuCategorias" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse justify-content-center" id="menuCategorias">
     <ul class="navbar-nav mb-2 mb-lg-0 text-center gap-4">
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Todos</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Cordas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Percussão</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Teclas</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Sopro</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" routerLink="#">Acessórios</a>
-      </li>
+      <div class="navbar-nav">
+        @for (categoria of categorias; track categoria) {
+        <app-categoria [categoria]="categoria"></app-categoria>
+        }
+      </div>
     </ul>
   </div>
 </nav>

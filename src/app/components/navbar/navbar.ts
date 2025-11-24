@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterLink } from "@angular/router";
+import { Categoria } from "../categoria/categoria";
+import { CATEGORIAS } from '../../shared/models/Categorias';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, Categoria],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
@@ -20,5 +22,7 @@ mudarTema() {
     html.setAttribute('data-bs-theme', 'dark');
   }
 }
+
+categorias = CATEGORIAS;
 
 }
