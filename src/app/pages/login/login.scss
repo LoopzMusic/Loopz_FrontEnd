@@ -1,39 +1,36 @@
-
 .h2-custom {
-  font-size: 1.8em; 
+  font-size: 1.8em;
 }
 
 .p-custom {
-  font-size: 0.95em; 
+  font-size: 0.95em;
 }
 
 .toggle-switch {
-    .toggle-btn-transition {
-        transition: background-color 0.3s, color 0.3s;
-    }
+  .toggle-btn-transition {
+    transition: background-color 0.3s, color 0.3s;
+  }
 
-    .active-toggle {
-        background-color: #795548;
-        color: white !important; 
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+  .active-toggle {
+    background-color: #795548;
+    color: white !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .btn-submit-custom {
-    padding: 12px; 
-    background-color: #795548; 
-    color: white;
-    border: none;
-    font-size: 1.1em;
-    transition: background-color 0.3s;
-    
-    &:hover:not(:disabled) {
-        background-color: #6d4c41;
-    }
+  padding: 12px;
+  background-color: #795548;
+  color: white;
+  border: none;
+  font-size: 1.1em;
+  transition: background-color 0.3s;
 
+  &:hover:not(:disabled) {
+    background-color: #6d4c41;
+  }
 }
 
-
 .link-hover-underline:hover {
-    text-decoration: underline !important;
+  text-decoration: underline !important;
 }
