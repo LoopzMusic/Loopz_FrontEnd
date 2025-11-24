@@ -16,10 +16,7 @@ export class ProdutoService {
     return this.http.get<Produto>(`http://localhost:8085/produto/${id}/idProduto`);
   }
 
-filtrarPorCategoria(categoria: string) {
-    return this.http.get<Produto[]>(
-      `http://localhost:8085/produto/categoria/${categoria}`
-    );
+  filtrarPorCategoria(categoria: string) {
+    return this.http.get<Produto[]>(`http://localhost:8085/produto/categoria/${categoria}`);
   }
-
 }
