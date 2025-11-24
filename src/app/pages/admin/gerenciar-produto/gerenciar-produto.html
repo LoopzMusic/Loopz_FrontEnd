@@ -1,0 +1,110 @@
+<div class="dashboard-container d-flex">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
+    <header class="page-header d-flex justify-content-between align-items-center mb-4">
+      <h1 class="fs-3 fw-bold text-dark-gray">Gerenciar Produtos</h1>
+    </header>
+
+    <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th class="px-4 py-3">Produto</th>
+                <th class="px-4 py-3">Preço</th>
+                <th class="px-4 py-3">Estoque</th>
+                <th class="px-4 py-3">Categoria</th>
+                <th class="px-4 py-3 text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (produto of produtos; track produto.id) {
+                <tr>
+                  <td class="px-4 py-3">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="produto-img-container bg-light rounded d-flex align-items-center justify-content-center">
+                        <i class="bi bi-music-note-beamed fs-3 text-secondary"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-0 fw-semibold">{{ produto.nome }}</h6>
+                        <small class="text-muted">{{ produto.marca }}</small>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="px-4 py-3">
+                    <span class="fw-semibold">{{ produto.preco | currency:'BRL':'symbol':'1.2-2' }}</span>
+                  </td>
+
+                  <td class="px-4 py-3">
+                    <span 
+                      class="badge"
+                      [class.badge-success]="produto.estoque > 10"
+                      [class.badge-warning]="produto.estoque > 0 && produto.estoque <= 10"
+                      [class.badge-danger]="produto.estoque === 0">
+                      {{ produto.estoque }} un. - {{ getEstoqueStatus(produto.estoque) }}
+                    </span>
+                  </td>
+
+                  <td class="px-4 py-3">
+                    <span class="text-muted">{{ produto.categoria }}</span>
+                  </td>
+
+                  <td class="px-4 py-3">
+                    <div class="d-flex justify-content-center gap-2">
+                      <button 
+                        class="btn btn-sm btn-outline-primary"
+                        (click)="editarProduto(produto.id)"
+                        title="Editar produto">
+                        <i class="bi bi-pencil"></i>
+                      </button>
+
+                      <button 
+                        class="btn btn-sm btn-outline-danger"
+                        (click)="confirmarExclusao(produto)"
+                        title="Excluir produto">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="text-center py-5">
+                    <i class="bi bi-inbox fs-1 text-muted"></i>
+                    <p class="text-muted mt-3 mb-0">Nenhum produto cadastrado</p>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="modalExcluirLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="modalExcluirLabel">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        @if (produtoParaExcluir) {
+          <p class="mb-0">Tem certeza que deseja excluir o produto <strong>{{ produtoParaExcluir.nome }}</strong>?</p>
+          <p class="text-muted small mt-2 mb-0">Esta ação não pode ser desfeita.</p>
+        }
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" (click)="excluirProduto()" data-bs-dismiss="modal">
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

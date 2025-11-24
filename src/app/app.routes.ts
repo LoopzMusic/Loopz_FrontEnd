@@ -11,6 +11,7 @@
   import { ProdutoVendido } from './pages/admin/produto-vendido/produto-vendido';
 import { Avaliacoes } from './pages/admin/avaliacoes/avaliacoes';
 import { Filtro } from './components/filtro/filtro';
+import { GerenciarProduto } from './pages/admin/gerenciar-produto/gerenciar-produto';
 
   export const routes: Routes = [
     { path: '', component: TelaInicial },
@@ -24,6 +25,7 @@ import { Filtro } from './components/filtro/filtro';
     { path: 'admin/dashboard', component: Dashboard },
     { path: 'admin/cadastrar-produto', component: CadastrarProduto },
     { path: 'admin/produto-vendido', component: ProdutoVendido },
-    { path: 'admin/avaliacoes', component: Avaliacoes }
+    { path: 'admin/avaliacoes', component: Avaliacoes },
+    { path: 'admin/gerenciar-produto', component: GerenciarProduto }
     
   ];
