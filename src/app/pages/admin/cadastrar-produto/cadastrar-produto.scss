@@ -1,0 +1,39 @@
+/* SCSS mínimo - a maior parte da estilização vem do Bootstrap e da Sidebar */
+
+.card {
+  border: none;
+  border-radius: 0.5rem;
+
+  .card-title {
+    color: #333;
+    font-weight: 600;
+  }
+}
+
+.btn-primary {
+  background-color: #6c5448;
+  border-color: #6c5448;
+
+  &:hover {
+    background-color: #5a463c;
+    border-color: #5a463c;
+  }
+
+  &:disabled {
+    background-color: #6c5448;
+    border-color: #6c5448;
+    opacity: 0.65;
+  }
+}
+
+main {
+  margin-left: 0;
+  
+  @media (min-width: 768px) {
+    margin-left: 16.666667%;
+  }
+
+  @media (min-width: 992px) {
+    margin-left: 16.666667%;
+  }
+}
