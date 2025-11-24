@@ -15,6 +15,7 @@ export class CadastrarProduto {
   produtoForm!: FormGroup;
   imagemSelecionada: string = '';
   loading: boolean = false;
+isEdicao: any;
 
   constructor(
     private formBuilder: FormBuilder,
