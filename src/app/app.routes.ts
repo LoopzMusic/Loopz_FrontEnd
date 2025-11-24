@@ -4,6 +4,7 @@
   import { Carrinho } from './pages/carrinho/carrinho';
   import { TelaInicial } from './pages/tela-inicial/tela-inicial';
   import { Login } from './pages/login/login';
+  import { Cadastro } from './pages/cadastro/cadastro';
   import { MaisDetalhes } from './pages/mais-detalhes/mais-detalhes';
   import { Dashboard } from '././pages/admin/dashboard/dashboard';
   import { CadastrarProduto } from './pages/admin/cadastrar-produto/cadastrar-produto';
@@ -18,6 +19,7 @@ import { Filtro } from './components/filtro/filtro';
     { path: 'carrinho', component: Carrinho },
     { path: 'filtro/:categoria', component: Filtro },
     { path: 'login', component: Login },
+    { path: 'cadastro', component: Cadastro },
     { path: 'maisDetalhes/:id', component: MaisDetalhes },
     { path: 'admin/dashboard', component: Dashboard },
     { path: 'admin/cadastrar-produto', component: CadastrarProduto },
