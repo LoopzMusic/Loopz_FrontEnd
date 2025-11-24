@@ -30,12 +30,12 @@
           formControlName="email"
           placeholder="{{ isAdmin ? 'admin@loopz.com' : 'seu@email.com' }}"
         />
-        <div
-          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-          class="error-message text-danger small mt-1 mb-2"
-        >
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <div class="error-message text-danger small mt-1 mb-2">
           E-mail é obrigatório e deve ser válido.
         </div>
+        }
 
         <label for="senha" class="form-label d-block small text-dark mt-3 mb-1">Senha</label>
         <input
@@ -56,11 +56,12 @@
         <button type="submit" class="btn btn-submit-custom w-100 py-2 mt-4">
           {{ isAdmin ? 'Entrar como Admin' : 'Entrar' }}
         </button>
-        <p class="text-center mt-5">
-          Não tem uma conta?
-          <a routerLink="/cadastro" class="text-decoration-none">Cadastre-se</a>
+        <p class="text-center">
+          Não tem uma conta? <a routerLink="/cadastro" class="text-decoration-none">Cadastre-se</a>
         </p>
       </form>
+      <p class="text-center mt-3 small"></p>
     </div>
   </div>
 </div>
+<br />
