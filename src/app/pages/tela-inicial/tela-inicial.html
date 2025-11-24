@@ -1,7 +1,9 @@
 <div class="card text-bg-dark">
-  <img src="banner-loopz.png" class="card-img" alt="banner-loopz" />
-  <div class="card-img-overlay d-flex flex-column justify-content-center align-items-center">
-    <h6 class="card-title">Bem Vindo à Loopz</h6>
+  <img src="banner-loopz.png" class="card-img img-fluid" alt="banner-loopz" />
+  <div
+    class="card-img-overlay d-flex flex-column justify-content-center align-items-center text-center p-3"
+  >
+    <h5 class="card-title">Bem Vindo à Loopz</h5>
     <p class="card-text">Instrumentos musicais de qualidade para todos os estilos!</p>
     <div>
       <button class="btn btn-light mt-3" routerLink="#" style="padding: 10px 20px">
@@ -16,26 +18,26 @@
     <h4><strong>Recomendados para você</strong></h4>
     <h6>Conheça nossa seleção especial baseado no seu estilo</h6>
   </div>
-  <div class="row">
-    <div class="col">
-      <div class="row">
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="row g-3">
         @for (produto of produtos; track produto.cdProduto) {
-        <div class="col-lg-4 col-md-6 col-sm-12 col-12 mb-3">
-          <app-card [produto]="produto" />
+        <div class="col-lg-4 col-md-6 col-sm-12 mb-3">
+          <app-card [produto]="produto" class="h-100" />
         </div>
         }
       </div>
     </div>
   </div>
 
-  <div class="explorar-mais">
+  <div class="explorar-mais text-center">
     <button class="btn mt-5 mb-5 explorar-mais-btn" routerLink="#">Explorar Mais</button>
   </div>
 </div>
 
 <div class="bg-secondary-subtle p-5 d-flex flex-column justify-content-center align-items-center">
-  <div class="row">
-    <div class="col text-center">
+  <div class="row row-cols-1 row-cols-md-3 g-4 text-center">
+    <div class="col">
       <h5>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -57,7 +59,7 @@
       <h5 class="fw-bolder mb-0 textoMarrom">Qualidade Garantida</h5>
       <p class="fw-light textoMarrom">Instrumentos de marcas reconhecidas mundialmente</p>
     </div>
-    <div class="col text-center">
+    <div class="col">
       <h5>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +77,7 @@
       <h5 class="fw-bolder mb-0 textoMarrom">Entrega Segura</h5>
       <p class="fw-light textoMarrom">Frete rápido e embalagem especial para proteção</p>
     </div>
-    <div class="col text-center">
+    <div class="col">
       <h5>
         <svg
           xmlns="http://www.w3.org/2000/svg"
