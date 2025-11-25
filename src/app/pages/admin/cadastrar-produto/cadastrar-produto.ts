@@ -3,6 +3,9 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
 import { Router } from '@angular/router';
+import { ProdutoCadastro } from '../../../shared/models/Produto-cadastro';
+import { EstoqueCadastroProduto } from '../../../shared/models/Estoque-cadastro-produto';
+import { ProdutoService } from '../../../services/produto-service';
 
 @Component({
   selector: 'app-cadastrar-produto',
@@ -12,14 +15,17 @@ import { Router } from '@angular/router';
   styleUrl: './cadastrar-produto.scss',
 })
 export class CadastrarProduto {
+
   produtoForm!: FormGroup;
   imagemSelecionada: string = '';
+  arquivoImagem!: File | null;
   loading: boolean = false;
-isEdicao: any;
+  isEdicao: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private produtoService: ProdutoService
   ) {}
 
   ngOnInit(): void {
@@ -28,14 +34,14 @@ isEdicao: any;
 
   initForm(): void {
     this.produtoForm = this.formBuilder.group({
-      nomeProduto: ['', [Validators.required]],
-      preco: ['', [Validators.required, Validators.min(0)]],
-      quantidadeEstoque: ['', [Validators.required, Validators.min(0)]],
-      marca: ['', [Validators.required]],
-      categoria: ['', [Validators.required]],
-      material: [''],
-      cor: [''],
-      descricao: ['']
+      nmProduto: ['', Validators.required],
+      vlProduto: ['', [Validators.required, Validators.min(0)]],
+      dsCategoria: ['', Validators.required],
+      dsAcessorio: ['', Validators.required],
+      dsProduto: ['', Validators.required],
+      cdEmpresa: ['', Validators.required],
+      qtdEstoqueProduto: ['', [Validators.required, Validators.min(1)]],
+      imgProduto: [''] 
     });
   }
 
@@ -47,50 +53,72 @@ isEdicao: any;
   onFileSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      this.arquivoImagem = file;
       this.imagemSelecionada = file.name;
-      // Aqui você pode adicionar lógica para upload da imagem
-      // Por exemplo, usando FileReader para preview ou enviar para um serviço
+
+      this.produtoForm.patchValue({ imgProduto: file.name });
     } else {
       this.imagemSelecionada = '';
+      this.arquivoImagem = null;
     }
   }
 
   onSubmit(): void {
-    if (this.produtoForm.valid) {
-      this.loading = true;
-      
-      const produto = this.produtoForm.value;
-      console.log('Produto a ser cadastrado:', produto);
-
-      // Aqui você deve chamar seu serviço para cadastrar o produto
-      // Exemplo:
-      // this.produtoService.cadastrarProduto(produto).subscribe({
-      //   next: (response) => {
-      //     console.log('Produto cadastrado com sucesso!', response);
-      //     this.router.navigate(['/admin/produtos']);
-      //   },
-      //   error: (error) => {
-      //     console.error('Erro ao cadastrar produto:', error);
-      //     this.loading = false;
-      //   }
-      // });
-
-      // Simulação de requisição
-      setTimeout(() => {
-        alert('Produto cadastrado com sucesso!');
-        this.loading = false;
-        this.router.navigate(['/admin/produtos']);
-      }, 1500);
-    } else {
-      // Marca todos os campos como touched para exibir erros
+    if (this.produtoForm.invalid) {
       Object.keys(this.produtoForm.controls).forEach(key => {
         this.produtoForm.get(key)?.markAsTouched();
       });
+      return;
     }
+
+    this.loading = true;
+
+    const formData = new FormData();
+
+    formData.append('nmProduto', this.produtoForm.value.nmProduto);
+    formData.append('vlProduto', this.produtoForm.value.vlProduto);
+    formData.append('dsCategoria', this.produtoForm.value.dsCategoria);
+    formData.append('dsAcessorio', this.produtoForm.value.dsAcessorio);
+    formData.append('dsProduto', this.produtoForm.value.dsProduto);
+    formData.append('cdEmpresa', this.produtoForm.value.cdEmpresa);
+
+    if (this.arquivoImagem) {
+      formData.append('imgProduto', this.arquivoImagem);
+    }
+
+    this.produtoService.cadastrarProduto(formData).subscribe({
+      next: (response) => {
+        const cdProdutoCriado = response.cdProduto;
+        const quantidade = this.produtoForm.value.qtdEstoqueProduto;
+
+        const estoque: EstoqueCadastroProduto = {
+          cdProduto: cdProdutoCriado,
+          qtdEstoqueProduto: quantidade
+        };
+
+        this.produtoService.criarEstoque(estoque).subscribe({
+          next: () => {
+            alert('Produto e estoque cadastrados com sucesso!');
+            this.loading = false;
+            this.router.navigate(['/admin/produtos']);
+          },
+          error: (err) => {
+            console.error('Erro ao criar estoque:', err);
+            alert('Erro ao criar o estoque.');
+            this.loading = false;
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao cadastrar produto:', err);
+        alert('Erro ao cadastrar o produto.');
+        this.loading = false;
+      }
+    });
   }
 
   onCancelar(): void {
-    if (confirm('Deseja realmente cancelar? Todas as alterações serão perdidas.')) {
+    if (confirm('Deseja realmente cancelar?')) {
       this.router.navigate(['/admin/produtos']);
     }
   }

@@ -19,4 +19,14 @@ export class ProdutoService {
   filtrarPorCategoria(categoria: string) {
     return this.http.get<Produto[]>(`http://localhost:8085/produto/categoria/${categoria}`);
   }
+
+  //cadastro de produto
+  cadastrarProduto(data: FormData) {
+    return this.http.post<any>('http://localhost:8085/produto/criar', data);
+  }
+
+  //cadastrar estoque do produto
+  criarEstoque(body: any) {
+    return this.http.post<any>('http://localhost:8085/estoque/criar', body);
+  }
 }
