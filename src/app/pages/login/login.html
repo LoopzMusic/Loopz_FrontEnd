@@ -1,40 +1,67 @@
 <div class="login-container d-flex justify-content-center align-items-center vh-100 p-3 p-md-5">
-  <div class="card p-5 shadow-lg border-0" style="width: 100%; max-width: 450px;">
+  <div class="card p-5 shadow-lg border-0" style="width: 100%; max-width: 450px">
     <div class="text-center">
-      
       <h2 class="h2-custom fw-bold mb-1">Bem-vindo à Loopz</h2>
       <p class="p-custom text-secondary mb-4">Entre na sua conta para continuar</p>
-      <div class="toggle-switch bg-light rounded-2 d-flex mb-4 overflow-hidden">
+      <div class="toggle-switch rounded-2 d-flex mb-4 overflow-hidden">
+        <button
+          class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
+          [class.active-toggle]="!isAdmin"
+          (click)="isAdmin = false"
+        >
+          Usuário
+        </button>
 
-        <button class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
-          [class.active-toggle]="!isAdmin" (click)="isAdmin = false">Usuário</button>
-
-        <button class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
-          [class.active-toggle]="isAdmin" (click)="isAdmin = true">Administrador</button>
+        <button
+          class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
+          [class.active-toggle]="isAdmin"
+          (click)="isAdmin = true"
+        >
+          Administrador
+        </button>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-start">
         <label for="email" class="form-label d-block small text-dark mt-3 mb-1">E-mail</label>
-        <input id="email" type="email" class="form-control" formControlName="email"
-          placeholder="{{ isAdmin ? 'admin@loopz.com' : 'seu@email.com' }}">
-        <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-          class="error-message text-danger small mt-1 mb-2">E-mail é obrigatório e deve ser válido.
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="{{ isAdmin ? 'admin@loopz.com' : 'seu@email.com' }}"
+        />
+
+        @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <div class="error-message text-danger small mt-1 mb-2">
+          E-mail é obrigatório e deve ser válido.
         </div>
+        }
 
         <label for="senha" class="form-label d-block small text-dark mt-3 mb-1">Senha</label>
-        <input id="senha" type="password" class="form-control" formControlName="senha" placeholder="********">
+        <input
+          id="senha"
+          type="password"
+          class="form-control"
+          formControlName="senha"
+          placeholder="********"
+        />
 
-        <div *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched"
-          class="error-message text-danger small mt-1 mb-2">A senha é obrigatória e deve ter no mínimo 8 caracteres.
+        <div
+          *ngIf="loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched"
+          class="error-message text-danger small mt-1 mb-2"
+        >
+          A senha é obrigatória e deve ter no mínimo 8 caracteres.
         </div>
 
         <button type="submit" class="btn btn-submit-custom w-100 py-2 mt-4">
           {{ isAdmin ? 'Entrar como Admin' : 'Entrar' }}
         </button>
-        <p class="text-center">Não tem uma conta? <a routerLink="/cadastro" class="text-decoration-none">Cadastre-se</a></p>
+        <p class="text-center">
+          Não tem uma conta? <a routerLink="/cadastro" class="text-decoration-none">Cadastre-se</a>
+        </p>
       </form>
-      <p class="text-center mt-3 small">
+      <p class="text-center mt-3 small"></p>
     </div>
   </div>
 </div>
-<br>
+<br />
