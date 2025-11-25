@@ -155,10 +155,25 @@
 
   <div class="collapse navbar-collapse justify-content-center" id="menuCategorias">
     <ul class="navbar-nav mb-2 mb-lg-0 text-center gap-4">
-      <div class="navbar-nav">
-        @for (categoria of categorias; track categoria) {
-        <app-categoria [categoria]="categoria"></app-categoria>
-        }
+      <div class="navbar-nav text-light gap-4" style="cursor: pointer">
+        <div class="filtro">
+          <button class="nav-link" routerLink="/filtro/todos">Todos</button>
+        </div>
+        <div class="filtro">
+          <button class="nav-link" routerLink="/filtro/cordas">Cordas</button>
+        </div>
+        <div class="filtro">
+          <a class="nav-link" routerLink="/filtro/percussao">Percussão</a>
+        </div>
+        <div class="filtro">
+          <a class="nav-link" routerLink="/filtro/teclas">Teclas</a>
+        </div>
+        <div class="filtro">
+          <a class="nav-link" routerLink="/filtro/sopro">Sopro</a>
+        </div>
+        <div class="filtro">
+          <a class="nav-link" routerLink="/filtro/acessorios">Acessórios</a>
+        </div>
       </div>
     </ul>
   </div>
