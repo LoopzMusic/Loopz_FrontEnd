@@ -26,10 +26,10 @@ export class Login implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid && this.isAdmin==true) {
+    if (this.loginForm.valid && this.isAdmin == true) {
       console.log('Dados do Login:', this.loginForm.value);
     } else if (this.loginForm.valid) {
-      console.log('Dados do Login:', this.loginForm.value);;
+      console.log('Dados do Login:', this.loginForm.value);
     } else {
       this.loginForm.markAllAsTouched();
       return;
