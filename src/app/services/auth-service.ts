@@ -1,25 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../shared/models/LoginRequest';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8085/auth'; // ajuste para o endpoint do backend
+  private baseUrl = 'http://localhost:8085/auth';
   private usuarioLogado: any = null;
 
   constructor(private http: HttpClient) {}
 
   login(loginData: LoginRequest, isAdmin: boolean): Observable<any> {
     const url = isAdmin ? `${this.baseUrl}/login` : `${this.baseUrl}/login`;
-    return this.http.post(url, loginData);
+    
+    return this.http.post(url, loginData).pipe(
+      tap((response: any) => {
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
+      })
+    );
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 
   setUsuario(usuario: any) {
     this.usuarioLogado = usuario;
-    localStorage.setItem('usuario', JSON.stringify(usuario)); // persiste entre reloads
+    localStorage.setItem('usuario', JSON.stringify(usuario));
   }
 
   getUsuarioLogado() {
@@ -33,5 +44,6 @@ export class AuthService {
   logout() {
     this.usuarioLogado = null;
     localStorage.removeItem('usuario');
+    localStorage.removeItem('token');
   }
 }
