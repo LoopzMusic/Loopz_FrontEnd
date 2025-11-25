@@ -8,19 +8,19 @@ import { Usuario } from '../../shared/models/Usuario';
   templateUrl: './perfil.html',
 })
 export class Perfil implements OnInit {
-  usuario!: Usuario | null;
+  usuario: Usuario | null = null;
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.usuario = this.authService.getUsuarioLogado();
+    const user = this.authService.getUsuarioLogado();
 
-    if (!this.usuario) {
+    if (!user) {
       this.router.navigate(['/login']);
+      return;
     }
+
+    this.usuario = user;
   }
 
   editarPerfil() {
