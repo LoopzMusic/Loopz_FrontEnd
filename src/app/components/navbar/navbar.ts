@@ -1,13 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Usuario } from '../../shared/models/Usuario';
-import { Categoria } from '../categoria/categoria';
-import { CATEGORIAS } from '../../shared/models/Categorias';
 import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink, Categoria],
+  imports: [RouterLink],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })
@@ -41,6 +39,4 @@ export class Navbar {
       html.setAttribute('data-bs-theme', 'dark');
     }
   }
-
-  categorias = CATEGORIAS;
 }
