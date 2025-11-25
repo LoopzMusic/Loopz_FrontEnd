@@ -13,7 +13,7 @@ export class ProdutoService {
   }
 
   buscarProdutoPorId(id: number) {
-    return this.http.get<Produto>(`http://localhost:8085/produto/${id}/idProduto`);
+    return this.http.get<Produto>(`http://localhost:8085/produto/${id}/detalhes`);
   }
 
   filtrarPorCategoria(categoria: string) {
