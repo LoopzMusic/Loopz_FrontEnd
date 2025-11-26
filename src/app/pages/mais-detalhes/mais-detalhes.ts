@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
 import { ProdutoService } from '../../services/produto-service';
@@ -21,13 +21,11 @@ export class MaisDetalhes implements OnInit {
   private authService = inject(AuthService);
 
   @ViewChild('toastCarrinho') toastCarrinho!: ElementRef;
+  @ViewChild('toastFavorito') toastFavorito!: ElementRef;
 
   protected produtos: Produto[] = [];
   produto: Produto = new Produto();
   favorito = false;
-  @ViewChild('toastFavorito') toastFavorito!: ElementRef;
-
-  // avaliacoes: Avaliacao[] = [];
 
   constructor() {}
 
@@ -40,7 +38,7 @@ export class MaisDetalhes implements OnInit {
     });
   }
 
-  verificarFavorito() {
+  verificarFavorito(): void {
     const usuario = this.authService.getUsuarioLogado();
     
     if (usuario && usuario.cdUsuario) {
@@ -51,7 +49,7 @@ export class MaisDetalhes implements OnInit {
     }
   }
 
-  adicionarFavorito() {
+  adicionarFavorito(): void {
     const usuario = this.authService.getUsuarioLogado();
     
     if (!usuario || !usuario.cdUsuario) {
@@ -62,7 +60,6 @@ export class MaisDetalhes implements OnInit {
     const cdusuario = usuario.cdUsuario;
 
     if (this.favorito) {
-      
       this.favoritosService.removerFavorito(cdusuario, this.produto.cdProduto).subscribe({
         next: () => {
           let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
@@ -85,7 +82,6 @@ export class MaisDetalhes implements OnInit {
         }
       });
     } else {
-      
       this.favoritosService.adicionarFavorito(this.produto.cdProduto, cdusuario).subscribe({
         next: (response) => {
           console.log('Favorito adicionado:', response);
@@ -105,62 +101,56 @@ export class MaisDetalhes implements OnInit {
     }
   }
 
-  showToastCarrinho(msg: string) {
-    this.toastCarrinho.nativeElement.querySelector('.toast-body').textContent = msg;
-
-    // @ts-ignore
-    const toast = new bootstrap.Toast(this.toastCarrinho.nativeElement);
-    toast.show();
-  }
-
-  adicionarAoCarrinho(qtdInput: HTMLInputElement) {
-  const quantidade = Number(qtdInput.value);
-
-  let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-
-  const itemExistente = carrinho.find((item: any) => item.cdProduto === this.produto.cdProduto);
-
-  if (itemExistente) {
-    itemExistente.quantidade += quantidade;
-  } else {
-    carrinho.push({
-      cdProduto: this.produto.cdProduto,
-      nome: this.produto.nmProduto,
-      marca: this.produto.dsCategoria ?? 'Não informado',
-      preco: this.produto.vlProduto,
-      quantidade: quantidade,
-      estoque: this.produto.qtdEstoqueProduto,
-      imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`
-    });
-  }
-
-  localStorage.setItem('carrinho', JSON.stringify(carrinho));
-    this.showToastCarrinho("Produto adicionado ao carrinho!");
-}
-
-aumentarQtd(input: HTMLInputElement) {
-  const atual = Number(input.value);
-  if (atual < this.produto.qtdEstoqueProduto) {
-    input.value = (atual + 1).toString();
-  }
-}
-
-diminuirQtd(input: HTMLInputElement) {
-  const atual = Number(input.value);
-  if (atual > 1) {
-    input.value = (atual - 1).toString();
-  }
-}
-}
-  showToast(msg: string) {
+  showToast(msg: string): void {
     this.toastFavorito.nativeElement.querySelector('.toast-body').textContent = msg;
-
     // @ts-ignore
     const toast = new bootstrap.Toast(this.toastFavorito.nativeElement);
     toast.show();
   }
 
-  // this.produtoService.buscarAvaliacoesPorProdutoId(id).subscribe(response => {
-  //   this.avaliacoes = response;
-  // });
+  showToastCarrinho(msg: string): void {
+    this.toastCarrinho.nativeElement.querySelector('.toast-body').textContent = msg;
+    // @ts-ignore
+    const toast = new bootstrap.Toast(this.toastCarrinho.nativeElement);
+    toast.show();
+  }
+
+  adicionarAoCarrinho(qtdInput: HTMLInputElement): void {
+    const quantidade = Number(qtdInput.value);
+
+    let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
+
+    const itemExistente = carrinho.find((item: any) => item.cdProduto === this.produto.cdProduto);
+
+    if (itemExistente) {
+      itemExistente.quantidade += quantidade;
+    } else {
+      carrinho.push({
+        cdProduto: this.produto.cdProduto,
+        nome: this.produto.nmProduto,
+        marca: this.produto.dsCategoria ?? 'Não informado',
+        preco: this.produto.vlProduto,
+        quantidade: quantidade,
+        estoque: this.produto.qtdEstoqueProduto,
+        imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`
+      });
+    }
+
+    localStorage.setItem('carrinho', JSON.stringify(carrinho));
+    this.showToastCarrinho("Produto adicionado ao carrinho!");
+  }
+
+  aumentarQtd(input: HTMLInputElement): void {
+    const atual = Number(input.value);
+    if (atual < this.produto.qtdEstoqueProduto) {
+      input.value = (atual + 1).toString();
+    }
+  }
+
+  diminuirQtd(input: HTMLInputElement): void {
+    const atual = Number(input.value);
+    if (atual > 1) {
+      input.value = (atual - 1).toString();
+    }
+  }
 }

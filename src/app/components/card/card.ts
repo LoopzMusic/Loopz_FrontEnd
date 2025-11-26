@@ -20,7 +20,6 @@ export class Card {
   favorito = false;
 
   constructor(private router: Router) { }
-  private router = inject(Router);
   private favoritosService = inject(FavoritosService);
   private authService = inject(AuthService);
 
@@ -125,4 +124,4 @@ export class Card {
 
 
 }
-}
+
