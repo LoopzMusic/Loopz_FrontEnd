@@ -17,6 +17,7 @@ import { Percussao } from './components/filtros/percussao/percussao';
 import { Teclas } from './components/filtros/teclas/teclas';
 import { Acessorios } from './components/filtros/acessorios/acessorios';
 import { Sopro } from './components/filtros/sopro/sopro';
+import { FinalizarCompra } from './pages/finalizar-compra/finalizar-compra';
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
@@ -38,8 +39,9 @@ export const routes: Routes = [
   { path: 'admin/avaliacoes', component: Avaliacoes },
   { path: 'admin/gerenciar-produto', component: GerenciarProduto },
   {
-  path: 'carrinho',
-  loadComponent: () => import('./pages/carrinho/carrinho')
-    .then(m => m.Carrinho)
-},
+    path: 'carrinho',
+    loadComponent: () => import('./pages/carrinho/carrinho')
+      .then(m => m.Carrinho)
+  },
+  {path: 'finalizar-compra', component: FinalizarCompra}
 ];

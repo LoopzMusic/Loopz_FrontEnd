@@ -57,39 +57,32 @@ export class Carrinho {
   }
 
   finalizarCompra(): void {
-    if (this.itensCarrinho.length === 0) {
-      alert('Seu carrinho está vazio!');
-      return;
-    }
-
-    console.log('Finalizando compra...', {
-      itens: this.itensCarrinho,
-      total: this.calcularTotal()
-    });
-
-    // Aqui você deve chamar seu serviço para criar o pedido
-    // this.pedidoService.criar(this.itensCarrinho).subscribe({
-    //   next: (response) => {
-    //     this.router.navigate(['/checkout']);
-    //   },
-    //   error: (error) => {
-    //     console.error('Erro ao finalizar compra:', error);
-    //     alert('Erro ao finalizar a compra. Tente novamente.');
-    //   }
-    // });
-
-    // Por enquanto, apenas navega para checkout
-    this.router.navigate(['/checkout']);
+  if (this.itensCarrinho.length === 0) {
+    alert('Seu carrinho está vazio!');
+    return;
   }
 
-  salvarCarrinho() {
-    localStorage.setItem('carrinho', JSON.stringify(this.itensCarrinho));
-  }
+  console.log('Finalizando compra...', {
+    itens: this.itensCarrinho,
+    total: this.calcularTotal()
+  });
 
-  private carregarCarrinho(): void {
-    const carrinhoSalvo = localStorage.getItem('carrinho');
-    if (carrinhoSalvo) {
-      this.itensCarrinho = JSON.parse(carrinhoSalvo);
-    }
+  // 👉 Salva o carrinho antes de sair desta página
+  this.salvarCarrinho();
+
+  // 👉 Navega para a tela de finalização
+  this.router.navigate(['/finalizar-compra']);
+}
+
+salvarCarrinho() {
+  localStorage.setItem('carrinho', JSON.stringify(this.itensCarrinho));
+}
+
+private carregarCarrinho(): void {
+  const carrinhoSalvo = localStorage.getItem('carrinho');
+  if (carrinhoSalvo) {
+    this.itensCarrinho = JSON.parse(carrinhoSalvo);
   }
+}
+
 }
