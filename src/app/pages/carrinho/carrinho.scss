@@ -1,0 +1,123 @@
+/* Variáveis */
+$brown-primary: #6c5448;
+$brown-hover: #5a463c;
+
+.container {
+  max-width: 1200px;
+}
+
+.card {
+  border-radius: 12px;
+
+  &.shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+.produto-img-wrapper {
+  width: 100px;
+  height: 100px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.produto-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.text-brown {
+  color: $brown-primary;
+}
+
+.quantidade-control {
+  .btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  span {
+    min-width: 40px;
+    text-align: center;
+    font-size: 1rem;
+  }
+}
+
+.btn-brown {
+  background-color: $brown-primary;
+  border-color: $brown-primary;
+  color: white;
+
+  &:hover {
+    background-color: $brown-hover;
+    border-color: $brown-hover;
+    color: white;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(108, 84, 72, 0.25);
+  }
+}
+
+.btn-link {
+  text-decoration: none;
+
+  &:hover {
+    opacity: 0.7;
+  }
+}
+
+.btn-primary {
+  background-color: $brown-primary;
+  border-color: $brown-primary;
+
+  &:hover {
+    background-color: $brown-hover;
+    border-color: $brown-hover;
+  }
+}
+
+.sticky-top {
+  position: sticky;
+  z-index: 10;
+}
+
+@media (max-width: 991px) {
+  .sticky-top {
+    position: relative;
+    top: 0 !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .produto-img-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+
+  .quantidade-control {
+    .btn {
+      width: 32px;
+      height: 32px;
+    }
+
+    span {
+      min-width: 30px;
+      font-size: 0.9rem;
+    }
+  }
+}

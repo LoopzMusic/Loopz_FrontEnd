@@ -8,6 +8,6 @@ export class Produto {
     public imgProduto = '',
     public cdProduto = 0,
     public cdEmpresa = 0,
-    public qtdEstoqueProduto = ''
+    public qtdEstoqueProduto = 0
   ) {}
 }
