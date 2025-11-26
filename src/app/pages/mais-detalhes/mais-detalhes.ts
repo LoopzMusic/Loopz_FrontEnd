@@ -16,9 +16,9 @@ import { AuthService } from '../../services/auth-service';
 export class MaisDetalhes implements OnInit {
   private produtoService = inject(ProdutoService);
   private route = inject(ActivatedRoute);
-  private router = inject(Router)
-  private favoritosService = inject(FavoritosService)
-  private authService = inject(AuthService)
+  private router = inject(Router);
+  private favoritosService = inject(FavoritosService);
+  private authService = inject(AuthService);
 
   protected produtos: Produto[] = [];
   produto: Produto = new Produto();
@@ -34,11 +34,11 @@ export class MaisDetalhes implements OnInit {
 
     this.produtoService.buscarProdutoPorId(id).subscribe((response) => {
       this.produto = response;
-      this.verificarFavorito()
+      this.verificarFavorito();
     });
   }
 
-    verificarFavorito() {
+  verificarFavorito() {
     const usuario = this.authService.getUsuarioLogado();
     
     if (usuario && usuario.cdUsuario) {
@@ -49,7 +49,7 @@ export class MaisDetalhes implements OnInit {
     }
   }
 
-   adicionarFavorito() {
+  adicionarFavorito() {
     const usuario = this.authService.getUsuarioLogado();
     
     if (!usuario || !usuario.cdUsuario) {
@@ -73,9 +73,8 @@ export class MaisDetalhes implements OnInit {
             this.router.navigate(['/produtos']);
           }
 
-    this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
-  }
-}
+          this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
+          
           this.showToast("Removido dos favoritos!");
         },
         error: (error) => {
@@ -113,8 +112,6 @@ export class MaisDetalhes implements OnInit {
   }
 
   // this.produtoService.buscarAvaliacoesPorProdutoId(id).subscribe(response => {
-    //   this.avaliacoes = response;
-    // });
-  
-}  
-
+  //   this.avaliacoes = response;
+  // });
+}
