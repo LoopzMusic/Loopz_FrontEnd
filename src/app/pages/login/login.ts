@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LoginRequest } from '../../shared/models/LoginRequest';
-import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +14,7 @@ export class Login implements OnInit {
   loginForm!: FormGroup;
   isAdmin = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
+  constructor(private fb: FormBuilder, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -26,27 +24,18 @@ export class Login implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid && this.isAdmin == true) {
-      console.log('Dados do Login:', this.loginForm.value);
-    } else if (this.loginForm.valid) {
-      console.log('Dados do Login:', this.loginForm.value);
-    } else {
+    if (!this.loginForm.valid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
-    const loginData = new LoginRequest(this.loginForm.value.email, this.loginForm.value.senha);
+    // Se estiver como Admin
+    if (this.isAdmin) {
+      this.router.navigate(['/admin/dashboard']);
+      return;
+    }
 
-    this.authService.login(loginData, this.isAdmin).subscribe({
-      next: (res) => {
-        this.authService.setUsuario(res);
-        console.log('Login sucesso:', res);
-        this.router.navigate(['']);
-      },
-      error: (err) => {
-        console.error('Erro ao logar:', err);
-        alert('Usuário ou senha inválidos');
-      },
-    });
+    // Se for usuário normal
+    this.router.navigate(['']); // tela inicial
   }
 }
