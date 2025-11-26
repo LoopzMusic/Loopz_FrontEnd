@@ -17,6 +17,7 @@ import { Percussao } from './components/filtros/percussao/percussao';
 import { Teclas } from './components/filtros/teclas/teclas';
 import { Acessorios } from './components/filtros/acessorios/acessorios';
 import { Sopro } from './components/filtros/sopro/sopro';
+import { perfilGuardGuard } from './guards/perfil-guard-guard';
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
@@ -32,14 +33,13 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'cadastro', component: Cadastro },
   { path: 'maisDetalhes/:id', component: MaisDetalhes },
-  { path: 'admin/dashboard', component: Dashboard },
-  { path: 'admin/cadastrar-produto', component: CadastrarProduto },
-  { path: 'admin/produto-vendido', component: ProdutoVendido },
-  { path: 'admin/avaliacoes', component: Avaliacoes },
-  { path: 'admin/gerenciar-produto', component: GerenciarProduto },
+  { path: 'admin/dashboard', component: Dashboard, canActivate: [perfilGuardGuard] },
+  { path: 'admin/cadastrar-produto', component: CadastrarProduto, canActivate: [perfilGuardGuard] },
+  { path: 'admin/produto-vendido', component: ProdutoVendido, canActivate: [perfilGuardGuard] },
+  { path: 'admin/avaliacoes', component: Avaliacoes, canActivate: [perfilGuardGuard] },
+  { path: 'admin/gerenciar-produto', component: GerenciarProduto, canActivate: [perfilGuardGuard] },
   {
-  path: 'carrinho',
-  loadComponent: () => import('./pages/carrinho/carrinho')
-    .then(m => m.Carrinho)
-},
+    path: 'carrinho',
+    loadComponent: () => import('./pages/carrinho/carrinho').then((m) => m.Carrinho),
+  },
 ];
