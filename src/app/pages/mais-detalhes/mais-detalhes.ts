@@ -3,12 +3,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
 import { ProdutoService } from '../../services/produto-service';
 import { Produto } from '../../shared/models/Produto';
+import { Card } from '../../components/card/card';
 import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
 import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-mais-detalhes',
-  imports: [RouterLink, CardAvaliacao],
+  imports: [RouterLink, CardAvaliacao, Card],
   templateUrl: './mais-detalhes.html',
   styleUrl: './mais-detalhes.scss',
 })
@@ -19,6 +20,7 @@ export class MaisDetalhes implements OnInit {
   private favoritosService = inject(FavoritosService)
   private authService = inject(AuthService)
 
+  protected produtos: Produto[] = [];
   produto: Produto = new Produto();
   favorito = false;
   @ViewChild('toastFavorito') toastFavorito!: ElementRef;
@@ -71,6 +73,9 @@ export class MaisDetalhes implements OnInit {
             this.router.navigate(['/produtos']);
           }
 
+    this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
+  }
+}
           this.showToast("Removido dos favoritos!");
         },
         error: (error) => {
