@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginRequest } from '../../shared/models/LoginRequest';
 import { AuthService } from '../../services/auth-service';
@@ -41,7 +41,11 @@ export class Login implements OnInit {
       next: (res) => {
         this.authService.setUsuario(res);
         console.log('Login sucesso:', res);
-        this.router.navigate(['']);
+        if (this.isAdmin) {
+          this.router.navigate(['/admin/dashboard']);
+        } else {
+          this.router.navigate(['']);
+        }
       },
       error: (err) => {
         console.error('Erro ao logar:', err);
