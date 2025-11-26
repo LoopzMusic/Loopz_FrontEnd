@@ -1,0 +1,171 @@
+<div class="container my-5">
+    <h2 class="mb-4">Finalizar Compra</h2>
+
+    <div class="row">
+        <!-- Endereço -->
+        <div class="col-lg-8">
+            <div class="card p-4 mb-4">
+                <h5 class="mb-3">
+                    <i class="bi bi-geo-alt"></i> Endereço de Entrega
+                </h5>
+
+                <div class="row g-3">
+
+                    <!-- CEP -->
+                    <div class="col-md-4">
+                        <label for="cep" class="form-label">CEP</label>
+                        <div class="input-group">
+                            <input type="text" id="cep" class="form-control" maxlength="8" placeholder="Digite o CEP"
+                                (blur)="buscarCep()" />
+
+                                <button class="btn btn-lupa" type="button" (click)="buscarCep()" title="Buscar CEP">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-search text-white" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Logradouro -->
+                    <div class="col-md-8">
+                        <label class="form-label">Endereço</label>
+                        <input type="text" class="form-control" placeholder="Rua, Avenida..."
+                            [value]="endereco().logradouro"
+                            (input)="atualizarEndereco('logradouro', $event.target.value)">
+                    </div>
+
+                    <!-- Número -->
+                    <div class="col-md-3">
+                        <label class="form-label">Número</label>
+                        <input type="text" class="form-control" placeholder="123" [value]="endereco().numero"
+                            (input)="atualizarEndereco('numero', $event.target.value)">
+                    </div>
+
+                    <!-- Complemento -->
+                    <div class="col-md-9">
+                        <label class="form-label">Complemento</label>
+                        <input type="text" class="form-control" placeholder="Apto, Bloco..."
+                            [value]="endereco().complemento"
+                            (input)="atualizarEndereco('complemento', $event.target.value)">
+                    </div>
+
+                    <!-- Bairro -->
+                    <div class="col-md-6">
+                        <label class="form-label">Bairro</label>
+                        <input type="text" class="form-control" placeholder="Bairro" [value]="endereco().bairro"
+                            (input)="atualizarEndereco('bairro', $event.target.value)">
+                    </div>
+
+                    <!-- Cidade -->
+                    <div class="col-md-6">
+                        <label class="form-label">Cidade</label>
+                        <input type="text" class="form-control" placeholder="Cidade" [value]="endereco().localidade"
+                            (input)="atualizarEndereco('localidade', $event.target.value)">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Forma de Pagamento -->
+            <div class="card p-4 mb-4">
+                <h5><i class="bi bi-credit-card"></i> Forma de Pagamento</h5>
+
+                <div class="mt-3">
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="pagamento" value="credito"
+                            (change)="selecionarPagamento('credito')">
+                        <label class="form-check-label">Cartão de Crédito</label>
+                    </div>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="pagamento" value="debito"
+                            (change)="selecionarPagamento('debito')">
+                        <label class="form-check-label">Cartão de Débito</label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="pagamento" value="pix"
+                            (change)="selecionarPagamento('pix')">
+                        <label class="form-check-label">PIX</label>
+                    </div>
+
+                    @if (pagamento() !== 'pix') {
+                    <div class="row g-3">
+
+                        <div class="col-md-12">
+                            <label class="form-label">Número do Cartão</label>
+                            <input type="text" class="form-control" placeholder="0000 0000 0000 0000">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Validade</label>
+                            <input type="text" class="form-control" placeholder="MM/AA">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">CVV</label>
+                            <input type="text" class="form-control" placeholder="123">
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label">Nome no Cartão</label>
+                            <input type="text" class="form-control" placeholder="Nome completo">
+                        </div>
+
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumo do Pedido -->
+        <div class="col-lg-4">
+            <div class="card p-4 sticky-top">
+                <h5><i class="bi bi-box"></i> Resumo do Pedido</h5>
+
+                <div class="border-bottom pb-2 mb-2">
+                    @for (item of itensCarrinho(); track item.cdProduto) {
+                    <div class="d-flex justify-content-between">
+                        <span>{{ item.nome }} x{{ item.quantidade }}</span>
+                        <span>R$ {{ item.preco * item.quantidade }}</span>
+                    </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span>Subtotal</span>
+                    <strong>R$ {{ subtotal() }}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span>Frete</span>
+                    <strong>
+                        @if (frete() === 0) {
+                        Grátis
+                        } @else {
+                        R$ {{ frete() }}
+                        }
+                    </strong>
+                </div>
+
+                <hr>
+
+                <div class="d-flex justify-content-between">
+                    <strong>Total</strong>
+                    <strong>R$ {{ subtotal() + frete() }}</strong>
+                </div>
+
+                <button class="btn btn-dark w-100 mt-3" (click)="confirmarPedido()">
+                    Confirmar Pedido
+                </button>
+
+                <button class="btn btn-light w-100 mt-2" routerLink="/carrinho">
+                    Voltar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
