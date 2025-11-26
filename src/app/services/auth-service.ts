@@ -20,6 +20,15 @@ export class AuthService {
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
+        
+        if (response.cdUsuario) {
+          const usuario = {
+            cdUsuario: response.cdUsuario,
+            dsEmail: response.dsEmail,
+            userRole: response.userRole
+          };
+          this.setUsuario(usuario);
+        }
       })
     );
   }
@@ -45,5 +54,6 @@ export class AuthService {
     this.usuarioLogado = null;
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
+    localStorage.removeItem('favoritos')
   }
 }
