@@ -43,5 +43,4 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/carrinho/carrinho')
       .then(m => m.Carrinho)
   },
-  {path: 'finalizar-compra', component: FinalizarCompra}
 ];
