@@ -1,6 +1,8 @@
-import { Component, Input, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, ElementRef, ViewChild, inject } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
 import { Produto } from '../../shared/models/Produto';
+import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-card',
@@ -18,6 +20,9 @@ export class Card {
   favorito = false;
 
   constructor(private router: Router) { }
+  private router = inject(Router);
+  private favoritosService = inject(FavoritosService);
+  private authService = inject(AuthService);
 
   ngOnInit() {
     const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
@@ -25,25 +30,54 @@ export class Card {
   }
 
   adicionarFavorito() {
-    let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    const usuario = this.authService.getUsuarioLogado();
+    
+    if (!usuario || !usuario.cdUsuario) {
+      this.showToast("Você precisa estar logado!");
+      return;
+    }
+
+    const cdusuario = usuario.cdUsuario;
 
     if (this.favorito) {
-      favoritos = favoritos.filter((p: any) => p.cdProduto !== this.produto.cdProduto);
-      localStorage.setItem('favoritos', JSON.stringify(favoritos));
+      
+      this.favoritosService.removerFavorito(cdusuario, this.produto.cdProduto).subscribe({
+        next: () => {
+          let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+          favoritos = favoritos.filter((p: any) => p.cdProduto !== this.produto.cdProduto);
+          localStorage.setItem('favoritos', JSON.stringify(favoritos));
 
-      this.favorito = false;
+          this.favorito = false;
 
-      if (this.router.url.includes('favoritos')) {
-        this.router.navigate(['/produtos']);
-      }
+          if (this.router.url.includes('favoritos')) {
+            this.router.navigate(['/produtos']);
+          }
 
-      this.showToast("Removido dos favoritos!");
+          this.showToast("Removido dos favoritos!");
+        },
+        error: (error) => {
+          console.error('Erro ao remover favorito:', error);
+          this.showToast("Erro ao remover dos favoritos!");
+        }
+      });
     } else {
-      favoritos.push(this.produto);
-      localStorage.setItem('favoritos', JSON.stringify(favoritos));
+      
+      this.favoritosService.adicionarFavorito(this.produto.cdProduto, cdusuario).subscribe({
+        next: (response) => {
+          console.log('Favorito adicionado:', response);
+          
+          let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
+          favoritos.push(this.produto);
+          localStorage.setItem('favoritos', JSON.stringify(favoritos));
 
-      this.favorito = true;
-      this.showToast("Adicionado aos favoritos!");
+          this.favorito = true;
+          this.showToast("Adicionado aos favoritos!");
+        },
+        error: (error) => {
+          console.error('Erro ao adicionar favorito:', error);
+          this.showToast("Erro ao adicionar aos favoritos!");
+        }
+      });
     }
   }
 
@@ -90,4 +124,5 @@ export class Card {
 
 
 
+}
 }

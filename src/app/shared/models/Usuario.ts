@@ -1,5 +1,6 @@
 export class Usuario {
   constructor(
+    public cdUsuario?: number,
     public nmCliente = '',
     public nuCPF = '',
     public nuTelefone = '',
