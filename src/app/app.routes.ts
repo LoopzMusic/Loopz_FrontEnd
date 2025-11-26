@@ -37,4 +37,9 @@ export const routes: Routes = [
   { path: 'admin/produto-vendido', component: ProdutoVendido },
   { path: 'admin/avaliacoes', component: Avaliacoes },
   { path: 'admin/gerenciar-produto', component: GerenciarProduto },
+  {
+  path: 'carrinho',
+  loadComponent: () => import('./pages/carrinho/carrinho')
+    .then(m => m.Carrinho)
+},
 ];

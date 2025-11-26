@@ -14,8 +14,12 @@ export class Card {
 
   @Input({ required: true }) produto: Produto = new Produto();
   @ViewChild('toastFavorito') toastFavorito!: ElementRef;
+  @ViewChild('toastCarrinho') toastCarrinho!: ElementRef;
+  
 
   favorito = false;
+
+  constructor(private router: Router) { }
   private router = inject(Router);
   private favoritosService = inject(FavoritosService);
   private authService = inject(AuthService);
@@ -84,4 +88,41 @@ export class Card {
     const toast = new bootstrap.Toast(this.toastFavorito.nativeElement);
     toast.show();
   }
+
+  showToastCarrinho(msg: string) {
+    this.toastCarrinho.nativeElement.querySelector('.toast-body').textContent = msg;
+
+    // @ts-ignore
+    const toast = new bootstrap.Toast(this.toastCarrinho.nativeElement);
+    toast.show();
+  }
+
+  adicionarAoCarrinho() {
+  let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
+
+  const itemExistente = carrinho.find((item: any) => item.cdProduto === this.produto.cdProduto);
+
+  if (itemExistente) {
+    // aumenta quantidade se já existir
+    itemExistente.quantidade++;
+  } else {
+    // adiciona um novo produto no formato do carrinho
+    carrinho.push({
+      cdProduto: this.produto.cdProduto,
+      nome: this.produto.nmProduto,
+      marca: this.produto.dsCategoria ?? 'Não informado',
+      preco: this.produto.vlProduto,
+      quantidade: 1,
+      estoque: this.produto.qtdEstoqueProduto,
+      imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`
+    });
+  }
+
+  localStorage.setItem('carrinho', JSON.stringify(carrinho));
+  this.showToastCarrinho("Produto adicionado ao carrinho!");
+}
+
+
+
+}
 }
