@@ -18,12 +18,14 @@ import { Teclas } from './components/filtros/teclas/teclas';
 import { Acessorios } from './components/filtros/acessorios/acessorios';
 import { Sopro } from './components/filtros/sopro/sopro';
 import { perfilGuardGuard } from './guards/perfil-guard-guard';
+import { MeusPedidos } from './pages/meus-pedidos/meus-pedidos';
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
   { path: 'favoritos', component: Favoritos },
   { path: 'perfil', component: Perfil },
   { path: 'carrinho', component: Carrinho },
+  { path: 'meus-pedidos', component: MeusPedidos },
   { path: 'filtro/todos', component: Todos },
   { path: 'filtro/cordas', component: Cordas },
   { path: 'filtro/percussao', component: Percussao },
