@@ -1,21 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
 import { ProdutoService } from '../../../services/produto-service';
 import { Produto } from '../../../shared/models/Produto';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-gerenciar-produto',
   standalone: true,
-  imports: [CommonModule, Sidebar],
+  imports: [CommonModule, Sidebar, FormsModule],
   templateUrl: './gerenciar-produto.html',
   styleUrls: ['./gerenciar-produto.scss']
 })
 export class GerenciarProduto implements OnInit {
 
+  @ViewChild('toastProduto') toastProduto!: ElementRef;
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
   produtos: Produto[] = [];
   produtoParaExcluir: Produto | null = null;
+  produtoParaEditar: Produto | null = null;
+  cdEstoqueAtual: number | null = null; 
+  imagemSelecionada: File | null = null;
+  imagemPreview: string | null = null;
+  salvandoEdicao = false;
 
   constructor(
     private router: Router,
@@ -33,6 +43,7 @@ export class GerenciarProduto implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao listar produtos:', err);
+        this.showToast('Erro ao carregar produtos!', 'error');
       }
     });
   }
@@ -43,10 +54,120 @@ export class GerenciarProduto implements OnInit {
     return 'OK';
   }
 
-  editarProduto(produtoId: number): void {
-    this.router.navigate(['/admin/produtos/cadastrar'], { 
-      queryParams: { id: produtoId } 
+  abrirModalEditar(produto: Produto): void {
+
+    
+    this.produtoParaEditar = { ...produto };
+
+    
+    this.imagemSelecionada = null;
+    this.imagemPreview = null;
+
+    
+    this.cdEstoqueAtual = produto.cdProduto;
+    console.log("cdEstoqueAtual:", this.cdEstoqueAtual);
+
+    
+    const modalElement = document.getElementById('modalEditar');
+    if (modalElement) {
+      const bootstrap = (window as any).bootstrap;
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
+  onImagemSelecionada(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.imagemSelecionada = file;
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagemPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  salvarEdicao(): void {
+    if (!this.produtoParaEditar) return;
+
+    this.salvandoEdicao = true;
+
+    const dadosTexto = {
+      nmProduto: this.produtoParaEditar.nmProduto,
+      vlProduto: this.produtoParaEditar.vlProduto,
+      dsProduto: this.produtoParaEditar.dsProduto,
+      dsCategoria: this.produtoParaEditar.dsCategoria,
+      dsAcessorio: this.produtoParaEditar.dsAcessorio,
+      cdEmpresa: this.produtoParaEditar.cdEmpresa
+    };
+
+    const requests = [];
+
+    
+    requests.push(
+      this.produtoService.atualizarTextoProduto(
+        this.produtoParaEditar.cdProduto,
+        dadosTexto
+      )
+    );
+
+    
+    const dadosEstoque = {
+      qtdEstoqueProduto: this.produtoParaEditar.qtdEstoqueProduto,
+      cdProduto: this.produtoParaEditar.cdProduto
+    };
+
+    requests.push(
+      this.produtoService.atualizarEstoque(
+        this.produtoParaEditar.cdProduto,
+        dadosEstoque
+      )
+    );
+
+   
+    if (this.imagemSelecionada) {
+      requests.push(
+        this.produtoService.atualizarImagemProduto(
+          this.produtoParaEditar.cdProduto,
+          this.imagemSelecionada
+        )
+      );
+    }
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.finalizarEdicao(true);
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar produto:', err);
+        this.showToast('Erro ao atualizar produto!', 'error');
+        this.salvandoEdicao = false;
+      }
     });
+  }
+
+  finalizarEdicao(sucesso: boolean): void {
+    this.salvandoEdicao = false;
+
+    if (sucesso) {
+      this.showToast('Produto atualizado com sucesso!', 'success');
+
+      const modalElement = document.getElementById('modalEditar');
+      if (modalElement) {
+        const bootstrap = (window as any).bootstrap;
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal?.hide();
+      }
+
+      this.carregarProdutos();
+    }
+
+    this.produtoParaEditar = null;
+    this.cdEstoqueAtual = null;
+    this.imagemSelecionada = null;
+    this.imagemPreview = null;
   }
 
   confirmarExclusao(produto: Produto): void {
@@ -63,18 +184,37 @@ export class GerenciarProduto implements OnInit {
   excluirProduto(): void {
     if (!this.produtoParaExcluir) return;
 
-    const id = this.produtoParaExcluir.cdProduto; 
+    const id = this.produtoParaExcluir.cdProduto;
 
     this.produtoService.excluirProduto(id).subscribe({
       next: () => {
         this.produtos = this.produtos.filter(p => p.cdProduto !== id);
+        this.showToast('Produto excluído com sucesso!', 'success');
       },
       error: (err) => {
         console.error('Erro ao excluir produto:', err);
-        alert('Erro ao excluir o produto');
+        this.showToast('Erro ao excluir produto!', 'error');
       }
     });
 
     this.produtoParaExcluir = null;
+  }
+
+  showToast(msg: string, type: 'success' | 'error'): void {
+    if (this.toastProduto) {
+      const toastElement = this.toastProduto.nativeElement;
+      const toastBody = toastElement.querySelector('.toast-body');
+      
+      if (toastBody) {
+        toastBody.textContent = msg;
+      }
+      
+      toastElement.classList.remove('text-bg-success', 'text-bg-danger');
+      toastElement.classList.add(type === 'success' ? 'text-bg-success' : 'text-bg-danger');
+
+      // @ts-ignore
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
+    }
   }
 }
