@@ -13,7 +13,7 @@ export class Navbar {
   constructor(public authService: AuthService, private router: Router) {}
 
   get usuario() {
-    console.log(this.authService.getUsuarioLogado());
+    console.log('USER ROLEEE: ', this.authService.getUsuarioLogado());
     return this.authService.getUsuarioLogado();
   }
 
