@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../shared/models/LoginRequest';
 import { Observable, tap } from 'rxjs';
+import { UsuarioCadastro } from '../pages/cadastro/cadastro';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +32,10 @@ export class AuthService {
         }
       })
     );
+  }
+
+  cadastrar(usuario: UsuarioCadastro) {
+    return this.http.post(`${this.baseUrl}/register`, usuario);
   }
 
   getToken(): string | null {
