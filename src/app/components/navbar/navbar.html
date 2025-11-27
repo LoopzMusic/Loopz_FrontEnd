@@ -30,7 +30,7 @@
       </div>
 
       <div class="icons d-flex gap-3 justify-content-center justify-content-lg-end mt-3 mt-lg-0">
-        <a class="icons-navbar" (click)="mudarTema()">
+        <a class="icons-navbar" (click)="mudarTema()" style="cursor: pointer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="20"
@@ -60,7 +60,6 @@
           </svg>
         </a>
 
-        <!-- Se o usuário NÃO estiver logado -->
         @if (!usuario) {
         <a class="icons-navbar d-flex gap-1" routerLink="/login">
           <svg
@@ -78,10 +77,7 @@
           </svg>
           <span>Entrar</span>
         </a>
-        }
-
-        <!-- Se o usuário estiver logado -->
-        @if (usuario) {
+        } @if (usuario) {
         <div class="dropdown">
           <a
             class="icons-navbar d-flex gap-1 dropdown-toggle"

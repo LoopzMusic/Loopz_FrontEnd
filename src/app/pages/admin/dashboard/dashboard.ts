@@ -1,9 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // Importação essencial para navegação
+import { Router } from '@angular/router';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
 
-// Interfaces mantidas para clareza
 interface StatsCard {
   title: string;
   value: number;
@@ -57,13 +56,6 @@ export class Dashboard implements OnInit {
       icon: 'star-fill',
       color: '#FF9800',
     },
-    {
-      title: 'Estoque Baixo',
-      value: 8,
-      subtitle: 'Requer atenção',
-      icon: 'exclamation-triangle-fill',
-      color: '#F44336',
-    },
   ];
 
   quickActions: QuickAction[] = [
@@ -87,11 +79,6 @@ export class Dashboard implements OnInit {
       description: 'Ver avaliações dos clientes',
       route: '/admin/avaliacoes',
     },
-    {
-      title: 'Estoque Baixo',
-      description: 'Produtos com estoque crítico',
-      route: '/admin/estoque-baixo',
-    },
   ];
 
   recentActivities: RecentActivity[] = [
@@ -108,12 +95,6 @@ export class Dashboard implements OnInit {
       color: '#2196F3',
     },
     {
-      title: 'Estoque baixo',
-      description: 'Galeria Acústica - 3 unidades',
-      time: 'Há 2 horas',
-      color: '#FF9800',
-    },
-    {
       title: 'Nova avaliação',
       description: '5 estrelas - Violão Clássico',
       time: 'Há 3 horas',
@@ -121,9 +102,7 @@ export class Dashboard implements OnInit {
     },
   ];
 
-  ngOnInit(): void {
-    // Inicialização
-  }
+  ngOnInit(): void {}
 
   navigateTo(route: string, item: string): void {
     this.router.navigate([route]);

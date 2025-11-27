@@ -10,22 +10,20 @@ $active-text: #ffffff; /* Cor do Texto do Item Ativo */
   transition: width 0.3s ease;
 }
 
-.sidebar-nav {
-  .nav-item {
-    color: $text-sidebar;
-    transition: all 0.2s;
-    border-radius: 10px;
+.sidebar-nav .nav-item {
+  color: inherit;
+  transition: all 0.2s;
+  border-radius: 10px;
+}
 
-    &.active {
-      background-color: $active-bg !important;
-      color: $active-text !important;
-    }
+.sidebar-nav .nav-item.active {
+  background-color: #54392b !important;
+  color: #ffffff !important;
+}
 
-    &:hover {
-      background-color: $brown-light;
-      color: $text-sidebar;
-    }
-  }
+.sidebar-nav .nav-item:hover {
+  background-color: #796c61;
+  color: inherit;
 }
 
 @media (max-width: 992px) {
