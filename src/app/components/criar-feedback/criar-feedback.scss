@@ -1,0 +1,35 @@
+// src/app/components/criar-feedback/criar-feedback.component.scss
+
+.cursor-pointer {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.bi-star-fill,
+.bi-star {
+  transition: color 0.2s ease;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.alert {
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
