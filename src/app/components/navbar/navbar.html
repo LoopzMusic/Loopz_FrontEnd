@@ -18,14 +18,14 @@
 
     <div class="collapse navbar-collapse justify-content-between" id="navbarTopo">
       <div class="d-flex justify-content-center w-100">
-        <form class="d-flex w-50 w-lg-50" role="search">
+        <form class="d-flex" role="search">
           <input
             class="form-control me-2 barra-pesquisa"
             type="search"
             placeholder="pesquise aqui"
             aria-label="Search"
+            style="width: 600px"
           />
-          <button class="btn btn-outline-light" type="submit">Pesquisar</button>
         </form>
       </div>
 
@@ -106,16 +106,23 @@
             <li>
               <a class="dropdown-item" routerLink="/perfil">Meu Perfil</a>
             </li>
+
+            @if (usuario.userRole === 'USER') {
             <li>
               <a class="dropdown-item" routerLink="/meus-pedidos">Meus Pedidos</a>
             </li>
+            } @if (usuario.userRole === 'ADMIN') {
+            <li>
+              <a class="dropdown-item" routerLink="/admin/dashboard">Painel Admin</a>
+            </li>
+            }
+
             <li>
               <a class="dropdown-item" (click)="logout()">Sair</a>
             </li>
           </ul>
         </div>
-        }
-
+        } @if (usuario.userRole === 'USER') {
         <a class="icons-navbar" routerLink="/carrinho">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -131,6 +138,7 @@
             />
           </svg>
         </a>
+        }
       </div>
     </div>
   </div>
