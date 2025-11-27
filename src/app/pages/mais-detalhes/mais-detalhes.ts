@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
 import { ProdutoService } from '../../services/produto-service';
@@ -6,14 +6,16 @@ import { Produto } from '../../shared/models/Produto';
 import { Card } from '../../components/card/card';
 import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
 import { AuthService } from '../../services/auth-service';
+import { CommonModule } from '@angular/common';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-mais-detalhes',
-  imports: [RouterLink, CardAvaliacao, Card],
+  imports: [RouterLink, CardAvaliacao, Card, CommonModule],
   templateUrl: './mais-detalhes.html',
   styleUrl: './mais-detalhes.scss',
 })
-export class MaisDetalhes implements OnInit {
+export class MaisDetalhes implements OnInit, OnDestroy {
   private produtoService = inject(ProdutoService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -26,15 +28,67 @@ export class MaisDetalhes implements OnInit {
   protected produtos: Produto[] = [];
   produto: Produto = new Produto();
   favorito = false;
+  carregandoRecomendados = false;
+  
+  private routeSub?: Subscription;
 
   constructor() {}
 
   ngOnInit(): void {
-    const id = Number(this.route.snapshot.paramMap.get('id'));
+    
+    this.routeSub = this.route.params.subscribe(params => {
+      const id = Number(params['id']);
+      this.carregarProduto(id);
+    });
+  }
 
-    this.produtoService.buscarProdutoPorId(id).subscribe((response) => {
+  ngOnDestroy(): void {
+  
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
+  }
+
+  carregarProduto(cd: number): void {
+     
+    this.produtoService.buscarProdutoPorId(cd).subscribe((response) => {
       this.produto = response;
       this.verificarFavorito();
+      this.carregarProdutosRecomendados(cd);
+    });
+  }
+
+  carregarProdutosRecomendados(cdProduto: number): void {
+    this.carregandoRecomendados = true;
+
+    this.produtoService.buscarProdutosRecomendados(cdProduto).subscribe({
+      next: (produtosRecomendados) => {
+        this.produtos = produtosRecomendados;
+        this.carregandoRecomendados = false;
+
+        if (this.produtos.length === 0) {
+          this.carregarProdutosFallback();
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao buscar produtos recomendados:', error);
+        this.carregandoRecomendados = false;
+        this.carregarProdutosFallback();
+      }
+    });
+  }
+  carregarProdutosFallback(): void {
+    
+    this.produtoService.listarProdutos().subscribe({
+      next: (todosProdutos) => {
+        this.produtos = todosProdutos
+          .filter(p => p.cdProduto !== this.produto.cdProduto)
+          .slice(0, 4);
+      },
+      error: (error) => {
+        console.error('Erro ao buscar produtos fallback:', error);
+        this.produtos = [];
+      }
     });
   }
 
@@ -71,8 +125,6 @@ export class MaisDetalhes implements OnInit {
           if (this.router.url.includes('favoritos')) {
             this.router.navigate(['/produtos']);
           }
-
-          this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
           
           this.showToast("Removido dos favoritos!");
         },
