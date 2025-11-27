@@ -12,11 +12,24 @@ import { FormsModule } from '@angular/forms';
 })
 export class Todos {
   private produtoService = inject(ProdutoService);
+  protected produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
 
   ngOnInit(): void {
-    this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
+    this.produtoService.listarProdutos().subscribe((response) => {
+      this.produtos = response;
+      this.produtosFiltrados = response;
+    });
+
+    this.produtoService.filtroPesquisa$.subscribe((texto) => {
+      texto = texto.toLowerCase();
+
+      this.produtosFiltrados = this.produtos.filter(
+        (p) =>
+          p.nmProduto.toLowerCase().includes(texto) || p.dsCategoria.toLowerCase().includes(texto)
+      );
+    });
   }
-  protected produtos: Produto[] = [];
 
   ordenar(event: any) {
     const tipo = event.target.value;

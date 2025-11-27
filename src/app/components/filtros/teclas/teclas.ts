@@ -13,23 +13,33 @@ import { FormsModule } from '@angular/forms';
 export class Teclas {
   private produtoService = inject(ProdutoService);
 
+  produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
+
   ngOnInit(): void {
-    this.produtoService.listarProdutos().subscribe((response) => {
-      this.produtos = response.filter((p) => p.dsCategoria === 'TECLADO');
+    this.produtoService.listarProdutos().subscribe((todos) => {
+      this.produtos = todos.filter((p) => p.dsCategoria === 'TECLADO');
+      this.produtosFiltrados = [...this.produtos];
+    });
+
+    this.produtoService.filtroPesquisa$.subscribe((texto) => {
+      texto = texto.toLowerCase();
+
+      this.produtosFiltrados = this.produtos.filter((p) =>
+        p.nmProduto.toLowerCase().includes(texto)
+      );
     });
   }
-
-  protected produtos: Produto[] = [];
 
   ordenar(event: any) {
     const tipo = event.target.value;
 
     if (tipo === 'menor') {
-      this.produtos.sort((a, b) => a.vlProduto - b.vlProduto);
+      this.produtosFiltrados.sort((a, b) => a.vlProduto - b.vlProduto);
     }
 
     if (tipo === 'maior') {
-      this.produtos.sort((a, b) => b.vlProduto - a.vlProduto);
+      this.produtosFiltrados.sort((a, b) => b.vlProduto - a.vlProduto);
     }
   }
 }

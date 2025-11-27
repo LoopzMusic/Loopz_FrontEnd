@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Produto } from '../shared/models/Produto';
-import { Observable, forkJoin, of } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, of } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -12,6 +12,13 @@ export class ProdutoService {
   private apiUrl = 'http://localhost:8085/produto';
   private apiUrlRecomendacao = 'http://localhost:8085/recomendacao';
   private apiUrlEstoque = 'http://localhost:8085/estoque';
+
+  private filtroPesquisa = new BehaviorSubject<string>('');
+  filtroPesquisa$ = this.filtroPesquisa.asObservable();
+
+  setFiltroPesquisa(valor: string) {
+    this.filtroPesquisa.next(valor);
+  }
 
   listarProdutos() {
     return this.http.get<Produto[]>('http://localhost:8085/produto/listar/todos');
