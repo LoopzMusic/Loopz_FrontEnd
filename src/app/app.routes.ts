@@ -20,6 +20,8 @@ import { Sopro } from './components/filtros/sopro/sopro';
 import { FinalizarCompra } from './pages/finalizar-compra/finalizar-compra';
 import { perfilGuardGuard } from './guards/perfil-guard-guard';
 import { MeusPedidos } from './pages/meus-pedidos/meus-pedidos';
+import { CadastrarEmpresa } from './pages/admin/cadastrar-empresa/cadastrar-empresa';
+
 
 export const routes: Routes = [
   { path: '', component: TelaInicial },
@@ -41,6 +43,7 @@ export const routes: Routes = [
   { path: 'admin/produto-vendido', component: ProdutoVendido, canActivate: [perfilGuardGuard] },
   { path: 'admin/avaliacoes', component: Avaliacoes, canActivate: [perfilGuardGuard] },
   { path: 'admin/gerenciar-produto', component: GerenciarProduto, canActivate: [perfilGuardGuard] },
+  {path: 'admin/cadastrar-empresa', component: CadastrarEmpresa, canActivate: [perfilGuardGuard] },
   {
     path: 'carrinho',
     loadComponent: () => import('./pages/carrinho/carrinho')

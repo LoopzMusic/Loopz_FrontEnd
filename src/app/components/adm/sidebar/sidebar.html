@@ -1,6 +1,7 @@
 <aside class="sidebar text-brown-dark d-flex flex-column w-64 flex-shrink-0 ps-3 pt-2">
   <div class="card-body">
     <nav class="sidebar-nav sticky top-24 space-y-2" style="cursor: pointer">
+
       <a
         class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none"
         [class.active]="activeItem === 'dashboard'"
@@ -30,6 +31,15 @@
 
       <a
         class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none"
+        [class.active]="activeItem === 'cadastrar-empresa'"
+        (click)="navigateTo('/admin/cadastrar-empresa', 'cadastrar-empresa')"
+      >
+        <i class="bi bi-building-add me-3 fs-5"></i>
+        <span class="fw-medium">Cadastrar Empresa</span>
+      </a>
+
+      <a
+        class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none"
         [class.active]="activeItem === 'vendidos'"
         (click)="navigateTo('/admin/produto-vendido', 'vendidos')"
       >
@@ -46,14 +56,8 @@
         <span class="fw-medium">Avaliações</span>
       </a>
 
-      <a
-        class="nav-item d-flex align-items-center w-100 py-3 px-4 text-decoration-none"
-        [class.active]="activeItem === 'estoque'"
-        (click)="navigateTo('/admin/estoque-baixo', 'estoque-baixo')"
-      >
-        <i class="bi bi-inbox-fill me-3 fs-5"></i>
-        <span class="fw-medium">Estoque Baixo</span>
-      </a>
+      
+
     </nav>
   </div>
 </aside>
