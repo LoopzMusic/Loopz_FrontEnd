@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { ProdutoCadastro } from '../../../shared/models/Produto-cadastro';
 import { EstoqueCadastroProduto } from '../../../shared/models/Estoque-cadastro-produto';
 import { ProdutoService } from '../../../services/produto-service';
+import { EmpresaService } from '../../../services/empresa-service';
+import { Empresa } from '../../../shared/models/Empresa';
 
 @Component({
   selector: 'app-cadastrar-produto',
@@ -21,16 +23,29 @@ export class CadastrarProduto {
   arquivoImagem!: File | null;
   loading: boolean = false;
   isEdicao: boolean = false;
+  empresas: any[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private produtoService: ProdutoService
+    private produtoService: ProdutoService,
+    private empresaService: EmpresaService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.carregarEmpresas();
   }
+  carregarEmpresas() {
+  this.empresaService.listarEmpresas().subscribe({
+    next: (data) => {
+      this.empresas = data;
+    },
+    error: (err) => {
+      console.error('Erro ao carregar empresas:', err);
+    }
+  });
+}
 
   initForm(): void {
     this.produtoForm = this.formBuilder.group({

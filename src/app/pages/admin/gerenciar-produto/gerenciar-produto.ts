@@ -1,90 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
-
-interface Produto {
-  id: number;
-  nome: string;
-  marca: string;
-  preco: number;
-  estoque: number;
-  categoria: string;
-}
+import { ProdutoService } from '../../../services/produto-service';
+import { Produto } from '../../../shared/models/Produto';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-gerenciar-produto',
   standalone: true,
-  imports: [CommonModule, Sidebar],
+  imports: [CommonModule, Sidebar, FormsModule],
   templateUrl: './gerenciar-produto.html',
   styleUrls: ['./gerenciar-produto.scss']
 })
 export class GerenciarProduto implements OnInit {
-  produtos: Produto[] = [
-    {
-      id: 1,
-      nome: 'Violão Clássico Loopz Pro',
-      marca: 'Loopz',
-      preco: 899.90,
-      estoque: 15,
-      categoria: 'Cordas'
-    },
-    {
-      id: 2,
-      nome: 'Teclado Digital Premium 88 Teclas',
-      marca: 'Yamaha',
-      preco: 2499.90,
-      estoque: 8,
-      categoria: 'Teclas'
-    },
-    {
-      id: 3,
-      nome: 'Bateria Acústica Completa 5 Peças',
-      marca: 'Pearl',
-      preco: 3299.90,
-      estoque: 3,
-      categoria: 'Percussão'
-    },
-    {
-      id: 4,
-      nome: 'Violão Clássico Estudante',
-      marca: 'Giannini',
-      preco: 399.90,
-      estoque: 25,
-      categoria: 'Cordas'
-    },
-    {
-      id: 5,
-      nome: 'Guitarra Elétrica Stratocaster',
-      marca: 'Fender',
-      preco: 4599.90,
-      estoque: 5,
-      categoria: 'Cordas'
-    },
-    {
-      id: 6,
-      nome: 'Saxofone Alto Profissional',
-      marca: 'Yamaha',
-      preco: 5899.90,
-      estoque: 2,
-      categoria: 'Sopro'
-    },
-    {
-      id: 7,
-      nome: 'Baixo Elétrico 4 Cordas',
-      marca: 'Ibanez',
-      preco: 2199.90,
-      estoque: 0,
-      categoria: 'Cordas'
-    }
-  ];
 
+  @ViewChild('toastProduto') toastProduto!: ElementRef;
+  @ViewChild('fileInput') fileInput!: ElementRef;
+
+  produtos: Produto[] = [];
   produtoParaExcluir: Produto | null = null;
+  produtoParaEditar: Produto | null = null;
+  cdEstoqueAtual: number | null = null; 
+  imagemSelecionada: File | null = null;
+  imagemPreview: string | null = null;
+  salvandoEdicao = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private produtoService: ProdutoService
+  ) {}
 
   ngOnInit(): void {
-    // Inicialização
+    this.carregarProdutos();
+  }
+
+  carregarProdutos(): void {
+    this.produtoService.listarProdutos().subscribe({
+      next: (data) => {
+        this.produtos = data;
+      },
+      error: (err) => {
+        console.error('Erro ao listar produtos:', err);
+        this.showToast('Erro ao carregar produtos!', 'error');
+      }
+    });
   }
 
   getEstoqueStatus(estoque: number): string {
@@ -93,18 +54,125 @@ export class GerenciarProduto implements OnInit {
     return 'OK';
   }
 
-  editarProduto(produtoId: number): void {
-    console.log('Editando produto:', produtoId);
-    // Navega para a página de cadastro com o ID do produto para edição
-    this.router.navigate(['/admin/produtos/cadastrar'], { 
-      queryParams: { id: produtoId } 
+  abrirModalEditar(produto: Produto): void {
+
+    
+    this.produtoParaEditar = { ...produto };
+
+    
+    this.imagemSelecionada = null;
+    this.imagemPreview = null;
+
+    
+    this.cdEstoqueAtual = produto.cdProduto;
+    console.log("cdEstoqueAtual:", this.cdEstoqueAtual);
+
+    
+    const modalElement = document.getElementById('modalEditar');
+    if (modalElement) {
+      const bootstrap = (window as any).bootstrap;
+      const modal = new bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
+  onImagemSelecionada(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.imagemSelecionada = file;
+
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.imagemPreview = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  salvarEdicao(): void {
+    if (!this.produtoParaEditar) return;
+
+    this.salvandoEdicao = true;
+
+    const dadosTexto = {
+      nmProduto: this.produtoParaEditar.nmProduto,
+      vlProduto: this.produtoParaEditar.vlProduto,
+      dsProduto: this.produtoParaEditar.dsProduto,
+      dsCategoria: this.produtoParaEditar.dsCategoria,
+      dsAcessorio: this.produtoParaEditar.dsAcessorio,
+      cdEmpresa: this.produtoParaEditar.cdEmpresa
+    };
+
+    const requests = [];
+
+    
+    requests.push(
+      this.produtoService.atualizarTextoProduto(
+        this.produtoParaEditar.cdProduto,
+        dadosTexto
+      )
+    );
+
+    
+    const dadosEstoque = {
+      qtdEstoqueProduto: this.produtoParaEditar.qtdEstoqueProduto,
+      cdProduto: this.produtoParaEditar.cdProduto
+    };
+
+    requests.push(
+      this.produtoService.atualizarEstoque(
+        this.produtoParaEditar.cdProduto,
+        dadosEstoque
+      )
+    );
+
+   
+    if (this.imagemSelecionada) {
+      requests.push(
+        this.produtoService.atualizarImagemProduto(
+          this.produtoParaEditar.cdProduto,
+          this.imagemSelecionada
+        )
+      );
+    }
+
+    forkJoin(requests).subscribe({
+      next: () => {
+        this.finalizarEdicao(true);
+      },
+      error: (err) => {
+        console.error('Erro ao atualizar produto:', err);
+        this.showToast('Erro ao atualizar produto!', 'error');
+        this.salvandoEdicao = false;
+      }
     });
+  }
+
+  finalizarEdicao(sucesso: boolean): void {
+    this.salvandoEdicao = false;
+
+    if (sucesso) {
+      this.showToast('Produto atualizado com sucesso!', 'success');
+
+      const modalElement = document.getElementById('modalEditar');
+      if (modalElement) {
+        const bootstrap = (window as any).bootstrap;
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        modal?.hide();
+      }
+
+      this.carregarProdutos();
+    }
+
+    this.produtoParaEditar = null;
+    this.cdEstoqueAtual = null;
+    this.imagemSelecionada = null;
+    this.imagemPreview = null;
   }
 
   confirmarExclusao(produto: Produto): void {
     this.produtoParaExcluir = produto;
-    
-    // Abre o modal usando Bootstrap
+
     const modalElement = document.getElementById('modalExcluir');
     if (modalElement) {
       const bootstrap = (window as any).bootstrap;
@@ -114,26 +182,39 @@ export class GerenciarProduto implements OnInit {
   }
 
   excluirProduto(): void {
-    if (this.produtoParaExcluir) {
-      const index = this.produtos.findIndex(p => p.id === this.produtoParaExcluir!.id);
+    if (!this.produtoParaExcluir) return;
+
+    const id = this.produtoParaExcluir.cdProduto;
+
+    this.produtoService.excluirProduto(id).subscribe({
+      next: () => {
+        this.produtos = this.produtos.filter(p => p.cdProduto !== id);
+        this.showToast('Produto excluído com sucesso!', 'success');
+      },
+      error: (err) => {
+        console.error('Erro ao excluir produto:', err);
+        this.showToast('Erro ao excluir produto!', 'error');
+      }
+    });
+
+    this.produtoParaExcluir = null;
+  }
+
+  showToast(msg: string, type: 'success' | 'error'): void {
+    if (this.toastProduto) {
+      const toastElement = this.toastProduto.nativeElement;
+      const toastBody = toastElement.querySelector('.toast-body');
       
-      if (index !== -1) {
-        this.produtos.splice(index, 1);
-        console.log('Produto excluído:', this.produtoParaExcluir.nome);
-        
-        // Aqui você deve chamar seu serviço para excluir do backend
-        // Exemplo:
-        // this.produtoService.excluir(this.produtoParaExcluir.id).subscribe({
-        //   next: () => {
-        //     console.log('Produto excluído com sucesso!');
-        //   },
-        //   error: (error) => {
-        //     console.error('Erro ao excluir produto:', error);
-        //   }
-        // });
+      if (toastBody) {
+        toastBody.textContent = msg;
       }
       
-      this.produtoParaExcluir = null;
+      toastElement.classList.remove('text-bg-success', 'text-bg-danger');
+      toastElement.classList.add(type === 'success' ? 'text-bg-success' : 'text-bg-danger');
+
+      // @ts-ignore
+      const toast = new bootstrap.Toast(toastElement);
+      toast.show();
     }
   }
 }

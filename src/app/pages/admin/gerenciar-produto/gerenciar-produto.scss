@@ -66,6 +66,13 @@ $brown-primary: #6c5448;
     width: 60px;
     height: 60px;
     flex-shrink: 0;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
 
 /* -------------------------------------- */

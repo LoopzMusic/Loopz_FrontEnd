@@ -8,88 +8,153 @@
 
     <div class="card shadow-sm border-0 rounded-3">
       <div class="card-body p-4">
-        <h5 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">Informações do Produto</h5>
+        <h5 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">
+          Informações do Produto
+        </h5>
 
         <form [formGroup]="produtoForm" (ngSubmit)="onSubmit()">
-          
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="nmProduto" class="form-label">Nome do Produto <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="nmProduto" formControlName="nmProduto" placeholder="Ex: Violão Clássico Loopz" [class.is-invalid]="isFieldInvalid('nmProduto')">
+              <label for="nmProduto" class="form-label"
+                >Nome do Produto <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="nmProduto"
+                formControlName="nmProduto"
+                placeholder="Ex: Violão Clássico Loopz"
+                [class.is-invalid]="isFieldInvalid('nmProduto')"
+              />
               <div class="invalid-feedback" *ngIf="isFieldInvalid('nmProduto')">
                 Nome do produto é obrigatório
               </div>
             </div>
-            
+
             <div class="col-md-6 mb-3">
-              <label for="cdEmpresa" class="form-label">Código da Empresa<span class="text-danger">*</span></label>
-              <input type="number" class="form-control" id="cdEmpresa" formControlName="cdEmpresa" placeholder="Ex: 1" [class.is-invalid]="isFieldInvalid('cdEmpresa')">
+              <label for="cdEmpresa" class="form-label"
+                >Empresa <span class="text-danger">*</span></label
+              >
+
+              <select
+                class="form-select"
+                id="cdEmpresa"
+                formControlName="cdEmpresa"
+                [class.is-invalid]="isFieldInvalid('cdEmpresa')"
+              >
+                <option value="">Selecione uma empresa...</option>
+
+
+                <option *ngFor="let empresa of empresas" [value]="empresa.cdEmpresa">
+                  {{ empresa.nmFantasia }} 
+                </option>
+              </select>
+
               <div class="invalid-feedback" *ngIf="isFieldInvalid('cdEmpresa')">
-                O código da empresa é obrigatório
+                A seleção da empresa é obrigatória.
               </div>
             </div>
           </div>
 
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="vlProduto" class="form-label">
-                  Preço (R$) <span class="text-danger">*</span>
-                </label>
-                <input type="number" class="form-control" id="vlProduto" formControlName="vlProduto" placeholder="899.90" step="0.01" [class.is-invalid]="isFieldInvalid('vlProduto')">
-                <div class="invalid-feedback" *ngIf="isFieldInvalid('vlProduto')">
-                  Preço é obrigatório
-                </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="vlProduto" class="form-label">
+                Preço (R$) <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                id="vlProduto"
+                formControlName="vlProduto"
+                placeholder="899.90"
+                step="0.01"
+                [class.is-invalid]="isFieldInvalid('vlProduto')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('vlProduto')">
+                Preço é obrigatório
               </div>
-              
-              <div class="col-md-6 mb-3">
-                <label for="qtdEstoqueProduto" class="form-label">Quantidade em Estoque <span class="text-danger">*</span></label>
-                <input type="number" class="form-control" id="qtdEstoqueProduto" formControlName="qtdEstoqueProduto" placeholder="15" [class.is-invalid]="isFieldInvalid('qtdEstoqueProduto')">
-                <div class="invalid-feedback" *ngIf="isFieldInvalid('qtdEstoqueProduto')">
-                  Quantidade é obrigatória
-                </div>
-              </div>
-              
             </div>
-            
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="dsAcessorio" class="form-label">É um acessório?<span class="text-danger">*</span></label>
-                <select class="form-select" id="dsAcessorio" formControlName="dsAcessorio"
-                  [class.is-invalid]="isFieldInvalid('dsAcessorio')">
-                  <option value="" selected>Selecione...</option>
-                  <option value="S">Sim</option>
-                  <option value="N">Não</option>
-                </select>
-                <div class="invalid-feedback" *ngIf="isFieldInvalid('qtdEstoqueProduto')">
-                  Indique se é acessório
-                </div>
-              </div>
 
-              <div class="col-md-6 mb-3">
-                <label for="dsCategoria" class="form-label">Categoria <span class="text-danger">*</span></label>
-                <select class="form-select" id="dsCategoria" formControlName="dsCategoria"
-                  [class.is-invalid]="isFieldInvalid('dsCategoria')">
-                  <option value="" selected>Selecione...</option>
-                  <option value="CORDA">CORDA</option>
-                  <option value="TECLADO">TECLADO</option>
-                  <option value="SOPRO">SOPRO</option>
-                  <option value="PERCUSSAO">PERCUSSAO</option>
-                </select>
-                <div class="invalid-feedback" *ngIf="isFieldInvalid('dsCategoria')">
-                  Categoria é obrigatória
-                </div>
+            <div class="col-md-6 mb-3">
+              <label for="qtdEstoqueProduto" class="form-label"
+                >Quantidade em Estoque <span class="text-danger">*</span></label
+              >
+              <input
+                type="number"
+                class="form-control"
+                id="qtdEstoqueProduto"
+                formControlName="qtdEstoqueProduto"
+                placeholder="15"
+                [class.is-invalid]="isFieldInvalid('qtdEstoqueProduto')"
+              />
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('qtdEstoqueProduto')">
+                Quantidade é obrigatória
               </div>
             </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="dsAcessorio" class="form-label"
+                >É um acessório?<span class="text-danger">*</span></label
+              >
+              <select
+                class="form-select"
+                id="dsAcessorio"
+                formControlName="dsAcessorio"
+                [class.is-invalid]="isFieldInvalid('dsAcessorio')"
+              >
+                <option value="" selected>Selecione...</option>
+                <option value="S">Sim</option>
+                <option value="N">Não</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('qtdEstoqueProduto')">
+                Indique se é acessório
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="dsCategoria" class="form-label"
+                >Categoria <span class="text-danger">*</span></label
+              >
+              <select
+                class="form-select"
+                id="dsCategoria"
+                formControlName="dsCategoria"
+                [class.is-invalid]="isFieldInvalid('dsCategoria')"
+              >
+                <option value="" selected>Selecione...</option>
+                <option value="CORDA">CORDA</option>
+                <option value="TECLADO">TECLADO</option>
+                <option value="SOPRO">SOPRO</option>
+                <option value="PERCUSSAO">PERCUSSAO</option>
+              </select>
+              <div class="invalid-feedback" *ngIf="isFieldInvalid('dsCategoria')">
+                Categoria é obrigatória
+              </div>
+            </div>
+          </div>
 
           <div class="mb-3">
             <label for="dsProduto" class="form-label">Descrição</label>
-            <textarea class="form-control" id="dsProduto" formControlName="dsProduto" rows="4"
-              placeholder="Descrição detalhada do produto..."></textarea>
+            <textarea
+              class="form-control"
+              id="dsProduto"
+              formControlName="dsProduto"
+              rows="4"
+              placeholder="Descrição detalhada do produto..."
+            ></textarea>
           </div>
 
           <div class="mb-4">
             <label for="imgProduto" class="form-label">Imagem do Produto</label>
-            <input class="form-control" type="file" id="imgProduto" (change)="onFileSelected($event)" accept="image/*">
+            <input
+              class="form-control"
+              type="file"
+              id="imgProduto"
+              (change)="onFileSelected($event)"
+              accept="image/*"
+            />
             <div class="form-text">
               {{ imagemSelecionada ? imagemSelecionada : 'Nenhum arquivo escolhido' }}
             </div>
@@ -104,7 +169,6 @@
               Cancelar
             </button>
           </div>
-
         </form>
       </div>
     </div>
