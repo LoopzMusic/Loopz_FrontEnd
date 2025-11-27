@@ -1,171 +1,119 @@
-/* Variáveis de Cor */
-$bg-default: #f5f5f5;
-$text-dark: #796c61;
-$brown-primary: #6c5448;
-
-/* -------------------------------------- */
-/* 1. Global e Layout                     */
-/* -------------------------------------- */
 .dashboard-container {
-    min-height: 100vh;
+  min-height: 100vh;
 }
-
-.text-dark-gray {
-    color: $text-dark !important;
-}
-
-.bg-light-gray {
-    background-color: $bg-default !important;
-}
-
-/* -------------------------------------- */
-/* 2. Main Content                        */
-/* -------------------------------------- */
 
 .main-content {
-    transition: margin-left 0.3s ease;
-    min-height: 100vh;
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
 }
 
-/* -------------------------------------- */
-/* 3. Tabela de Produtos                  */
-/* -------------------------------------- */
-
-.table {
-    > :not(caption) > * > * {
-        padding: 1rem 0.75rem;
-    }
-    
-    thead {
-        th {
-            font-weight: 600;
-            color: #6c757d;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #dee2e6;
-        }
-    }
-    
-    tbody {
-        tr {
-            transition: all 0.2s ease;
-            
-            &:hover {
-                background-color: #f8f9fa;
-            }
-        }
-    }
+.table > :not(caption) > * > * {
+  padding: 1rem 0.75rem;
 }
 
-/* -------------------------------------- */
-/* 4. Imagem do Produto                   */
-/* -------------------------------------- */
+.table thead th {
+  font-weight: 600;
+  color: #6c757d;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f9fa;
+}
 
 .produto-img-container {
-    width: 60px;
-    height: 60px;
-    flex-shrink: 0;
-    overflow: hidden;
-
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-/* -------------------------------------- */
-/* 5. Badges de Estoque                   */
-/* -------------------------------------- */
+.produto-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .badge {
-    padding: 0.4rem 0.8rem;
-    font-weight: 500;
-    font-size: 0.75rem;
-    border-radius: 20px;
+  padding: 0.4rem 0.8rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  border-radius: 20px;
 }
 
 .badge-success {
-    background-color: #28a745;
-    color: white;
+  background-color: #28a745;
+  color: white;
 }
 
 .badge-warning {
-    background-color: #ffc107;
-    color: #333;
+  background-color: #ffc107;
+  color: #333;
 }
 
 .badge-danger {
-    background-color: #dc3545;
-    color: white;
+  background-color: #dc3545;
+  color: white;
 }
-
-/* -------------------------------------- */
-/* 6. Botões de Ação                      */
-/* -------------------------------------- */
 
 .btn-outline-primary {
-    color: $brown-primary;
-    border-color: $brown-primary;
-    
-    &:hover {
-        background-color: $brown-primary;
-        border-color: $brown-primary;
-        color: white;
-    }
+  color: #6c5448;
+  border-color: #6c5448;
 }
 
-.btn-outline-danger {
-    &:hover {
-        background-color: #dc3545;
-        border-color: #dc3545;
-    }
+.btn-outline-primary:hover {
+  background-color: #6c5448;
+  border-color: #6c5448;
+  color: white;
 }
 
-/* -------------------------------------- */
-/* 7. Modal                               */
-/* -------------------------------------- */
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
 
 .modal-content {
-    border-radius: 1rem;
-    border: none;
+  border-radius: 1rem;
+  border: none;
 }
 
 .modal-header,
 .modal-footer {
-    padding: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem;
 }
 
 .modal-body {
-    padding: 1.25rem 1.5rem;
+  padding: 1.25rem 1.5rem;
 }
 
-/* -------------------------------------- */
-/* 8. Responsividade                      */
-/* -------------------------------------- */
-
-@media (max-width: 992px) { 
-    .main-content.minimized {
-        margin-left: 80px; 
-    }
+@media (max-width: 992px) {
+  .main-content.minimized {
+    margin-left: 80px;
+  }
 }
 
 @media (max-width: 768px) {
-    .table {
-        font-size: 0.875rem;
-        
-        > :not(caption) > * > * {
-            padding: 0.75rem 0.5rem;
-        }
-    }
-    
-    .produto-img-container {
-        width: 50px;
-        height: 50px;
-    }
-    
-    h6 {
-        font-size: 0.875rem;
-    }
+  .table {
+    font-size: 0.875rem;
+  }
+
+  .table > :not(caption) > * > * {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .produto-img-container {
+    width: 50px;
+    height: 50px;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+  }
 }
