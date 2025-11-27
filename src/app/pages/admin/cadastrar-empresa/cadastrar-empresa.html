@@ -1,0 +1,204 @@
+<div class="dashboard-container d-flex">
+  <app-sidebar></app-sidebar>
+
+  <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
+    <header class="page-header d-flex justify-content-between align-items-center mb-4">
+      <h1 class="fs-3 fw-bold text-dark-gray">Cadastrar Empresa</h1>
+    </header>
+
+    <div class="card shadow-sm border-0 rounded-3">
+      <div class="card-body p-4">
+        <form>
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-building me-2"></i>
+              Informações da Empresa
+            </h5>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Nome Fantasia <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.nmFantasia"
+                  name="nmFantasia"
+                  placeholder="Ex: Loja de Música"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Razão Social <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.nmRazao"
+                  name="nmRazao"
+                  placeholder="Ex: Música LTDA"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">CNPJ <span class="text-danger">*</span></label>
+
+                <div class="input-group">
+                  <input
+                    type="text"
+                    class="form-control"
+                    [(ngModel)]="empresa.nuCNPJ"
+                    name="nuCNPJ"
+                    [class.is-invalid]="cnpjInvalido"
+                    [class.is-valid]="!cnpjInvalido && empresa.nuCNPJ"
+                    (input)="formatarCNPJ()"
+                    (blur)="validarCNPJ()"
+                    maxlength="18"
+                    placeholder="00.000.000/0000-00"
+                    required
+                  />
+
+                  
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary"
+                    (click)="consultarCnpj()"
+                    title="Consultar CNPJ"
+                  >
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+
+                @if (cnpjInvalido) {
+                <div class="invalid-feedback d-block">
+                  CNPJ inválido! Verifique os números digitados.
+                </div>
+                } @if (!cnpjInvalido && empresa.nuCNPJ) {
+                <div class="valid-feedback d-block">CNPJ válido ✓</div>
+                }
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Telefone <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.nuTelefone"
+                  name="nuTelefone"
+                  (input)="formatarTelefone()"
+                  maxlength="15"
+                  placeholder="(00) 00000-0000"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h5 class="fw-bold mb-3">
+              <i class="bi bi-geo-alt me-2"></i>
+              Endereço
+            </h5>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Estado <span class="text-danger">*</span></label>
+                <select class="form-select" [(ngModel)]="empresa.dsEstado" name="dsEstado" required>
+                  <option value="">Selecione um estado</option>
+                  @for (estado of estados; track estado) {
+                  <option [value]="estado">{{ estado }}</option>
+                  }
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">Cidade <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.dsCidade"
+                  name="dsCidade"
+                  placeholder="Ex: São Paulo"
+                  required
+                />
+              </div>
+
+              <div class="col-md-9">
+                <label class="form-label">Endereço <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.dsEndereco"
+                  name="dsEndereco"
+                  placeholder="Ex: Rua das Flores"
+                  required
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">Número <span class="text-danger">*</span></label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="empresa.nuEndereco"
+                  name="nuEndereco"
+                  placeholder="Ex: 123"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2 justify-content-end">
+            <button
+              type="button"
+              class="btn btn-outline-secondary px-4"
+              (click)="limparFormulario()"
+              [disabled]="salvando"
+            >
+              <i class="bi bi-x-lg me-2"></i>
+              Limpar
+            </button>
+
+            <button
+              type="button"
+              class="btn btn-primary px-4"
+              (click)="cadastrarEmpresa()"
+              [disabled]="salvando"
+            >
+              @if (salvando) {
+              <span
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              } @if (!salvando) {
+              <i class="bi bi-check-lg me-2"></i>
+              } Cadastrar Empresa
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div
+    #toastEmpresa
+    class="toast align-items-center border-0"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+  >
+    <div class="d-flex">
+      <div class="toast-body">Mensagem aqui</div>
+      <button
+        type="button"
+        class="btn-close btn-close-white me-2 m-auto"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+      ></button>
+    </div>
+  </div>
+</div>
