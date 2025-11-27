@@ -1,17 +1,33 @@
+// src/app/pages/mais-detalhes/mais-detalhes.component.ts (ATUALIZADO)
+
 import { Component, ElementRef, inject, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
-import { ProdutoService } from '../../services/produto-service';
-import { Produto } from '../../shared/models/Produto';
-import { Card } from '../../components/card/card';
-import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
-import { AuthService } from '../../services/auth-service';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 
+// Componentes
+import { CardAvaliacao } from '../../components/card-avaliacao/card-avaliacao';
+import { CriarFeedback } from '../../components/criar-feedback/criar-feedback';
+import { Card } from '../../components/card/card';
+
+// Serviços
+import { ProdutoService } from '../../services/produto-service';
+import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
+import { AuthService } from '../../services/auth-service';
+
+// Models
+import { Produto } from '../../shared/models/Produto';
+
 @Component({
   selector: 'app-mais-detalhes',
-  imports: [RouterLink, CardAvaliacao, Card, CommonModule],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterLink, 
+    CardAvaliacao, 
+    CriarFeedback,
+    Card
+  ],
   templateUrl: './mais-detalhes.html',
   styleUrl: './mais-detalhes.scss',
 })
@@ -24,6 +40,7 @@ export class MaisDetalhes implements OnInit, OnDestroy {
 
   @ViewChild('toastCarrinho') toastCarrinho!: ElementRef;
   @ViewChild('toastFavorito') toastFavorito!: ElementRef;
+  @ViewChild('cardAvaliacaoRef') cardAvaliacaoRef!: CardAvaliacao;
 
   protected produtos: Produto[] = [];
   produto: Produto = new Produto();
@@ -35,22 +52,20 @@ export class MaisDetalhes implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
-    
     this.routeSub = this.route.params.subscribe(params => {
       const id = Number(params['id']);
       this.carregarProduto(id);
+      
     });
   }
 
   ngOnDestroy(): void {
-  
     if (this.routeSub) {
       this.routeSub.unsubscribe();
     }
   }
 
   carregarProduto(cd: number): void {
-     
     this.produtoService.buscarProdutoPorId(cd).subscribe((response) => {
       this.produto = response;
       this.verificarFavorito();
@@ -77,8 +92,8 @@ export class MaisDetalhes implements OnInit, OnDestroy {
       }
     });
   }
+
   carregarProdutosFallback(): void {
-    
     this.produtoService.listarProdutos().subscribe({
       next: (todosProdutos) => {
         this.produtos = todosProdutos
@@ -150,6 +165,14 @@ export class MaisDetalhes implements OnInit, OnDestroy {
           this.showToast("Erro ao adicionar aos favoritos!");
         }
       });
+    }
+  }
+
+ 
+  onFeedbackCriado(): void {
+    
+    if (this.cardAvaliacaoRef) {
+      this.cardAvaliacaoRef.recarregar();
     }
   }
 
