@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Usuario } from '../../shared/models/Usuario';
 import { AuthService } from '../../services/auth-service';
+import { ProdutoService } from '../../services/produto-service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +11,16 @@ import { AuthService } from '../../services/auth-service';
   styleUrl: './navbar.scss',
 })
 export class Navbar {
-  constructor(public authService: AuthService, private router: Router) {}
+  constructor(
+    public authService: AuthService,
+    private router: Router,
+    private produtoService: ProdutoService
+  ) {}
+
+  onSearch(event: any) {
+    const texto = event.target.value;
+    this.produtoService.setFiltroPesquisa(texto);
+  }
 
   get usuario() {
     console.log('USER ROLEEE: ', this.authService.getUsuarioLogado());

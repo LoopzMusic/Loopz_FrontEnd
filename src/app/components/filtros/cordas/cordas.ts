@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Produto } from '../../../shared/models/Produto';
 import { ProdutoService } from '../../../services/produto-service';
 import { Card } from '../../card/card';
@@ -9,26 +9,36 @@ import { Card } from '../../card/card';
   templateUrl: './cordas.html',
   styleUrl: './cordas.scss',
 })
-export class Cordas {
+export class Cordas implements OnInit {
   private produtoService = inject(ProdutoService);
 
+  produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
+
   ngOnInit(): void {
-    this.produtoService.listarProdutos().subscribe((response) => {
-      this.produtos = response.filter((p) => p.dsCategoria === 'CORDA');
+    this.produtoService.listarProdutos().subscribe((todos) => {
+      this.produtos = todos.filter((p) => p.dsCategoria === 'CORDA');
+      this.produtosFiltrados = [...this.produtos];
+    });
+
+    this.produtoService.filtroPesquisa$.subscribe((texto) => {
+      texto = texto.toLowerCase();
+
+      this.produtosFiltrados = this.produtos.filter((p) =>
+        p.nmProduto.toLowerCase().includes(texto)
+      );
     });
   }
-
-  protected produtos: Produto[] = [];
 
   ordenar(event: any) {
     const tipo = event.target.value;
 
     if (tipo === 'menor') {
-      this.produtos.sort((a, b) => a.vlProduto - b.vlProduto);
+      this.produtosFiltrados.sort((a, b) => a.vlProduto - b.vlProduto);
     }
 
     if (tipo === 'maior') {
-      this.produtos.sort((a, b) => b.vlProduto - a.vlProduto);
+      this.produtosFiltrados.sort((a, b) => b.vlProduto - a.vlProduto);
     }
   }
 }

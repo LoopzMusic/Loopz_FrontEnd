@@ -13,8 +13,22 @@ import { Produto } from '../../shared/models/Produto';
 export class TelaInicial implements OnInit {
   private produtoService = inject(ProdutoService);
 
+  produtos: Produto[] = [];
+  produtosFiltrados: Produto[] = [];
+
   ngOnInit(): void {
-    this.produtoService.listarProdutos().subscribe((response) => (this.produtos = response));
+    this.produtoService.listarProdutos().subscribe((response) => {
+      this.produtos = response;
+      this.produtosFiltrados = response;
+    });
+
+    this.produtoService.filtroPesquisa$.subscribe((texto) => {
+      texto = texto.toLowerCase();
+
+      this.produtosFiltrados = this.produtos.filter(
+        (p) =>
+          p.nmProduto.toLowerCase().includes(texto) || p.dsCategoria.toLowerCase().includes(texto)
+      );
+    });
   }
-  protected produtos: Produto[] = [];
 }
