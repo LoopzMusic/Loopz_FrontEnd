@@ -34,6 +34,10 @@ export class ProdutoService {
     return this.http.post<any>('http://localhost:8085/estoque/criar', body);
   }
 
+  excluirProduto(id: number) {
+  return this.http.delete(`http://localhost:8085/produto/delete/${id}/`);
+}
+
   
   buscarProdutosRecomendados(cdProduto: number): Observable<Produto[]> {
     return this.http.get<any[]>(`${this.apiUrlRecomendacao}/${cdProduto}/recomendados`).pipe(
