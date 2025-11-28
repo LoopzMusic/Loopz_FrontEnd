@@ -1,0 +1,24 @@
+
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { PedidoResumo } from '../../../shared/models/usuario/PedidosUsuarios';
+import { AuthService } from '../../auth-service';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PedidoService {
+  private apiUrl = 'http://localhost:8085/pedido';
+
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  listarMeusPedidos(): Observable<PedidoResumo[]> {
+    const token = this.authService.getToken();
+    const headers = token
+      ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
+      : undefined;
+
+    return this.http.get<PedidoResumo[]>(`${this.apiUrl}/meus`, { headers });
+  }
+}
