@@ -4,17 +4,21 @@ import { Produto } from '../../shared/models/Produto';
 import { FavoritosService } from '../../services/acoesUsuario/favorito-service/favorito-service';
 import { AuthService } from '../../services/auth-service';
 import { CarrinhoService } from '../../services/carrinho/carrinho.service';
+import { ShowToast } from '../show-toast/show-toast';
 
 @Component({
   selector: 'app-card',
-  imports: [RouterLink],
+  imports: [RouterLink, ShowToast],
   templateUrl: './card.html',
   styleUrl: './card.scss',
 })
 export class Card {
   @Input({ required: true }) produto: Produto = new Produto();
-  @ViewChild('toastFavorito') toastFavorito!: ElementRef;
-  @ViewChild('toastCarrinho') toastCarrinho!: ElementRef;
+  toast = {
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  };
 
   favorito = false;
 
@@ -78,22 +82,17 @@ export class Card {
     }
   }
 
-  showToast(msg: string) {
-    this.toastFavorito.nativeElement.querySelector('.toast-body').textContent = msg;
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    this.toast = { show: true, message, type };
 
-    // @ts-ignore
-    const toast = new bootstrap.Toast(this.toastFavorito.nativeElement);
-    toast.show();
+    setTimeout(() => {
+      this.toast.show = false;
+    }, 800);
   }
 
-  showToastCarrinho(msg: string) {
-    this.toastCarrinho.nativeElement.querySelector('.toast-body').textContent = msg;
-
-    // @ts-ignore
-    const toast = new bootstrap.Toast(this.toastCarrinho.nativeElement);
-    toast.show();
+  fecharToast() {
+    this.toast.show = false;
   }
-
   adicionarAoCarrinho() {
     const usuario = this.authService.getUsuarioLogado();
 
@@ -111,11 +110,11 @@ export class Card {
       // Se estiver logado, adiciona via serviço (sincroniza com backend)
       this.carrinhoService.adicionarItem(item).subscribe({
         next: () => {
-          this.showToastCarrinho('Produto adicionado ao carrinho!');
+          this.showToast('Produto adicionado ao carrinho!');
         },
         error: (error) => {
           console.error('Erro ao adicionar ao carrinho:', error);
-          this.showToastCarrinho('Erro ao adicionar ao carrinho!');
+          this.showToast('Erro ao adicionar ao carrinho!');
         },
       });
     } else {
@@ -130,7 +129,7 @@ export class Card {
       }
 
       localStorage.setItem('carrinho', JSON.stringify(carrinho));
-      this.showToastCarrinho('Produto adicionado ao carrinho!');
+      this.showToast('Produto adicionado ao carrinho!');
     }
   }
 }

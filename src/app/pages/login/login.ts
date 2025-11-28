@@ -5,13 +5,14 @@ import { CommonModule } from '@angular/common';
 import { LoginRequest } from '../../shared/models/LoginRequest';
 import { AuthService } from '../../services/auth-service';
 import { CarrinhoService } from '../../services/carrinho/carrinho.service';
+import { ShowToast } from '../../components/show-toast/show-toast';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports: [ReactiveFormsModule, RouterModule, CommonModule],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, ShowToast],
 })
 export class Login implements OnInit {
   private fb = inject(FormBuilder);
@@ -21,6 +22,11 @@ export class Login implements OnInit {
 
   loginForm!: FormGroup;
   isAdmin = false;
+  toast = {
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  };
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -42,7 +48,7 @@ export class Login implements OnInit {
         this.authService.setUsuario(res);
         console.log('Login sucesso:', res);
 
-        // ✅ Sincroniza carrinho APÓS login bem-sucedido
+        
         this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
           next: () => {
             console.log('Carrinho carregado do backend');
@@ -52,7 +58,7 @@ export class Login implements OnInit {
               next: () => console.log('Carrinho sincronizado'),
               error: (err) => console.error('Erro ao sincronizar:', err),
               complete: () => {
-                // Navega após sincronização
+                
                 if (this.isAdmin) {
                   this.router.navigate(['/admin/dashboard']);
                 } else {
@@ -63,7 +69,7 @@ export class Login implements OnInit {
           },
           error: (err) => {
             console.error('Erro ao carregar carrinho:', err);
-            // Navega mesmo com erro
+            
             if (this.isAdmin) {
               this.router.navigate(['/admin/dashboard']);
             } else {
@@ -74,8 +80,19 @@ export class Login implements OnInit {
       },
       error: (err) => {
         console.error('Erro ao logar:', err);
-        alert('Usuário ou senha inválidos');
+        this.showToast('Usuário ou senha inválidos', 'error');
       },
     });
+  }
+  showToast(message: string, type: 'success' | 'error' = 'error') {
+    this.toast = {
+      show: true,
+      message,
+      type,
+    };
+
+    setTimeout(() => {
+      this.toast.show = false;
+    }, 3000);
   }
 }

@@ -17,17 +17,12 @@ import { AuthService } from '../../services/auth-service';
 
 // Models
 import { Produto } from '../../shared/models/Produto';
+import { ShowToast } from '../../components/show-toast/show-toast';
 
 @Component({
   selector: 'app-mais-detalhes',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterLink, 
-    CardAvaliacao, 
-    CriarFeedback,
-    Card
-  ],
+  imports: [CommonModule, RouterLink, CardAvaliacao, CriarFeedback, Card, ShowToast],
   templateUrl: './mais-detalhes.html',
   styleUrl: './mais-detalhes.scss',
 })
@@ -38,24 +33,26 @@ export class MaisDetalhes implements OnInit, OnDestroy {
   private favoritosService = inject(FavoritosService);
   private authService = inject(AuthService);
 
-  @ViewChild('toastCarrinho') toastCarrinho!: ElementRef;
-  @ViewChild('toastFavorito') toastFavorito!: ElementRef;
   @ViewChild('cardAvaliacaoRef') cardAvaliacaoRef!: CardAvaliacao;
 
   protected produtos: Produto[] = [];
   produto: Produto = new Produto();
   favorito = false;
   carregandoRecomendados = false;
-  
+  toast = {
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  };
+
   private routeSub?: Subscription;
 
   constructor() {}
 
   ngOnInit(): void {
-    this.routeSub = this.route.params.subscribe(params => {
+    this.routeSub = this.route.params.subscribe((params) => {
       const id = Number(params['id']);
       this.carregarProduto(id);
-      
     });
   }
 
@@ -89,7 +86,7 @@ export class MaisDetalhes implements OnInit, OnDestroy {
         console.error('Erro ao buscar produtos recomendados:', error);
         this.carregandoRecomendados = false;
         this.carregarProdutosFallback();
-      }
+      },
     });
   }
 
@@ -97,19 +94,19 @@ export class MaisDetalhes implements OnInit, OnDestroy {
     this.produtoService.listarProdutos().subscribe({
       next: (todosProdutos) => {
         this.produtos = todosProdutos
-          .filter(p => p.cdProduto !== this.produto.cdProduto)
+          .filter((p) => p.cdProduto !== this.produto.cdProduto)
           .slice(0, 4);
       },
       error: (error) => {
         console.error('Erro ao buscar produtos fallback:', error);
         this.produtos = [];
-      }
+      },
     });
   }
 
   verificarFavorito(): void {
     const usuario = this.authService.getUsuarioLogado();
-    
+
     if (usuario && usuario.cdUsuario) {
       const favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
       this.favorito = favoritos.some((p: any) => p.cdProduto === this.produto.cdProduto);
@@ -120,9 +117,9 @@ export class MaisDetalhes implements OnInit, OnDestroy {
 
   adicionarFavorito(): void {
     const usuario = this.authService.getUsuarioLogado();
-    
+
     if (!usuario || !usuario.cdUsuario) {
-      this.showToast("Você precisa estar logado!");
+      this.showToast('Você precisa estar logado!');
       return;
     }
 
@@ -140,54 +137,50 @@ export class MaisDetalhes implements OnInit, OnDestroy {
           if (this.router.url.includes('favoritos')) {
             this.router.navigate(['/produtos']);
           }
-          
-          this.showToast("Removido dos favoritos!");
+
+          this.showToast('Removido dos favoritos!', 'error');
         },
         error: (error) => {
           console.error('Erro ao remover favorito:', error);
-          this.showToast("Erro ao remover dos favoritos!");
-        }
+          this.showToast('Erro ao remover dos favoritos!');
+        },
       });
     } else {
       this.favoritosService.adicionarFavorito(this.produto.cdProduto, cdusuario).subscribe({
         next: (response) => {
           console.log('Favorito adicionado:', response);
-          
+
           let favoritos = JSON.parse(localStorage.getItem('favoritos') || '[]');
           favoritos.push(this.produto);
           localStorage.setItem('favoritos', JSON.stringify(favoritos));
 
           this.favorito = true;
-          this.showToast("Adicionado aos favoritos!");
+          this.showToast('Adicionado aos favoritos!');
         },
         error: (error) => {
           console.error('Erro ao adicionar favorito:', error);
-          this.showToast("Erro ao adicionar aos favoritos!");
-        }
+          this.showToast('Erro ao adicionar aos favoritos!');
+        },
       });
     }
   }
 
- 
   onFeedbackCriado(): void {
-    
     if (this.cardAvaliacaoRef) {
       this.cardAvaliacaoRef.recarregar();
     }
   }
 
-  showToast(msg: string): void {
-    this.toastFavorito.nativeElement.querySelector('.toast-body').textContent = msg;
-    // @ts-ignore
-    const toast = new bootstrap.Toast(this.toastFavorito.nativeElement);
-    toast.show();
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    this.toast = { show: true, message, type };
+
+    setTimeout(() => {
+      this.toast.show = false;
+    }, 3500);
   }
 
-  showToastCarrinho(msg: string): void {
-    this.toastCarrinho.nativeElement.querySelector('.toast-body').textContent = msg;
-    // @ts-ignore
-    const toast = new bootstrap.Toast(this.toastCarrinho.nativeElement);
-    toast.show();
+  fecharToast() {
+    this.toast.show = false;
   }
 
   adicionarAoCarrinho(qtdInput: HTMLInputElement): void {
@@ -207,12 +200,12 @@ export class MaisDetalhes implements OnInit, OnDestroy {
         preco: this.produto.vlProduto,
         quantidade: quantidade,
         estoque: this.produto.qtdEstoqueProduto,
-        imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`
+        imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`,
       });
     }
 
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
-    this.showToastCarrinho("Produto adicionado ao carrinho!");
+    this.showToast('Produto adicionado ao carrinho!');
   }
 
   aumentarQtd(input: HTMLInputElement): void {
@@ -228,6 +221,4 @@ export class MaisDetalhes implements OnInit, OnDestroy {
       input.value = (atual - 1).toString();
     }
   }
-
-  
 }

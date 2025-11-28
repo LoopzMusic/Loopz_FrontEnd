@@ -6,10 +6,11 @@ import { Sidebar } from "../../../components/adm/sidebar/sidebar";
 import { EmpresaService, Empresa } from '../../../services/empresa-service';
 import { CnpjValidator } from '../../../validators/cpnjValidator';
 import { CnpjApiService } from '../../../services/integracaoApis/cnpj-api-service';
+import { ShowToast } from '../../../components/show-toast/show-toast';
 
 @Component({
   selector: 'app-cadastrar-empresa',
-  imports: [Sidebar, CommonModule, FormsModule],
+  imports: [Sidebar, CommonModule, FormsModule, ShowToast],
   templateUrl: './cadastrar-empresa.html',
   styleUrl: './cadastrar-empresa.scss',
 })
@@ -19,7 +20,6 @@ export class CadastrarEmpresa {
 
   constructor(private cpnjService: CnpjApiService){}
 
-  @ViewChild('toastEmpresa') toastEmpresa!: ElementRef;
 
   empresa: Empresa = {
     nmFantasia: '',
@@ -31,6 +31,13 @@ export class CadastrarEmpresa {
     dsEndereco: '',
     nuEndereco: ''
   };
+
+  toast = {
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error'
+};
+
 
   cnpjInvalido = false;
   salvando = false;
@@ -214,21 +221,16 @@ export class CadastrarEmpresa {
     this.cnpjInvalido = false;
   }
 
-  showToast(msg: string, type: 'success' | 'error'): void {
-    if (this.toastEmpresa) {
-      const toastElement = this.toastEmpresa.nativeElement;
-      const toastBody = toastElement.querySelector('.toast-body');
-      
-      if (toastBody) {
-        toastBody.textContent = msg;
-      }
-      
-      toastElement.classList.remove('text-bg-success', 'text-bg-danger');
-      toastElement.classList.add(type === 'success' ? 'text-bg-success' : 'text-bg-danger');
-      
-      // @ts-ignore
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
-  }
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+  this.toast = {
+    show: true,
+    message,
+    type
+  };
+
+  setTimeout(() => {
+    this.toast.show = false;
+  }, 3000);
+}
+
 }

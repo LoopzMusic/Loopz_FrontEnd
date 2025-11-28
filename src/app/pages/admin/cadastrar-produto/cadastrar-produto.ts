@@ -8,11 +8,12 @@ import { EstoqueCadastroProduto } from '../../../shared/models/Estoque-cadastro-
 import { ProdutoService } from '../../../services/produto-service';
 import { EmpresaService } from '../../../services/empresa-service';
 import { Empresa } from '../../../shared/models/Empresa';
+import { ShowToast } from '../../../components/show-toast/show-toast'; 
 
 @Component({
   selector: 'app-cadastrar-produto',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Sidebar],
+  imports: [CommonModule, ReactiveFormsModule, Sidebar, ShowToast], 
   templateUrl: './cadastrar-produto.html',
   styleUrl: './cadastrar-produto.scss',
 })
@@ -25,7 +26,7 @@ export class CadastrarProduto {
   isEdicao: boolean = false;
   empresas: any[] = [];
 
-  
+  // Propriedades do Toast
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
@@ -54,7 +55,6 @@ export class CadastrarProduto {
     });
   }
 
-  
   mostrarToast(mensagem: string, tipo: 'success' | 'error' = 'success') {
     this.toastMessage = mensagem;
     this.toastType = tipo;
@@ -65,7 +65,6 @@ export class CadastrarProduto {
     }, 3000);
   }
 
-  
   fecharToast() {
     this.showToast = false;
   }

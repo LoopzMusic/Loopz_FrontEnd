@@ -1,6 +1,14 @@
 <div class="dashboard-container d-flex">
   <app-sidebar></app-sidebar>
 
+  <app-toast
+  [show]="toast.show"
+  [message]="toast.message"
+  [type]="toast.type"
+  (closed)="toast.show = false"
+></app-toast>
+
+
   <main class="main-content flex-grow-1 p-4 p-md-5 minimized">
     <header class="page-header d-flex justify-content-between align-items-center mb-4">
       <h1 class="fs-3 fw-bold text-dark-gray">Cadastrar Empresa</h1>
@@ -182,22 +190,3 @@
   </main>
 </div>
 
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div
-    #toastEmpresa
-    class="toast align-items-center border-0"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-  >
-    <div class="d-flex">
-      <div class="toast-body">Mensagem aqui</div>
-      <button
-        type="button"
-        class="btn-close btn-close-white me-2 m-auto"
-        data-bs-dismiss="toast"
-        aria-label="Close"
-      ></button>
-    </div>
-  </div>
-</div>

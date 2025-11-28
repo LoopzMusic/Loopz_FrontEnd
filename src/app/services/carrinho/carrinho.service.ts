@@ -135,9 +135,7 @@ export class CarrinhoService {
     );
   }
 
-  /**
-   * Atualiza quantidade de um item
-   */
+  
   atualizarQuantidade(cdItemCarrinho: number, novaQuantidade: number): Observable<any> {
     return this.http
       .put(`${this.apiUrl}/itemcarrinhos/itens-carrinho/${cdItemCarrinho}`, {
@@ -187,6 +185,23 @@ export class CarrinhoService {
       })
     );
   }
+
+  removerItemDoCarrinho(cdCarrinho: number, cdItemCarrinho: number): Observable<any> {
+  return this.http
+    .delete(`${this.apiUrl}/carrinhos/${cdCarrinho}/itens/${cdItemCarrinho}`)
+    .pipe(
+      tap(() => {
+        console.log('✅ Item removido do backend');
+        this.notificarAtualizacao();
+      }),
+      catchError((error) => {
+        console.error('❌ Erro ao remover item do backend:', error);
+        return of(null);
+      })
+    );
+}
+
+
 
   /**
    * Finaliza carrinho (muda status para FINALIZADO)
