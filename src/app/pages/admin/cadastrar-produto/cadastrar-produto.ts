@@ -25,6 +25,11 @@ export class CadastrarProduto {
   isEdicao: boolean = false;
   empresas: any[] = [];
 
+  
+  showToast = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' = 'success';
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -36,16 +41,34 @@ export class CadastrarProduto {
     this.initForm();
     this.carregarEmpresas();
   }
+
   carregarEmpresas() {
-  this.empresaService.listarEmpresas().subscribe({
-    next: (data) => {
-      this.empresas = data;
-    },
-    error: (err) => {
-      console.error('Erro ao carregar empresas:', err);
-    }
-  });
-}
+    this.empresaService.listarEmpresas().subscribe({
+      next: (data) => {
+        this.empresas = data;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar empresas:', err);
+        this.mostrarToast('Erro ao carregar empresas', 'error');
+      }
+    });
+  }
+
+  
+  mostrarToast(mensagem: string, tipo: 'success' | 'error' = 'success') {
+    this.toastMessage = mensagem;
+    this.toastType = tipo;
+    this.showToast = true;
+
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
+
+  
+  fecharToast() {
+    this.showToast = false;
+  }
 
   initForm(): void {
     this.produtoForm = this.formBuilder.group({
@@ -70,8 +93,8 @@ export class CadastrarProduto {
     if (file) {
       this.arquivoImagem = file;
       this.imagemSelecionada = file.name;
-
       this.produtoForm.patchValue({ imgProduto: file.name });
+      this.mostrarToast('Imagem selecionada com sucesso!', 'success');
     } else {
       this.imagemSelecionada = '';
       this.arquivoImagem = null;
@@ -83,6 +106,7 @@ export class CadastrarProduto {
       Object.keys(this.produtoForm.controls).forEach(key => {
         this.produtoForm.get(key)?.markAsTouched();
       });
+      this.mostrarToast('Preencha todos os campos obrigatórios', 'error');
       return;
     }
 
@@ -113,20 +137,23 @@ export class CadastrarProduto {
 
         this.produtoService.criarEstoque(estoque).subscribe({
           next: () => {
-            alert('Produto e estoque cadastrados com sucesso!');
+            this.mostrarToast('Produto e estoque cadastrados com sucesso!', 'success');
             this.loading = false;
-            this.router.navigate(['/admin/produtos']);
+            
+            setTimeout(() => {
+              this.router.navigate(['/admin/produtos']);
+            }, 2000);
           },
           error: (err) => {
             console.error('Erro ao criar estoque:', err);
-            alert('Erro ao criar o estoque.');
+            this.mostrarToast('Erro ao criar o estoque', 'error');
             this.loading = false;
           }
         });
       },
       error: (err) => {
         console.error('Erro ao cadastrar produto:', err);
-        alert('Erro ao cadastrar o produto.');
+        this.mostrarToast('Erro ao cadastrar o produto', 'error');
         this.loading = false;
       }
     });
