@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CarrinhoService, ItemCarrinho } from '../../services/carrinho/carrinho.service';
 import { ShowToast } from '../../components/show-toast/show-toast';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-carrinho',
@@ -19,16 +20,35 @@ export class Carrinho implements OnInit, OnDestroy {
   itensCarrinho: ItemCarrinho[] = [];
   carregando = false;
   private subscription?: Subscription;
-  private atualizandoQuantidade = false; 
+  private atualizandoQuantidade = false;
+  private authService = inject(AuthService);
 
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
 
   ngOnInit(): void {
+    const usuario = this.authService.getUsuarioLogado();
+
+    // ✅ VERIFICAR SE ESTÁ LOGADO
+    if (!usuario || !usuario.cdUsuario) {
+      this.mostrarToast('Você precisa estar logado para acessar o carrinho!', 'error');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // ✅ VERIFICAR SE PERFIL ESTÁ COMPLETO
+    if (!usuario.profileComplete) {
+      this.mostrarToast('Complete seu perfil antes de acessar o carrinho!', 'error');
+      setTimeout(() => {
+        this.router.navigate(['/perfil']);
+      }, 2000);
+      return;
+    }
+
+    // ✅ TUDO OK, CARREGA CARRINHO
     this.carregarCarrinho();
 
-    
     this.subscription = this.carrinhoService.carrinhoObservable$.subscribe(() => {
       if (!this.atualizandoQuantidade) {
         this.carregarCarrinho();
@@ -97,10 +117,8 @@ export class Carrinho implements OnInit, OnDestroy {
       return;
     }
 
-    
     this.atualizandoQuantidade = true;
 
-    
     const quantidadeAnterior = item.quantidade;
     item.quantidade++;
     this.salvarCarrinhoLocal();
@@ -110,24 +128,24 @@ export class Carrinho implements OnInit, OnDestroy {
         next: () => {
           console.log('✅ Quantidade atualizada no backend');
           this.mostrarToast('Quantidade aumentada!');
-          
+
           setTimeout(() => {
             this.atualizandoQuantidade = false;
           }, 300);
         },
         error: (err) => {
           console.error('❌ Erro ao atualizar quantidade:', err);
-          
+
           item.quantidade = quantidadeAnterior;
           this.salvarCarrinhoLocal();
           this.mostrarToast('Erro ao atualizar quantidade', 'error');
-          
+
           this.atualizandoQuantidade = false;
         },
       });
     } else {
       this.mostrarToast('Quantidade aumentada!');
-      
+
       setTimeout(() => {
         this.atualizandoQuantidade = false;
       }, 300);
@@ -139,10 +157,8 @@ export class Carrinho implements OnInit, OnDestroy {
       return;
     }
 
-    
     this.atualizandoQuantidade = true;
 
-   
     const quantidadeAnterior = item.quantidade;
     item.quantidade--;
     this.salvarCarrinhoLocal();
@@ -152,24 +168,24 @@ export class Carrinho implements OnInit, OnDestroy {
         next: () => {
           console.log('✅ Quantidade atualizada no backend');
           this.mostrarToast('Quantidade reduzida!');
-          
+
           setTimeout(() => {
             this.atualizandoQuantidade = false;
           }, 300);
         },
         error: (err) => {
           console.error('❌ Erro ao atualizar quantidade:', err);
-          
+
           item.quantidade = quantidadeAnterior;
           this.salvarCarrinhoLocal();
           this.mostrarToast('Erro ao atualizar quantidade', 'error');
-          
+
           this.atualizandoQuantidade = false;
         },
       });
     } else {
       this.mostrarToast('Quantidade reduzida!');
-      
+
       setTimeout(() => {
         this.atualizandoQuantidade = false;
       }, 300);
@@ -177,61 +193,58 @@ export class Carrinho implements OnInit, OnDestroy {
   }
 
   removerItem(cdProduto: number): void {
-  const item = this.itensCarrinho.find((i) => i.cdProduto === cdProduto);
+    const item = this.itensCarrinho.find((i) => i.cdProduto === cdProduto);
 
-  if (!item) return;
+    if (!item) return;
 
-  if (confirm('Deseja remover este item do carrinho?')) {
-    const index = this.itensCarrinho.findIndex((i) => i.cdProduto === cdProduto);
-    
-    if (index > -1) {
-      
-      const itemRemovido = { ...this.itensCarrinho[index] };
-      
-      
-      this.itensCarrinho.splice(index, 1);
-      this.salvarCarrinhoLocal();
-      
-      
-      const usuarioStr = localStorage.getItem('usuario');
-      const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+    if (confirm('Deseja remover este item do carrinho?')) {
+      const index = this.itensCarrinho.findIndex((i) => i.cdProduto === cdProduto);
 
-      if (usuario && usuario.cdUsuario && item.cdItemCarrinho) {
-        
-        this.carrinhoService.buscarDetalhesCarrinho().subscribe({
-          next: (carrinho) => {
-            if (carrinho && carrinho.cdCarrinho) {
-              
-              this.carrinhoService.removerItemDoCarrinho(carrinho.cdCarrinho, item.cdItemCarrinho!).subscribe({
-                next: () => {
-                  console.log('✅ Item removido no backend com sucesso');
-                  this.mostrarToast('Item removido do carrinho!', 'success');
-                },
-                error: (err) => {
-                  console.error('❌ Erro ao remover item no backend:', err);
-                  
-                  this.itensCarrinho.splice(index, 0, itemRemovido);
-                  this.salvarCarrinhoLocal();
-                  this.mostrarToast('Erro ao remover item. Tente novamente.', 'error');
-                }
-              });
-            } else {
-              console.warn('⚠️ Não foi possível obter cdCarrinho');
+      if (index > -1) {
+        const itemRemovido = { ...this.itensCarrinho[index] };
+
+        this.itensCarrinho.splice(index, 1);
+        this.salvarCarrinhoLocal();
+
+        const usuarioStr = localStorage.getItem('usuario');
+        const usuario = usuarioStr ? JSON.parse(usuarioStr) : null;
+
+        if (usuario && usuario.cdUsuario && item.cdItemCarrinho) {
+          this.carrinhoService.buscarDetalhesCarrinho().subscribe({
+            next: (carrinho) => {
+              if (carrinho && carrinho.cdCarrinho) {
+                this.carrinhoService
+                  .removerItemDoCarrinho(carrinho.cdCarrinho, item.cdItemCarrinho!)
+                  .subscribe({
+                    next: () => {
+                      console.log('✅ Item removido no backend com sucesso');
+                      this.mostrarToast('Item removido do carrinho!', 'success');
+                    },
+                    error: (err) => {
+                      console.error('❌ Erro ao remover item no backend:', err);
+
+                      this.itensCarrinho.splice(index, 0, itemRemovido);
+                      this.salvarCarrinhoLocal();
+                      this.mostrarToast('Erro ao remover item. Tente novamente.', 'error');
+                    },
+                  });
+              } else {
+                console.warn('⚠️ Não foi possível obter cdCarrinho');
+                this.mostrarToast('Item removido localmente', 'success');
+              }
+            },
+            error: (err) => {
+              console.error('❌ Erro ao buscar carrinho:', err);
               this.mostrarToast('Item removido localmente', 'success');
-            }
-          },
-          error: (err) => {
-            console.error('❌ Erro ao buscar carrinho:', err);
-            this.mostrarToast('Item removido localmente', 'success');
-          }
-        });
-      } else {
-        console.log('⚠️ Usuário não logado, removido apenas localmente');
-        this.mostrarToast('Item removido do carrinho!', 'success');
+            },
+          });
+        } else {
+          console.log('⚠️ Usuário não logado, removido apenas localmente');
+          this.mostrarToast('Item removido do carrinho!', 'success');
+        }
       }
     }
   }
-}
 
   calcularSubtotal(): number {
     return this.itensCarrinho.reduce((total, item) => total + item.preco * item.quantidade, 0);

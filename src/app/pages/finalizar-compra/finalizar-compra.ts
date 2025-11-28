@@ -27,7 +27,6 @@ export class FinalizarCompra implements OnInit {
   private carrinhoService = inject(CarrinhoService);
   private authService = inject(AuthService);
 
-
   endereco: WritableSignal<Endereco> = signal({
     cep: '',
     logradouro: '',
@@ -37,7 +36,7 @@ export class FinalizarCompra implements OnInit {
     complemento: '',
     numero: '',
   });
-   
+
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
@@ -49,6 +48,25 @@ export class FinalizarCompra implements OnInit {
   processando = false;
 
   ngOnInit() {
+    const usuario = this.authService.getUsuarioLogado();
+
+    // ✅ BLOQUEIA SE USUÁRIO NÃO ESTÁ LOGADO
+    if (!usuario || !usuario.cdUsuario) {
+      this.mostrarToast('Você precisa estar logado para finalizar a compra!', 'error');
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    // ✅ BLOQUEIA SE PERFIL ESTÁ INCOMPLETO
+    if (!usuario.profileComplete) {
+      this.mostrarToast('Complete seu perfil antes de finalizar a compra!', 'error');
+      setTimeout(() => {
+        this.router.navigate(['/perfil']);
+      }, 2000);
+      return;
+    }
+
+    // ✅ TUDO OK, CARREGA O CHECKOUT
     this.carregarCarrinho();
     this.calcularSubtotal();
   }
