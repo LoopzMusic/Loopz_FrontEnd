@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../shared/models/LoginRequest';
 import { Observable, tap } from 'rxjs';
@@ -10,23 +10,22 @@ import { UsuarioCadastro } from '../pages/cadastro/cadastro';
 export class AuthService {
   private baseUrl = 'http://localhost:8085/auth';
   private usuarioLogado: any = null;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   login(loginData: LoginRequest, isAdmin: boolean): Observable<any> {
-    const url = isAdmin ? `${this.baseUrl}/login` : `${this.baseUrl}/login`;
-    
+    const url = `${this.baseUrl}/login`;
+
     return this.http.post(url, loginData).pipe(
       tap((response: any) => {
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
-        
+
         if (response.cdUsuario) {
           const usuario = {
             cdUsuario: response.cdUsuario,
             dsEmail: response.dsEmail,
-            userRole: response.userRole
+            userRole: response.userRole,
           };
           this.setUsuario(usuario);
         }
@@ -57,8 +56,9 @@ export class AuthService {
 
   logout() {
     this.usuarioLogado = null;
+    localStorage.removeItem('carrinho');
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
-    localStorage.removeItem('favoritos')
+    localStorage.removeItem('favoritos');
   }
 }

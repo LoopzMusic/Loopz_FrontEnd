@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginRequest } from '../../shared/models/LoginRequest';
 import { AuthService } from '../../services/auth-service';
+import { CarrinhoService } from '../../services/carrinho/carrinho.service';
 
 @Component({
   selector: 'app-login',
@@ -13,10 +14,13 @@ import { AuthService } from '../../services/auth-service';
   imports: [ReactiveFormsModule, RouterModule, CommonModule],
 })
 export class Login implements OnInit {
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private carrinhoService = inject(CarrinhoService);
+  private router = inject(Router);
+
   loginForm!: FormGroup;
   isAdmin = false;
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -26,11 +30,7 @@ export class Login implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid && this.isAdmin == true) {
-      console.log('Dados do Login:', this.loginForm.value);
-    } else if (this.loginForm.valid) {
-      console.log('Dados do Login:', this.loginForm.value);
-    } else {
+    if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
@@ -41,11 +41,36 @@ export class Login implements OnInit {
       next: (res) => {
         this.authService.setUsuario(res);
         console.log('Login sucesso:', res);
-        if (this.isAdmin) {
-          this.router.navigate(['/admin/dashboard']);
-        } else {
-          this.router.navigate(['']);
-        }
+
+        // ✅ Sincroniza carrinho APÓS login bem-sucedido
+        this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
+          next: () => {
+            console.log('Carrinho carregado do backend');
+
+            // Sincroniza itens locais (se houver)
+            this.carrinhoService.sincronizarCarrinho().subscribe({
+              next: () => console.log('Carrinho sincronizado'),
+              error: (err) => console.error('Erro ao sincronizar:', err),
+              complete: () => {
+                // Navega após sincronização
+                if (this.isAdmin) {
+                  this.router.navigate(['/admin/dashboard']);
+                } else {
+                  this.router.navigate(['']);
+                }
+              },
+            });
+          },
+          error: (err) => {
+            console.error('Erro ao carregar carrinho:', err);
+            // Navega mesmo com erro
+            if (this.isAdmin) {
+              this.router.navigate(['/admin/dashboard']);
+            } else {
+              this.router.navigate(['']);
+            }
+          },
+        });
       },
       error: (err) => {
         console.error('Erro ao logar:', err);
