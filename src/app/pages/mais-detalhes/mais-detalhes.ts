@@ -228,4 +228,6 @@ export class MaisDetalhes implements OnInit, OnDestroy {
       input.value = (atual - 1).toString();
     }
   }
+
+  
 }
