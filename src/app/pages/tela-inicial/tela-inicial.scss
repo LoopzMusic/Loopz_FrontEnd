@@ -20,7 +20,6 @@
     background-color: #6d4a3a;
 }
 
-
 @media (max-width: 992px) {
     .card-title {
         font-size: 20px;
@@ -47,12 +46,10 @@
     }
 }
 
-/* SEÇÃO RECOMENDADOS */
 .row.g-3 > .col {
     margin-bottom: 20px;
 }
 
-/* SEÇÃO QUALIDADE / ENTREGA / PAGAMENTO */
 .bg-secondary-subtle h5 {
     font-size: 18px;
 }
@@ -66,7 +63,6 @@
     height: 20px;
 }
 
-
 @media (max-width: 576px) {
     .bg-secondary-subtle h5 {
         font-size: 14px;
@@ -79,5 +75,3 @@
         height: 16px;
     }
 }
-
-
