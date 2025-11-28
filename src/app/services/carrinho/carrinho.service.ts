@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, catchError, switchMap } from 'rxjs/operators';
-import { AuthService } from '../auth-service';
+import { BehaviorSubject, Observable, of, forkJoin } from 'rxjs';
+import { tap, catchError, switchMap, map } from 'rxjs/operators';
 
 export interface ItemCarrinho {
   cdItemCarrinho?: number;
@@ -40,7 +39,6 @@ export interface ItemCarrinhoDto {
 })
 export class CarrinhoService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService);
   private apiUrl = 'http://localhost:8085';
 
   // Observable para notificar mudanças no carrinho
@@ -48,8 +46,15 @@ export class CarrinhoService {
   public carrinhoObservable$ = this.carrinhoAtualizado$.asObservable();
 
   constructor() {
-    // Sincroniza carrinho ao fazer login
-    this.authService.getUsuarioLogado();
+    // NÃO injeta AuthService para evitar dependência circular
+  }
+
+  /**
+   * Obtém usuário logado diretamente do localStorage (sem depender de AuthService)
+   */
+  private getUsuario(): any {
+    const usuarioStr = localStorage.getItem('usuario');
+    return usuarioStr ? JSON.parse(usuarioStr) : null;
   }
 
   /**
@@ -81,30 +86,48 @@ export class CarrinhoService {
    * Adiciona item ao carrinho (sincroniza localStorage + backend)
    */
   adicionarItem(item: ItemCarrinho): Observable<any> {
+    console.log('➕ Adicionando item ao carrinho:', item);
+
+    const usuario = this.getUsuario();
+
+    if (!usuario || !usuario.cdUsuario) {
+      console.log('⚠️ Usuário não logado, salvando apenas no localStorage');
+      this.atualizarLocalStorage(item);
+      this.notificarAtualizacao();
+      return of(null);
+    }
+
+    console.log('🔄 Usuário logado, salvando no backend e localStorage');
+
     return this.buscarOuCriarCarrinho().pipe(
       switchMap((carrinho) => {
         if (!carrinho || !carrinho.cdCarrinho) {
+          console.error('❌ Erro: Não foi possível obter o carrinho');
           throw new Error('Não foi possível obter o carrinho');
         }
+
+        console.log('✅ Carrinho obtido:', carrinho);
 
         const itemDto = {
           cdProduto: item.cdProduto,
           qtdItemCarrinho: item.quantidade,
         };
 
+        console.log('📤 Enviando para backend:', itemDto);
+
         return this.http.post(
           `${this.apiUrl}/itemcarrinhos/carrinhos/${carrinho.cdCarrinho}/itens`,
           itemDto
         );
       }),
-      tap(() => {
-        // Atualiza localStorage também
+      tap((response) => {
+        console.log('✅ Item adicionado no backend:', response);
         this.atualizarLocalStorage(item);
         this.notificarAtualizacao();
       }),
       catchError((error) => {
-        console.error('Erro ao adicionar item:', error);
-        // Fallback: adiciona apenas no localStorage
+        console.error('❌ Erro ao adicionar item no backend:', error);
+        console.log('🔄 Fallback: salvando apenas no localStorage');
         this.atualizarLocalStorage(item);
         this.notificarAtualizacao();
         return of(null);
@@ -130,7 +153,7 @@ export class CarrinhoService {
   }
 
   /**
-   * Remove item do carrinho (NÃO IMPLEMENTADO NO BACKEND - usar atualizar quantidade para 0)
+   * Remove item do carrinho
    */
   removerItem(cdProduto: number): void {
     let carrinho = this.obterCarrinhoLocal();
@@ -140,9 +163,17 @@ export class CarrinhoService {
   }
 
   /**
-   * Limpa completamente o carrinho
+   * Limpa completamente o carrinho (local e backend)
    */
   limparCarrinho(): Observable<any> {
+    const usuario = this.getUsuario();
+
+    if (!usuario || !usuario.cdUsuario) {
+      localStorage.removeItem('carrinho');
+      this.notificarAtualizacao();
+      return of(null);
+    }
+
     return this.http.delete(`${this.apiUrl}/carrinhos/meu-carrinho/limpar`).pipe(
       tap(() => {
         localStorage.removeItem('carrinho');
@@ -191,7 +222,6 @@ export class CarrinhoService {
           return of(null);
         }
 
-        // Envia todos os itens do localStorage para o backend
         const requests = carrinhoLocal.map((item) => {
           const itemDto = {
             cdProduto: item.cdProduto,
@@ -203,18 +233,7 @@ export class CarrinhoService {
             .pipe(catchError(() => of(null)));
         });
 
-        // Aguarda todos os requests
-        return new Observable((observer) => {
-          Promise.all(requests.map((req) => req.toPromise()))
-            .then(() => {
-              observer.next(true);
-              observer.complete();
-            })
-            .catch(() => {
-              observer.next(false);
-              observer.complete();
-            });
-        });
+        return forkJoin(requests);
       }),
       tap(() => this.notificarAtualizacao())
     );
@@ -224,9 +243,13 @@ export class CarrinhoService {
    * Carrega carrinho do backend para o localStorage
    */
   carregarCarrinhoDoBackend(): Observable<void> {
+    console.log('🔄 Iniciando carregamento do carrinho do backend...');
+
     return this.buscarDetalhesCarrinho().pipe(
       tap((carrinho) => {
-        if (carrinho && carrinho.itens) {
+        console.log('📦 Resposta do backend:', carrinho);
+
+        if (carrinho && carrinho.itens && carrinho.itens.length > 0) {
           const carrinhoLocal: ItemCarrinho[] = carrinho.itens.map((item) => ({
             cdItemCarrinho: item.cdItemCarrinho,
             cdProduto: item.cdProduto,
@@ -234,15 +257,22 @@ export class CarrinhoService {
             marca: 'Não informado',
             preco: item.precoUnitario,
             quantidade: item.quantidade,
-            estoque: 999, // Você pode buscar do backend se necessário
+            estoque: 999,
             imagem: `http://localhost:8085/produto/${item.cdProduto}/imagem`,
           }));
 
+          console.log('✅ Salvando no localStorage:', carrinhoLocal);
           localStorage.setItem('carrinho', JSON.stringify(carrinhoLocal));
           this.notificarAtualizacao();
+        } else {
+          console.warn('⚠️ Carrinho vazio ou sem itens no backend');
         }
       }),
-      switchMap(() => of(undefined))
+      map(() => undefined),
+      catchError((error) => {
+        console.error('❌ Erro ao carregar carrinho do backend:', error);
+        return of(undefined);
+      })
     );
   }
 
@@ -273,15 +303,22 @@ export class CarrinhoService {
   // ===== MÉTODOS PRIVADOS =====
 
   private atualizarLocalStorage(novoItem: ItemCarrinho): void {
+    console.log('💾 Atualizando localStorage com:', novoItem);
+
     let carrinho = this.obterCarrinhoLocal();
+    console.log('📦 Carrinho atual no localStorage:', carrinho);
+
     const itemExistente = carrinho.find((item) => item.cdProduto === novoItem.cdProduto);
 
     if (itemExistente) {
+      console.log('🔄 Item já existe, incrementando quantidade');
       itemExistente.quantidade += novoItem.quantidade;
     } else {
+      console.log('➕ Item novo, adicionando ao carrinho');
       carrinho.push(novoItem);
     }
 
+    console.log('✅ Salvando carrinho atualizado:', carrinho);
     localStorage.setItem('carrinho', JSON.stringify(carrinho));
   }
 

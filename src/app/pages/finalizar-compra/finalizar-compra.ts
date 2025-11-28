@@ -49,6 +49,13 @@ export class FinalizarCompra implements OnInit {
 
   carregarCarrinho() {
     const carrinhoLocal = this.carrinhoService.obterCarrinhoLocal();
+
+    if (carrinhoLocal.length === 0) {
+      alert('Carrinho vazio! Redirecionando...');
+      this.router.navigate(['/carrinho']);
+      return;
+    }
+
     this.itensCarrinho.set(carrinhoLocal);
   }
 
@@ -171,10 +178,17 @@ export class FinalizarCompra implements OnInit {
           await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
 
           // 5. Limpa carrinho local
-          localStorage.removeItem('carrinho');
-
-          alert('Pedido confirmado com sucesso!');
-          this.router.navigate(['/meus-pedidos']);
+          this.carrinhoService.limparCarrinho().subscribe({
+            next: () => {
+              alert('Pedido confirmado com sucesso!');
+              this.router.navigate(['/meus-pedidos']);
+            },
+            error: (err) => {
+              console.error('Erro ao limpar carrinho:', err);
+              // Mesmo com erro na limpeza, redireciona pois o pedido foi criado
+              this.router.navigate(['/meus-pedidos']);
+            },
+          });
         } catch (error) {
           console.error('Erro ao processar pedido:', error);
           alert('Erro ao processar pedido. Tente novamente.');

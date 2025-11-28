@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LoginRequest } from '../shared/models/LoginRequest';
 import { Observable, tap } from 'rxjs';
@@ -10,11 +10,10 @@ import { UsuarioCadastro } from '../pages/cadastro/cadastro';
 export class AuthService {
   private baseUrl = 'http://localhost:8085/auth';
   private usuarioLogado: any = null;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   login(loginData: LoginRequest, isAdmin: boolean): Observable<any> {
-    const url = isAdmin ? `${this.baseUrl}/login` : `${this.baseUrl}/login`;
+    const url = `${this.baseUrl}/login`;
 
     return this.http.post(url, loginData).pipe(
       tap((response: any) => {
@@ -30,7 +29,6 @@ export class AuthService {
           };
           this.setUsuario(usuario);
         }
-        this.sincronizarCarrinhoAposLogin();
       })
     );
   }
@@ -62,25 +60,5 @@ export class AuthService {
     localStorage.removeItem('usuario');
     localStorage.removeItem('token');
     localStorage.removeItem('favoritos');
-  }
-  private sincronizarCarrinhoAposLogin(): void {
-    // Importação dinâmica para evitar dependência circular
-    import('../services/carrinho/carrinho.service').then((module) => {
-      const carrinhoService = new module.CarrinhoService();
-
-      // Primeiro, carrega o carrinho do backend
-      carrinhoService.carregarCarrinhoDoBackend().subscribe({
-        next: () => {
-          console.log('Carrinho carregado do backend com sucesso');
-
-          // Depois, sincroniza itens locais (se houver)
-          carrinhoService.sincronizarCarrinho().subscribe({
-            next: () => console.log('Carrinho sincronizado com sucesso'),
-            error: (err) => console.error('Erro ao sincronizar carrinho:', err),
-          });
-        },
-        error: (err) => console.error('Erro ao carregar carrinho do backend:', err),
-      });
-    });
   }
 }
