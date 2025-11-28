@@ -107,7 +107,7 @@ export class Card {
     };
 
     if (usuario && usuario.cdUsuario) {
-      // Se estiver logado, adiciona via serviço (sincroniza com backend)
+      
       this.carrinhoService.adicionarItem(item).subscribe({
         next: () => {
           this.showToast('Produto adicionado ao carrinho!');
@@ -118,7 +118,7 @@ export class Card {
         },
       });
     } else {
-      // Se não estiver logado, adiciona apenas no localStorage
+      
       let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
       const itemExistente = carrinho.find((i: any) => i.cdProduto === item.cdProduto);
 
