@@ -195,9 +195,8 @@ export class Login implements OnInit, AfterViewInit {
    */
   onProfileModalClosed(): void {
     this.showProfileModal = false;
-    // Faz logout se o usuário fechar o modal sem completar o perfil
-    this.authService.logout();
-    this.showToast('Perfil não foi completado. Faça login novamente.', 'error');
+    // ✅ IMPORTANTE: Não redireciona para home, mantém na tela de login
+    this.showToast('Complete seu perfil para usar o e-commerce', 'error');
   }
 
   /**

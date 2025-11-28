@@ -183,3 +183,12 @@
     </ul>
   </div>
 </nav>
+<!-- ✅ BANNER DE PERFIL INCOMPLETO -->
+@if (usuario && !usuario.profileComplete) {
+<div class="alert alert-warning alert-dismissible fade show m-0 text-center" role="alert">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  <strong>Complete seu perfil</strong> para adicionar produtos ao carrinho e realizar compras.
+  <a [routerLink]="['/perfil']" class="alert-link ms-2">Completar agora</a>
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+}

@@ -115,11 +115,18 @@ export class MaisDetalhes implements OnInit, OnDestroy {
     }
   }
 
-  adicionarFavorito(): void {
+  adicionarFavorito() {
     const usuario = this.authService.getUsuarioLogado();
 
+    // ✅ VERIFICAR SE ESTÁ LOGADO
     if (!usuario || !usuario.cdUsuario) {
-      this.showToast('Você precisa estar logado!');
+      this.showToast('Você precisa estar logado!', 'error');
+      return;
+    }
+
+    // ✅ VERIFICAR SE PERFIL ESTÁ COMPLETO
+    if (!usuario.profileComplete) {
+      this.showToast('Complete seu perfil antes de favoritar produtos!', 'error');
       return;
     }
 
@@ -142,7 +149,7 @@ export class MaisDetalhes implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Erro ao remover favorito:', error);
-          this.showToast('Erro ao remover dos favoritos!');
+          this.showToast('Erro ao remover dos favoritos!', 'error');
         },
       });
     } else {
@@ -159,7 +166,7 @@ export class MaisDetalhes implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Erro ao adicionar favorito:', error);
-          this.showToast('Erro ao adicionar aos favoritos!');
+          this.showToast('Erro ao adicionar aos favoritos!', 'error');
         },
       });
     }
@@ -184,6 +191,20 @@ export class MaisDetalhes implements OnInit, OnDestroy {
   }
 
   adicionarAoCarrinho(qtdInput: HTMLInputElement): void {
+    const usuario = this.authService.getUsuarioLogado();
+
+    // ✅ VERIFICAR SE ESTÁ LOGADO
+    if (!usuario || !usuario.cdUsuario) {
+      this.showToast('Você precisa estar logado para adicionar ao carrinho!', 'error');
+      return;
+    }
+
+    // ✅ VERIFICAR SE PERFIL ESTÁ COMPLETO
+    if (!usuario.profileComplete) {
+      this.showToast('Complete seu perfil antes de adicionar produtos ao carrinho!', 'error');
+      return;
+    }
+
     const quantidade = Number(qtdInput.value);
 
     let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
