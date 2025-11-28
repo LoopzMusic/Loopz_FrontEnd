@@ -1,40 +1,135 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { LoginRequest } from '../../shared/models/LoginRequest';
 import { AuthService } from '../../services/auth-service';
+import { OAuth2Service } from '../../services/oauth2.service';
 import { CarrinhoService } from '../../services/carrinho/carrinho.service';
 import { ShowToast } from '../../components/show-toast/show-toast';
+import { ProfileCompletionModal } from '../../components/profile-completion-modal/profile-completion-modal';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
-  imports: [ReactiveFormsModule, RouterModule, CommonModule, ShowToast],
+  imports: [ReactiveFormsModule, RouterModule, CommonModule, ShowToast, ProfileCompletionModal],
 })
-export class Login implements OnInit {
+export class Login implements OnInit, AfterViewInit {
+  @ViewChild('googleButtonContainer') googleButtonContainer!: ElementRef;
+
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private oauth2Service = inject(OAuth2Service);
   private carrinhoService = inject(CarrinhoService);
   private router = inject(Router);
 
   loginForm!: FormGroup;
   isAdmin = false;
+  showProfileModal = false;
+  isLoggingIn = false;
+
   toast = {
     show: false,
     message: '',
     type: 'success' as 'success' | 'error',
   };
 
+  // Seu Google Client ID - substitua pelo seu ID real
+  private googleClientId =
+    '149009561372-f3s2akfb66v9iemdl50ldi4qulbn4f3h.apps.googleusercontent.com';
+
   ngOnInit(): void {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(8)]],
     });
+
+    // Inicializa o Google Sign-In
+    this.initializeGoogleSignIn();
   }
 
+  ngAfterViewInit(): void {
+    // Renderiza o botão do Google após a view ser inicializada
+    if (this.googleButtonContainer) {
+      this.oauth2Service.renderGoogleButton('google-button-container');
+    }
+  }
+
+  /**
+   * Inicializa o Google Sign-In
+   */
+  private initializeGoogleSignIn(): void {
+    // IMPORTANTE: Substitua 'SEU_GOOGLE_CLIENT_ID_AQUI' pelo seu Client ID real do Google
+    this.oauth2Service.initializeGoogleSignIn(
+      this.googleClientId,
+      (response) => this.handleGoogleSignInSuccess(response),
+      () => this.handleGoogleSignInError()
+    );
+  }
+
+  /**
+   * Manipula o sucesso do login do Google
+   */
+  private handleGoogleSignInSuccess(response: any): void {
+    this.isLoggingIn = true;
+
+    // O token já foi validado no backend pelo OAuth2Service
+    // Agora carregamos o carrinho e verificamos se o perfil está completo
+    this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
+      next: () => {
+        console.log('Carrinho carregado do backend');
+
+        this.carrinhoService.sincronizarCarrinho().subscribe({
+          next: () => {
+            console.log('Carrinho sincronizado');
+            this.verificarPerfilCompleto();
+          },
+          error: (err) => {
+            console.error('Erro ao sincronizar carrinho:', err);
+            this.verificarPerfilCompleto();
+          },
+        });
+      },
+      error: (err) => {
+        console.error('Erro ao carregar carrinho:', err);
+        this.verificarPerfilCompleto();
+      },
+    });
+  }
+
+  /**
+   * Verifica se o perfil do usuário está completo
+   */
+  private verificarPerfilCompleto(): void {
+    const usuario = localStorage.getItem('usuario');
+    if (usuario) {
+      const usuarioData = JSON.parse(usuario);
+
+      // Se o perfil não está completo, mostra o modal
+      if (!usuarioData.profileComplete) {
+        this.isLoggingIn = false;
+        this.showProfileModal = true;
+      } else {
+        // Perfil já está completo, redireciona para a página inicial
+        this.isLoggingIn = false;
+        this.router.navigate(['']);
+      }
+    }
+  }
+
+  /**
+   * Manipula o erro do login do Google
+   */
+  private handleGoogleSignInError(): void {
+    this.isLoggingIn = false;
+    this.showToast('Erro ao fazer login com Google. Tente novamente.', 'error');
+  }
+
+  /**
+   * Submete o formulário de login tradicional
+   */
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -48,17 +143,14 @@ export class Login implements OnInit {
         this.authService.setUsuario(res);
         console.log('Login sucesso:', res);
 
-        
         this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
           next: () => {
             console.log('Carrinho carregado do backend');
 
-            // Sincroniza itens locais (se houver)
             this.carrinhoService.sincronizarCarrinho().subscribe({
               next: () => console.log('Carrinho sincronizado'),
               error: (err) => console.error('Erro ao sincronizar:', err),
               complete: () => {
-                
                 if (this.isAdmin) {
                   this.router.navigate(['/admin/dashboard']);
                 } else {
@@ -69,7 +161,7 @@ export class Login implements OnInit {
           },
           error: (err) => {
             console.error('Erro ao carregar carrinho:', err);
-            
+
             if (this.isAdmin) {
               this.router.navigate(['/admin/dashboard']);
             } else {
@@ -84,7 +176,34 @@ export class Login implements OnInit {
       },
     });
   }
-  showToast(message: string, type: 'success' | 'error' = 'error') {
+
+  /**
+   * Manipula a conclusão do preenchimento do perfil
+   */
+  onProfileCompleted(): void {
+    this.showProfileModal = false;
+    this.showToast('Perfil completado com sucesso!', 'success');
+
+    // Aguarda um pouco antes de redirecionar
+    setTimeout(() => {
+      this.router.navigate(['']);
+    }, 1500);
+  }
+
+  /**
+   * Manipula o fechamento do modal de perfil
+   */
+  onProfileModalClosed(): void {
+    this.showProfileModal = false;
+    // Faz logout se o usuário fechar o modal sem completar o perfil
+    this.authService.logout();
+    this.showToast('Perfil não foi completado. Faça login novamente.', 'error');
+  }
+
+  /**
+   * Exibe notificação toast
+   */
+  showToast(message: string, type: 'success' | 'error' = 'error'): void {
     this.toast = {
       show: true,
       message,

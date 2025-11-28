@@ -6,6 +6,14 @@
     (closed)="toast.show = false"
   ></app-toast>
 
+  <!-- Modal de Completude de Perfil -->
+  @if (showProfileModal) {
+  <app-profile-completion-modal
+    (profileCompleted)="onProfileCompleted()"
+    (closed)="onProfileModalClosed()"
+  ></app-profile-completion-modal>
+  }
+
   <div class="card p-5 shadow-lg border-0" style="width: 100%; max-width: 450px">
     <div class="text-center">
       <h2 class="h2-custom fw-bold mb-1">Bem-vindo à Loopz</h2>
@@ -15,6 +23,7 @@
           class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
           [class.active-toggle]="!isAdmin"
           (click)="isAdmin = false"
+          [disabled]="isLoggingIn"
         >
           Usuário
         </button>
@@ -23,10 +32,19 @@
           class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
           [class.active-toggle]="isAdmin"
           (click)="isAdmin = true"
+          [disabled]="isLoggingIn"
         >
           Administrador
         </button>
       </div>
+
+      <!-- Botão Google Sign-In -->
+      @if (!isAdmin) {
+      <div class="mb-4">
+        <div id="google-button-container" #googleButtonContainer></div>
+        <p class="text-center text-muted small mt-3">ou</p>
+      </div>
+      }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="text-start">
         <label for="email" class="form-label d-block small text-dark mt-3 mb-1">E-mail</label>
@@ -36,6 +54,7 @@
           class="form-control"
           formControlName="email"
           placeholder="{{ isAdmin ? 'admin@loopz.com' : 'seu@email.com' }}"
+          [disabled]="isLoggingIn"
         />
 
         @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
@@ -51,6 +70,7 @@
           class="form-control"
           formControlName="senha"
           placeholder="********"
+          [disabled]="isLoggingIn"
         />
 
         <div
@@ -60,11 +80,26 @@
           A senha é obrigatória e deve ter no mínimo 8 caracteres.
         </div>
 
-        <button type="submit" class="btn btn-submit-custom w-100 py-2 mt-4">
+        <button
+          type="submit"
+          class="btn btn-submit-custom w-100 py-2 mt-4"
+          [disabled]="isLoggingIn"
+        >
+          @if (isLoggingIn) {
+          <span
+            class="spinner-border spinner-border-sm me-2"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          Entrando... } @else {
           {{ isAdmin ? 'Entrar como Admin' : 'Entrar' }}
+          }
         </button>
         <p class="text-center">
-          Não tem uma conta? <a routerLink="/cadastro" class="text-decoration-none">Cadastre-se</a>
+          Não tem uma conta?
+          <a routerLink="/cadastro" class="text-decoration-none" [class.disabled]="isLoggingIn"
+            >Cadastre-se</a
+          >
         </p>
       </form>
       <p class="text-center mt-3 small"></p>

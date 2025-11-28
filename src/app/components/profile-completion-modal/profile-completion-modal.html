@@ -1,0 +1,193 @@
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-toast
+      [show]="toast.show"
+      [message]="toast.message"
+      [type]="toast.type"
+      (closed)="toast.show = false"
+    ></app-toast>
+
+    <div class="modal-header">
+      <h2 class="modal-title">Complete seu Perfil</h2>
+      <button
+        type="button"
+        class="btn-close"
+        (click)="closeModal()"
+        [disabled]="isLoading"
+      ></button>
+    </div>
+
+    <div class="modal-body">
+      <p class="text-muted mb-4">
+        Para continuar usando a Loopz, precisamos de algumas informações adicionais para completar
+        seu cadastro.
+      </p>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <!-- Nome Completo -->
+        <div class="mb-3">
+          <label for="nmCliente" class="form-label">Nome Completo *</label>
+          <input
+            id="nmCliente"
+            type="text"
+            class="form-control"
+            formControlName="nmCliente"
+            placeholder="Seu nome completo"
+            [class.is-invalid]="
+              profileForm.get('nmCliente')?.invalid && profileForm.get('nmCliente')?.touched
+            "
+          />
+          @if (profileForm.get('nmCliente')?.invalid && profileForm.get('nmCliente')?.touched) {
+          <div class="invalid-feedback d-block">
+            Nome completo é obrigatório e deve ter no mínimo 3 caracteres.
+          </div>
+          }
+        </div>
+
+        <!-- CPF -->
+        <div class="mb-3">
+          <label for="nuCPF" class="form-label">CPF *</label>
+          <input
+            id="nuCPF"
+            type="text"
+            class="form-control"
+            formControlName="nuCPF"
+            placeholder="000.000.000-00"
+            (input)="formatCPF($event)"
+            [class.is-invalid]="
+              profileForm.get('nuCPF')?.invalid && profileForm.get('nuCPF')?.touched
+            "
+          />
+          @if (profileForm.get('nuCPF')?.invalid && profileForm.get('nuCPF')?.touched) {
+          <div class="invalid-feedback d-block">CPF inválido. Verifique e tente novamente.</div>
+          }
+        </div>
+
+        <!-- Telefone -->
+        <div class="mb-3">
+          <label for="nuTelefone" class="form-label">Telefone *</label>
+          <input
+            id="nuTelefone"
+            type="text"
+            class="form-control"
+            formControlName="nuTelefone"
+            placeholder="(00) 00000-0000"
+            (input)="formatPhone($event)"
+            [class.is-invalid]="
+              profileForm.get('nuTelefone')?.invalid && profileForm.get('nuTelefone')?.touched
+            "
+          />
+          @if (profileForm.get('nuTelefone')?.invalid && profileForm.get('nuTelefone')?.touched) {
+          <div class="invalid-feedback d-block">
+            Telefone é obrigatório e deve ter no mínimo 10 dígitos.
+          </div>
+          }
+        </div>
+
+        <!-- Endereço -->
+        <div class="mb-3">
+          <label for="dsEndereco" class="form-label">Endereço *</label>
+          <input
+            id="dsEndereco"
+            type="text"
+            class="form-control"
+            formControlName="dsEndereco"
+            placeholder="Rua, Avenida, etc."
+            [class.is-invalid]="
+              profileForm.get('dsEndereco')?.invalid && profileForm.get('dsEndereco')?.touched
+            "
+          />
+          @if (profileForm.get('dsEndereco')?.invalid && profileForm.get('dsEndereco')?.touched) {
+          <div class="invalid-feedback d-block">
+            Endereço é obrigatório e deve ter no mínimo 5 caracteres.
+          </div>
+          }
+        </div>
+
+        <!-- Número -->
+        <div class="mb-3">
+          <label for="nuEndereco" class="form-label">Número *</label>
+          <input
+            id="nuEndereco"
+            type="text"
+            class="form-control"
+            formControlName="nuEndereco"
+            placeholder="123"
+            [class.is-invalid]="
+              profileForm.get('nuEndereco')?.invalid && profileForm.get('nuEndereco')?.touched
+            "
+          />
+          @if (profileForm.get('nuEndereco')?.invalid && profileForm.get('nuEndereco')?.touched) {
+          <div class="invalid-feedback d-block">Número é obrigatório.</div>
+          }
+        </div>
+
+        <!-- Cidade -->
+        <div class="mb-3">
+          <label for="dsCidade" class="form-label">Cidade *</label>
+          <input
+            id="dsCidade"
+            type="text"
+            class="form-control"
+            formControlName="dsCidade"
+            placeholder="Sua cidade"
+            [class.is-invalid]="
+              profileForm.get('dsCidade')?.invalid && profileForm.get('dsCidade')?.touched
+            "
+          />
+          @if (profileForm.get('dsCidade')?.invalid && profileForm.get('dsCidade')?.touched) {
+          <div class="invalid-feedback d-block">
+            Cidade é obrigatória e deve ter no mínimo 3 caracteres.
+          </div>
+          }
+        </div>
+
+        <!-- Estado -->
+        <div class="mb-3">
+          <label for="dsEstado" class="form-label">Estado *</label>
+          <select
+            id="dsEstado"
+            class="form-select"
+            formControlName="dsEstado"
+            [class.is-invalid]="
+              profileForm.get('dsEstado')?.invalid && profileForm.get('dsEstado')?.touched
+            "
+          >
+            <option value="">Selecione um estado</option>
+            @for (estado of estados; track estado) {
+            <option [value]="estado">{{ estado }}</option>
+            }
+          </select>
+          @if (profileForm.get('dsEstado')?.invalid && profileForm.get('dsEstado')?.touched) {
+          <div class="invalid-feedback d-block">Estado é obrigatório.</div>
+          }
+        </div>
+
+        <!-- Botões -->
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="closeModal()"
+            [disabled]="isLoading"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isLoading || profileForm.invalid"
+          >
+            @if (isLoading) {
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              role="status"
+              aria-hidden="true"
+            ></span>
+            Salvando... } @else { Salvar Perfil }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
