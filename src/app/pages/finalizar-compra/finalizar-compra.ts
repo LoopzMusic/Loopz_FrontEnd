@@ -1,6 +1,6 @@
 import { Component, signal, WritableSignal, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CarrinhoService, ItemCarrinho } from '../../services/carrinho/carrinho.service';
 import { AuthService } from '../../services/auth-service';
 import { ShowToast } from '../../components/show-toast/show-toast';
@@ -17,7 +17,7 @@ interface Endereco {
 
 @Component({
   selector: 'app-finalizar-compra',
-  imports: [ShowToast],
+  imports: [ShowToast, RouterModule],
   templateUrl: './finalizar-compra.html',
   styleUrl: './finalizar-compra.scss',
 })
@@ -26,6 +26,7 @@ export class FinalizarCompra implements OnInit {
   private router = inject(Router);
   private carrinhoService = inject(CarrinhoService);
   private authService = inject(AuthService);
+
 
   endereco: WritableSignal<Endereco> = signal({
     cep: '',
