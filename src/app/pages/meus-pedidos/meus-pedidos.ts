@@ -1,19 +1,41 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { PessoaService } from '../../services/pessoa-service';
-import { Pedido } from '../../shared/models/Pedido';
+import { PedidoService } from '../../services/usuario/pedidos/pedido';
+import { PedidoResumo } from '../../shared/models/usuario/PedidosUsuarios';
 import { CardMeusPedidos } from '../../components/card-meus-pedidos/card-meus-pedidos';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-meus-pedidos',
-  imports: [CardMeusPedidos],
+  standalone: true,
+  imports: [CardMeusPedidos, CommonModule],
   templateUrl: './meus-pedidos.html',
-  styleUrl: './meus-pedidos.scss',
+  styleUrls: ['./meus-pedidos.scss'],
 })
 export class MeusPedidos implements OnInit {
-  private pessoaService = inject(PessoaService);
+  private pedidoService = inject(PedidoService);
+
+  protected pedidos: PedidoResumo[] = [];
+  loading = false;
+  erro: string | null = null;
 
   ngOnInit(): void {
-    this.pessoaService.buscarMeusPedidos().subscribe((response) => (this.pedidos = response));
+    this.carregarPedidos();
   }
-  protected pedidos: Pedido[] = [];
+
+  carregarPedidos(): void {
+    this.loading = true;
+    this.erro = null;
+
+    this.pedidoService.listarMeusPedidos().subscribe({
+      next: (response) => {
+        this.pedidos = response;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.erro = 'Erro ao carregar pedidos.';
+        this.loading = false;
+        console.error(err);
+      },
+    });
+  }
 }
