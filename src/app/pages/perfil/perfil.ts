@@ -5,7 +5,7 @@ import { UsuarioService } from '../../services/usuario/usuario-service';
 import { Usuario } from '../../shared/models/Usuario';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CpfValidator } from '../../services/validacoes/cpfValidator'; 
+import { CpfValidator } from '../../validators/cpfValidator'; 
 
 @Component({
   selector: 'app-perfil',
