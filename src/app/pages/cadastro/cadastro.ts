@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Viacep } from '../../services/viacep';
 import { HttpClient } from '@angular/common/http';
-import { validarCPF } from '../../validators/cpf-validator';
+import { CpfValidator } from '../../validators/cpfValidator';
 import { AuthService } from '../../services/auth-service';
 
 export interface UsuarioCadastro {
@@ -46,7 +46,7 @@ export class Cadastro {
         nmCliente: ['', [Validators.required, Validators.minLength(3)]],
         dsEmail: ['', [Validators.required, Validators.email]],
         nuTelefone: ['', [Validators.required]],
-        nuCPF: ['', [Validators.required, Validators.minLength(14)]],
+        nuCPF: ['', [Validators.required, Validators.minLength(14), this.cpfValidator]], // ADICIONA O VALIDADOR CUSTOMIZADO
         nuCEP: ['', [Validators.required]],
         dsEstado: ['', [Validators.required]],
         dsCidade: ['', [Validators.required]],
@@ -57,6 +57,21 @@ export class Cadastro {
       },
       { validators: this.passwordMatchValidator }
     );
+  }
+
+  // VALIDADOR CUSTOMIZADO PARA CPF
+  cpfValidator(control: AbstractControl): ValidationErrors | null {
+    const cpf = control.value;
+    
+    if (!cpf) {
+      return null; // Se vazio, deixa o Validators.required cuidar
+    }
+    
+    if (!CpfValidator.validarCPF(cpf)) {
+      return { cpfInvalido: true };
+    }
+    
+    return null;
   }
 
   passwordMatchValidator(form: FormGroup) {
@@ -129,15 +144,6 @@ export class Cadastro {
 
     event.target.value = value;
     this.cadastroForm.patchValue({ nuCPF: value }, { emitEvent: false });
-
-    this.validateCPF();
-  }
-
-  validateCPF() {
-    const cpf = this.cadastroForm.get('nuCPF')?.value;
-    if (cpf && !validarCPF(cpf)) {
-      this.cadastroForm.get('nuCPF')?.setErrors({ cpfInvalido: true });
-    }
   }
 
   formatTelefone(event: any) {

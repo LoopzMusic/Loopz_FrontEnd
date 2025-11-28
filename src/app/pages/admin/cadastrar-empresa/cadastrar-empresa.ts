@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Sidebar } from "../../../components/adm/sidebar/sidebar";
 import { EmpresaService, Empresa } from '../../../services/empresa-service';
-import { CnpjValidator } from '../../../services/validacoes/cpnjValidator';
+import { CnpjValidator } from '../../../validators/cpnjValidator';
 import { CnpjApiService } from '../../../services/integracaoApis/cnpj-api-service';
 
 @Component({
