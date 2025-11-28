@@ -6,6 +6,22 @@
       <h1 class="fs-3 fw-bold text-dark-gray">{{ isEdicao ? 'Editar' : 'Cadastrar' }} Produto</h1>
     </header>
 
+    <div 
+      class="toast-custom position-fixed top-0 end-0 m-3" 
+      [class.show]="showToast"
+      [class.toast-success]="toastType === 'success'"
+      [class.toast-error]="toastType === 'error'"
+      role="alert"
+    >
+      <div class="d-flex align-items-center">
+        <div class="toast-icon me-2">
+          <i [class]="toastType === 'success' ? 'bi bi-check-circle-fill' : 'bi bi-exclamation-circle-fill'"></i>
+        </div>
+        <div class="toast-body flex-grow-1">{{ toastMessage }}</div>
+        <button type="button" class="btn-close btn-close-white" (click)="fecharToast()"></button>
+      </div>
+    </div>
+
     <div class="card shadow-sm border-0 rounded-3">
       <div class="card-body p-4">
         <h5 class="card-title fs-5 fw-bold text-dark-gray mb-4 border-bottom pb-2">
@@ -13,6 +29,7 @@
         </h5>
 
         <form [formGroup]="produtoForm" (ngSubmit)="onSubmit()">
+          
           <div class="row">
             <div class="col-md-6 mb-3">
               <label for="nmProduto" class="form-label"
@@ -126,7 +143,7 @@
                 <option value="CORDA">CORDA</option>
                 <option value="TECLADO">TECLADO</option>
                 <option value="SOPRO">SOPRO</option>
-                <option value="PERCUSSAO">PERCUSSAO</option>
+                <option value="PERCUSSAO">PERCUSSÃO</option>
               </select>
               <div class="invalid-feedback" *ngIf="isFieldInvalid('dsCategoria')">
                 Categoria é obrigatória
