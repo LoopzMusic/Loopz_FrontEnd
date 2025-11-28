@@ -45,7 +45,7 @@ export class ProdutoService {
   }
 
   excluirProduto(cdProduto: number) {
-    return this.http.delete(`http://localhost:8085/produto/delete/${cdProduto}/`);
+    return this.http.delete(`http://localhost:8085/produto/delete/${cdProduto}`);
   }
   atualizarTextoProduto(cdProduto: number, body: any) {
     return this.http.patch<any>(`http://localhost:8085/produto/alterar/${cdProduto}/texto`, body);
