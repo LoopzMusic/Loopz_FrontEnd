@@ -203,7 +203,7 @@ export class Cadastro {
 
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 2000);
+        }, 1500);
       },
       error: (err) => {
         this.isLoading = false;

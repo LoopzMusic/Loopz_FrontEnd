@@ -27,7 +27,6 @@ export class FinalizarCompra implements OnInit {
   private carrinhoService = inject(CarrinhoService);
   private authService = inject(AuthService);
 
-
   endereco: WritableSignal<Endereco> = signal({
     cep: '',
     logradouro: '',
@@ -37,7 +36,7 @@ export class FinalizarCompra implements OnInit {
     complemento: '',
     numero: '',
   });
-   
+
   showToast = false;
   toastMessage = '';
   toastType: 'success' | 'error' = 'success';
@@ -182,11 +181,13 @@ export class FinalizarCompra implements OnInit {
           this.carrinhoService.limparCarrinho().subscribe({
             next: () => {
               this.mostrarToast('Pedido confirmado com sucesso!', 'success');
-              this.router.navigate(['/meus-pedidos']);
+              setTimeout(() => {
+                this.router.navigate(['/meus-pedidos']);
+              }, 3000); 
             },
             error: (err) => {
               console.error('Erro ao limpar carrinho:', err);
-              this.router.navigate(['/meus-pedidos']);
+              
             },
           });
         } catch (error) {
@@ -211,7 +212,7 @@ export class FinalizarCompra implements OnInit {
 
     setTimeout(() => {
       this.showToast = false;
-    }, 3000);
+    }, 1500);
   }
 
   fecharToast() {

@@ -141,7 +141,7 @@ export class CadastrarProduto {
             
             setTimeout(() => {
               this.router.navigate(['/admin/produtos']);
-            }, 2000);
+            }, 1500);
           },
           error: (err) => {
             console.error('Erro ao criar estoque:', err);

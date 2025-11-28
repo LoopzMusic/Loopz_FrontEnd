@@ -271,7 +271,7 @@ export class Carrinho implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.showToast = false;
-    }, 3000);
+    }, 1500);
   }
 
   fecharToast() {

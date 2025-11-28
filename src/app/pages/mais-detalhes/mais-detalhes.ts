@@ -176,7 +176,7 @@ export class MaisDetalhes implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.toast.show = false;
-    }, 3500);
+    }, 1500);
   }
 
   fecharToast() {

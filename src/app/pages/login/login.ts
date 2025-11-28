@@ -93,6 +93,6 @@ export class Login implements OnInit {
 
     setTimeout(() => {
       this.toast.show = false;
-    }, 3000);
+    }, 1500);
   }
 }
