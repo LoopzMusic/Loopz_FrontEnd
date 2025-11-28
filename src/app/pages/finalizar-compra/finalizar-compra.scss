@@ -13,3 +13,41 @@ input[readonly] {
 .btn-lupa{
     background-color: #54392b;
 }
+
+.item-card {
+  display: flex;
+  align-items: center; 
+  gap: 12px; 
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.item-imagem {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-nome {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.item-quantidade-preco {
+  font-size: 0.85rem;
+  color: #666;
+}
+

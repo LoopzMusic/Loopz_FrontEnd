@@ -1,8 +1,9 @@
-import { Component, signal, WritableSignal, effect, inject, OnInit } from '@angular/core';
+import { Component, signal, WritableSignal, inject, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { CarrinhoService, ItemCarrinho } from '../../services/carrinho/carrinho.service';
 import { AuthService } from '../../services/auth-service';
+import { ShowToast } from '../../components/show-toast/show-toast';
 
 interface Endereco {
   cep: string;
@@ -16,7 +17,7 @@ interface Endereco {
 
 @Component({
   selector: 'app-finalizar-compra',
-  imports: [],
+  imports: [ShowToast],
   templateUrl: './finalizar-compra.html',
   styleUrl: './finalizar-compra.scss',
 })
@@ -35,6 +36,10 @@ export class FinalizarCompra implements OnInit {
     complemento: '',
     numero: '',
   });
+   
+  showToast = false;
+  toastMessage = '';
+  toastType: 'success' | 'error' = 'success';
 
   itensCarrinho: WritableSignal<ItemCarrinho[]> = signal([]);
   pagamento = signal<string>('credito');
@@ -51,7 +56,7 @@ export class FinalizarCompra implements OnInit {
     const carrinhoLocal = this.carrinhoService.obterCarrinhoLocal();
 
     if (carrinhoLocal.length === 0) {
-      alert('Carrinho vazio! Redirecionando...');
+      this.mostrarToast('Carrinho vazio! Redirecionando...', 'error');
       this.router.navigate(['/carrinho']);
       return;
     }
@@ -71,7 +76,7 @@ export class FinalizarCompra implements OnInit {
     let cep = String(cepInput.value).replace(/\D/g, '');
 
     if (cep.length !== 8) {
-      alert('CEP inválido!');
+      this.mostrarToast('CEP inválido!', 'error');
       return;
     }
 
@@ -79,7 +84,7 @@ export class FinalizarCompra implements OnInit {
       .then((res) => res.json())
       .then((data) => {
         if (data.erro) {
-          alert('CEP não encontrado!');
+          this.mostrarToast('CEP não encontrado!', 'error');
           return;
         }
 
@@ -94,7 +99,7 @@ export class FinalizarCompra implements OnInit {
 
         this.calcularFretePorCep(cep);
       })
-      .catch(() => alert('Erro ao buscar CEP.'));
+      .catch(() => this.mostrarToast('Erro ao buscar CEP.', 'error'));
   }
 
   calcularFretePorCep(cep: string) {
@@ -120,25 +125,24 @@ export class FinalizarCompra implements OnInit {
 
   async confirmarPedido() {
     if (!this.endereco().cep) {
-      alert('Informe o CEP antes de confirmar o pedido.');
+      this.mostrarToast('Informe o CEP antes de confirmar o pedido.', 'error');
       return;
     }
 
     const usuario = this.authService.getUsuarioLogado();
 
     if (!usuario || !usuario.cdUsuario) {
-      alert('Você precisa estar logado para finalizar a compra!');
+      this.mostrarToast('Você precisa estar logado para finalizar a compra!', 'error');
       this.router.navigate(['/login']);
       return;
     }
 
     this.processando = true;
 
-    // 1. Busca/cria o carrinho no backend
     this.carrinhoService.buscarOuCriarCarrinho().subscribe({
       next: async (carrinhoResponse) => {
         if (!carrinhoResponse || !carrinhoResponse.cdCarrinho) {
-          alert('Erro ao processar carrinho!');
+          this.mostrarToast('Erro ao processar carrinho!', 'error');
           this.processando = false;
           return;
         }
@@ -146,7 +150,6 @@ export class FinalizarCompra implements OnInit {
         const cdCarrinho = carrinhoResponse.cdCarrinho;
 
         try {
-          // 2. Cria o pedido
           const pedidoData = {
             cdUsuario: usuario.cdUsuario,
             formaPagamento: this.pagamento().toUpperCase(),
@@ -162,7 +165,6 @@ export class FinalizarCompra implements OnInit {
             throw new Error('Erro ao criar pedido');
           }
 
-          // 3. Cria itens do pedido
           const itensPedido = this.itensCarrinho().map((item) => ({
             cdPedido: pedidoResponse.cdPedido,
             cdProduto: item.cdProduto,
@@ -174,33 +176,44 @@ export class FinalizarCompra implements OnInit {
             await this.http.post('http://localhost:8085/itempedido/criar', itemPedido).toPromise();
           }
 
-          // 4. Finaliza o carrinho (muda status para FINALIZADO)
           await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
 
-          // 5. Limpa carrinho local
           this.carrinhoService.limparCarrinho().subscribe({
             next: () => {
-              alert('Pedido confirmado com sucesso!');
+              this.mostrarToast('Pedido confirmado com sucesso!', 'success');
               this.router.navigate(['/meus-pedidos']);
             },
             error: (err) => {
               console.error('Erro ao limpar carrinho:', err);
-              // Mesmo com erro na limpeza, redireciona pois o pedido foi criado
               this.router.navigate(['/meus-pedidos']);
             },
           });
         } catch (error) {
           console.error('Erro ao processar pedido:', error);
-          alert('Erro ao processar pedido. Tente novamente.');
+          this.mostrarToast('Erro ao processar pedido. Tente novamente.', 'error');
         } finally {
           this.processando = false;
         }
       },
       error: (error) => {
         console.error('Erro ao buscar carrinho:', error);
-        alert('Erro ao processar carrinho!');
+        this.mostrarToast('Erro ao processar carrinho!', 'error');
         this.processando = false;
       },
     });
+  }
+
+  mostrarToast(mensagem: string, tipo: 'success' | 'error' = 'success') {
+    this.toastMessage = mensagem;
+    this.toastType = tipo;
+    this.showToast = true;
+
+    setTimeout(() => {
+      this.showToast = false;
+    }, 3000);
+  }
+
+  fecharToast() {
+    this.showToast = false;
   }
 }
