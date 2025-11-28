@@ -15,6 +15,7 @@ export interface FeedbackResponse {
   nmCliente: string;
   cdProduto: number;
   nmProduto: string;
+  
 }
 
 export interface FeedbackListResponse {
@@ -23,4 +24,5 @@ export interface FeedbackListResponse {
   dsComentario: string;
   nmCliente: string;
   nmProduto: string;
+  dtCriacao?: string;
 }

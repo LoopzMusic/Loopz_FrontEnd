@@ -28,6 +28,15 @@
   filter: invert(100%);
 }
 
+.icons-navbar span {
+  max-width: 120px; 
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
 
 .barra-pesquisa {
   width: 400px;
