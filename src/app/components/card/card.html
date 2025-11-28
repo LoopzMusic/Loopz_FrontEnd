@@ -1,5 +1,11 @@
 <div class="card position-relative p-2">
-  <!-- Botão Favorito -->
+  <app-toast
+  [show]="toast.show"
+  [message]="toast.message"
+  [type]="toast.type"
+  (closed)="fecharToast()"
+></app-toast>
+
   <button class="btn-icone favorito" (click)="adicionarFavorito()">
     @if (!favorito) {
     <svg

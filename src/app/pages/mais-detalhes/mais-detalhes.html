@@ -1,5 +1,13 @@
 
 <div class="container mt-5">
+  <app-toast
+  [show]="toast.show"
+  [message]="toast.message"
+  [type]="toast.type"
+  (closed)="fecharToast()"
+></app-toast>
+
+
   <div class="card p-3 mb-5">
     <a routerLink="" class="mb-3 d-inline-flex align-items-center text-body text-decoration-none">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

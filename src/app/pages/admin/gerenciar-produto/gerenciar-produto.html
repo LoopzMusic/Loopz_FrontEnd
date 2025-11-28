@@ -1,6 +1,13 @@
 <div class="dashboard-container d-flex">
   <app-sidebar></app-sidebar>
 
+  <app-toast
+    [show]="toast.show"
+    [message]="toast.message"
+    [type]="toast.type"
+    (closed)="toast.show = false"
+  ></app-toast>
+
   <main class="main-content flex-grow-1 p-4 p-md-5 minimized">
     <header class="page-header d-flex justify-content-between align-items-center mb-4">
       <h1 class="fs-3 fw-bold text-dark-gray">Gerenciar Produtos</h1>

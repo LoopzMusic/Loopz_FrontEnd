@@ -6,31 +6,34 @@ import { Sidebar } from '../../../components/adm/sidebar/sidebar';
 import { ProdutoService } from '../../../services/produto-service';
 import { Produto } from '../../../shared/models/Produto';
 import { forkJoin } from 'rxjs';
+import { ShowToast } from '../../../components/show-toast/show-toast';
 
 @Component({
   selector: 'app-gerenciar-produto',
   standalone: true,
-  imports: [CommonModule, Sidebar, FormsModule],
+  imports: [CommonModule, Sidebar, FormsModule, ShowToast],
   templateUrl: './gerenciar-produto.html',
-  styleUrls: ['./gerenciar-produto.scss']
+  styleUrls: ['./gerenciar-produto.scss'],
 })
 export class GerenciarProduto implements OnInit {
-
   @ViewChild('toastProduto') toastProduto!: ElementRef;
   @ViewChild('fileInput') fileInput!: ElementRef;
 
   produtos: Produto[] = [];
   produtoParaExcluir: Produto | null = null;
   produtoParaEditar: Produto | null = null;
-  cdEstoqueAtual: number | null = null; 
+  cdEstoqueAtual: number | null = null;
   imagemSelecionada: File | null = null;
   imagemPreview: string | null = null;
   salvandoEdicao = false;
 
-  constructor(
-    private router: Router,
-    private produtoService: ProdutoService
-  ) {}
+  toast = {
+    show: false,
+    message: '',
+    type: 'success' as 'success' | 'error',
+  };
+
+  constructor(private router: Router, private produtoService: ProdutoService) {}
 
   ngOnInit(): void {
     this.carregarProdutos();
@@ -44,7 +47,7 @@ export class GerenciarProduto implements OnInit {
       error: (err) => {
         console.error('Erro ao listar produtos:', err);
         this.showToast('Erro ao carregar produtos!', 'error');
-      }
+      },
     });
   }
 
@@ -55,19 +58,14 @@ export class GerenciarProduto implements OnInit {
   }
 
   abrirModalEditar(produto: Produto): void {
-
-    
     this.produtoParaEditar = { ...produto };
 
-    
     this.imagemSelecionada = null;
     this.imagemPreview = null;
 
-    
     this.cdEstoqueAtual = produto.cdProduto;
-    console.log("cdEstoqueAtual:", this.cdEstoqueAtual);
+    console.log('cdEstoqueAtual:', this.cdEstoqueAtual);
 
-    
     const modalElement = document.getElementById('modalEditar');
     if (modalElement) {
       const bootstrap = (window as any).bootstrap;
@@ -100,33 +98,24 @@ export class GerenciarProduto implements OnInit {
       dsProduto: this.produtoParaEditar.dsProduto,
       dsCategoria: this.produtoParaEditar.dsCategoria,
       dsAcessorio: this.produtoParaEditar.dsAcessorio,
-      cdEmpresa: this.produtoParaEditar.cdEmpresa
+      cdEmpresa: this.produtoParaEditar.cdEmpresa,
     };
 
     const requests = [];
 
-    
     requests.push(
-      this.produtoService.atualizarTextoProduto(
-        this.produtoParaEditar.cdProduto,
-        dadosTexto
-      )
+      this.produtoService.atualizarTextoProduto(this.produtoParaEditar.cdProduto, dadosTexto)
     );
 
-    
     const dadosEstoque = {
       qtdEstoqueProduto: this.produtoParaEditar.qtdEstoqueProduto,
-      cdProduto: this.produtoParaEditar.cdProduto
+      cdProduto: this.produtoParaEditar.cdProduto,
     };
 
     requests.push(
-      this.produtoService.atualizarEstoque(
-        this.produtoParaEditar.cdProduto,
-        dadosEstoque
-      )
+      this.produtoService.atualizarEstoque(this.produtoParaEditar.cdProduto, dadosEstoque)
     );
 
-   
     if (this.imagemSelecionada) {
       requests.push(
         this.produtoService.atualizarImagemProduto(
@@ -144,7 +133,7 @@ export class GerenciarProduto implements OnInit {
         console.error('Erro ao atualizar produto:', err);
         this.showToast('Erro ao atualizar produto!', 'error');
         this.salvandoEdicao = false;
-      }
+      },
     });
   }
 
@@ -188,33 +177,27 @@ export class GerenciarProduto implements OnInit {
 
     this.produtoService.excluirProduto(id).subscribe({
       next: () => {
-        this.produtos = this.produtos.filter(p => p.cdProduto !== id);
+        this.produtos = this.produtos.filter((p) => p.cdProduto !== id);
         this.showToast('Produto excluído com sucesso!', 'success');
       },
       error: (err) => {
         console.error('Erro ao excluir produto:', err);
         this.showToast('Erro ao excluir produto!', 'error');
-      }
+      },
     });
 
     this.produtoParaExcluir = null;
   }
 
-  showToast(msg: string, type: 'success' | 'error'): void {
-    if (this.toastProduto) {
-      const toastElement = this.toastProduto.nativeElement;
-      const toastBody = toastElement.querySelector('.toast-body');
-      
-      if (toastBody) {
-        toastBody.textContent = msg;
-      }
-      
-      toastElement.classList.remove('text-bg-success', 'text-bg-danger');
-      toastElement.classList.add(type === 'success' ? 'text-bg-success' : 'text-bg-danger');
+  showToast(message: string, type: 'success' | 'error' = 'success') {
+    this.toast = {
+      show: true,
+      message,
+      type,
+    };
 
-      // @ts-ignore
-      const toast = new bootstrap.Toast(toastElement);
-      toast.show();
-    }
+    setTimeout(() => {
+      this.toast.show = false;
+    }, 3000);
   }
 }

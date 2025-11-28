@@ -6,6 +6,7 @@ import { Viacep } from '../../services/viacep';
 import { HttpClient } from '@angular/common/http';
 import { CpfValidator } from '../../validators/cpfValidator';
 import { AuthService } from '../../services/auth-service';
+import { ShowToast } from '../../components/show-toast/show-toast';
 
 export interface UsuarioCadastro {
   nmCliente: string;
@@ -22,7 +23,7 @@ export interface UsuarioCadastro {
 @Component({
   selector: 'app-cadastro',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, ShowToast],
   templateUrl: './cadastro.html',
   styleUrl: './cadastro.scss',
 })
@@ -31,9 +32,12 @@ export class Cadastro {
   errorMessage = '';
   isLoading = false;
 
-  showToast = false;
-  toastMessage = '';
-  toastType: 'success' | 'error' = 'success';
+  toast = {
+  show: false,
+  message: '',
+  type: 'success' as 'success' | 'error'
+};
+
 
   constructor(
     private fb: FormBuilder,
@@ -59,12 +63,12 @@ export class Cadastro {
     );
   }
 
-  // VALIDADOR CUSTOMIZADO PARA CPF
+  
   cpfValidator(control: AbstractControl): ValidationErrors | null {
     const cpf = control.value;
     
     if (!cpf) {
-      return null; // Se vazio, deixa o Validators.required cuidar
+      return null; 
     }
     
     if (!CpfValidator.validarCPF(cpf)) {
@@ -84,18 +88,21 @@ export class Cadastro {
     return null;
   }
 
-  mostrarToast(mensagem: string, tipo: 'success' | 'error' = 'success') {
-    this.toastMessage = mensagem;
-    this.toastType = tipo;
-    this.showToast = true;
+  showToast(message: string, type: 'success' | 'error' = 'error') {
+  this.toast = {
+    show: true,
+    message,
+    type
+  };
 
-    setTimeout(() => {
-      this.showToast = false;
-    }, 3000);
-  }
+  setTimeout(() => {
+    this.toast.show = false;
+  }, 3000);
+}
+
 
   fecharToast() {
-    this.showToast = false;
+    this.toast.show = false;
   }
 
   formatCEP(event: any) {
@@ -110,7 +117,7 @@ export class Cadastro {
 
     if (cep.length !== 8) {
       this.cadastroForm.get('nuCEP')?.markAsTouched();
-      this.mostrarToast('CEP deve ter 8 dígitos', 'error');
+      this.showToast('CEP deve ter 8 dígitos', 'error');
       return;
     }
 
@@ -122,13 +129,13 @@ export class Cadastro {
             dsCidade: data.localidade,
             dsEndereco: data.logradouro
           });
-          this.mostrarToast('CEP encontrado!', 'success');
+          this.showToast('CEP encontrado!', 'success');
         } else {
-          this.mostrarToast('CEP não encontrado', 'error');
+          this.showToast('CEP não encontrado', 'error');
         }
       },
       error: () => {
-        this.mostrarToast('Erro ao buscar CEP', 'error');
+        this.showToast('Erro ao buscar CEP', 'error');
       }
     });
   }
@@ -167,7 +174,7 @@ export class Cadastro {
   onSubmit() {
     if (this.cadastroForm.invalid) {
       this.markFormGroupTouched(this.cadastroForm);
-      this.mostrarToast('Preencha todos os campos obrigatórios', 'error');
+      this.showToast('Preencha todos os campos obrigatórios', 'error');
       return;
     }
 
@@ -192,7 +199,7 @@ export class Cadastro {
     this.authService.cadastrar(usuarioCadastro).subscribe({
       next: () => {
         this.isLoading = false;
-        this.mostrarToast("Cadastro realizado com sucesso!", "success");
+        this.showToast("Cadastro realizado com sucesso!", "success");
 
         setTimeout(() => {
           this.router.navigate(['/login']);
@@ -201,7 +208,7 @@ export class Cadastro {
       error: (err) => {
         this.isLoading = false;
         const erro = err.error?.message || "Erro ao cadastrar";
-        this.mostrarToast(erro, "error");
+        this.showToast(erro, "error");
       }
     });
   }
