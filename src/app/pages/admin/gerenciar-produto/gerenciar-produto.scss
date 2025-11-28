@@ -33,12 +33,14 @@
   height: 60px;
   flex-shrink: 0;
   overflow: hidden;
+  
 }
 
 .produto-img-container img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+ 
 }
 
 .badge {
