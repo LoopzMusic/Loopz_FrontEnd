@@ -48,6 +48,17 @@ export class FinalizarCompra implements OnInit {
   processando = false;
 
   ngOnInit() {
+    // 1. Verifica se há parâmetros de retorno de pagamento na URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const externalId = urlParams.get('externalId');
+    const sucesso = urlParams.get('sucesso');
+
+    if (externalId && sucesso) {
+      // 2. Processa o retorno do pagamento
+      this.processarRetornoPagamento(externalId, sucesso === 'true');
+      return;
+    }
+
     const usuario = this.authService.getUsuarioLogado();
 
     // ✅ BLOQUEIA SE USUÁRIO NÃO ESTÁ LOGADO
@@ -69,6 +80,36 @@ export class FinalizarCompra implements OnInit {
     // ✅ TUDO OK, CARREGA O CHECKOUT
     this.carregarCarrinho();
     this.calcularSubtotal();
+  }
+
+  processarRetornoPagamento(externalId: string, sucesso: boolean) {
+    // Limpa os parâmetros da URL para evitar reprocessamento
+    this.router.navigate([], {
+      queryParams: { externalId: null, sucesso: null },
+      queryParamsHandling: 'merge',
+    });
+
+    if (sucesso) {
+      // Pagamento bem-sucedido, limpa o carrinho e redireciona para meus-pedidos
+      this.carrinhoService.limparCarrinho().subscribe({
+        next: () => {
+          this.mostrarToast('Pagamento confirmado! Seu pedido está a caminho.', 'success');
+          this.router.navigate(['/meus-pedidos']);
+        },
+        error: (err) => {
+          console.error('Erro ao limpar carrinho:', err);
+          this.mostrarToast(
+            'Pagamento confirmado, mas houve um erro ao limpar o carrinho.',
+            'success'
+          );
+          this.router.navigate(['/meus-pedidos']);
+        },
+      });
+    } else {
+      // Pagamento cancelado/falhou, mantém o carrinho e redireciona para a tela inicial
+      // Removendo a mensagem de erro conforme solicitado pelo usuário.
+      this.router.navigate(['/']); // Redireciona para a raiz, que deve ser a página inicial
+    }
   }
 
   carregarCarrinho() {
@@ -205,7 +246,9 @@ export class FinalizarCompra implements OnInit {
 
           if (pedidoResponse.urlPagamento) {
             console.log('✅ Redirecionando para pagamento...');
-            await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
+            // Não finaliza o carrinho aqui, pois o status final do pedido
+            // será determinado pelo retorno do AbacatePay.
+            // O carrinho só será limpo após a confirmação de sucesso.
 
             // Pequeno delay para garantir que tudo foi salvo
             setTimeout(() => {
