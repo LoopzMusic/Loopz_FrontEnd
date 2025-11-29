@@ -5,7 +5,7 @@ import { UsuarioService } from '../../services/usuario/usuario-service';
 import { Usuario } from '../../shared/models/Usuario';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CpfValidator } from '../../validators/cpfValidator'; 
+import { CpfValidator } from '../../validators/cpfValidator';
 
 @Component({
   selector: 'app-perfil',
@@ -39,10 +39,10 @@ export class Perfil implements OnInit {
         this.usuario = { ...usuarioCompleto, cdUsuario: user.cdUsuario };
         this.usuarioOriginal = { ...this.usuario };
         this.carregando = false;
-        
+
         const usuarioAtualizado = {
           ...user,
-          ...usuarioCompleto
+          ...usuarioCompleto,
         };
         this.authService.setUsuario(usuarioAtualizado);
       },
@@ -51,7 +51,7 @@ export class Perfil implements OnInit {
         this.carregando = false;
         this.usuario = user;
         this.usuarioOriginal = { ...user };
-      }
+      },
     });
   }
 
@@ -71,29 +71,25 @@ export class Perfil implements OnInit {
       this.cpfInvalido = false;
       return;
     }
-    
+
     this.cpfInvalido = !CpfValidator.validarCPF(this.usuario.nuCPF);
   }
 
   formatarCPF() {
     if (this.usuario?.nuCPF) {
-      
       let cpfLimpo = this.usuario.nuCPF.replace(/[^\d]/g, '');
-      
-      
+
       if (cpfLimpo.length > 11) {
         cpfLimpo = cpfLimpo.substring(0, 11);
       }
-      
-      
+
       if (cpfLimpo.length <= 11) {
         this.usuario.nuCPF = cpfLimpo
           .replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d)/, '$1.$2')
           .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
       }
-      
-      
+
       this.validarCPF();
     }
   }
@@ -104,7 +100,7 @@ export class Perfil implements OnInit {
       return;
     }
 
-    
+    // ✅ VALIDAR CPF
     if (!CpfValidator.validarCPF(this.usuario.nuCPF)) {
       this.cpfInvalido = true;
       this.showToast('CPF inválido!');
@@ -113,28 +109,31 @@ export class Perfil implements OnInit {
 
     this.salvando = true;
 
+    // ✅ ENVIAR SOMENTE OS CAMPOS QUE O BACKEND ESPERA (UsuarioCriarDto)
     const dadosAtualizar = {
       nmCliente: this.usuario.nmCliente,
+      dsEmail: this.usuario.dsEmail,
+      dsSenha: '', // ✅ IMPORTANTE: Backend espera senha (mesmo que não mude)
       nuCPF: this.usuario.nuCPF,
       nuTelefone: this.usuario.nuTelefone,
       dsCidade: this.usuario.dsCidade,
       dsEstado: this.usuario.dsEstado,
       dsEndereco: this.usuario.dsEndereco,
       nuEndereco: this.usuario.nuEndereco,
-      dsEmail: this.usuario.dsEmail,
-      flAtivo: this.usuario.flAtivo
     };
 
     this.usuarioService.atualizarUsuario(this.usuario.cdUsuario, dadosAtualizar).subscribe({
       next: (response) => {
         console.log('Usuário atualizado:', response);
-        
+
+        // ✅ Atualiza localStorage
         const usuarioAtualizado = {
           cdUsuario: this.usuario!.cdUsuario,
-          ...dadosAtualizar
+          ...dadosAtualizar,
+          profileComplete: true, // ✅ Marca como completo após salvar
         };
         this.authService.setUsuario(usuarioAtualizado);
-        
+
         this.usuarioOriginal = { ...this.usuario! };
         this.modoEdicao = false;
         this.salvando = false;
@@ -144,8 +143,14 @@ export class Perfil implements OnInit {
       error: (error) => {
         console.error('Erro ao atualizar usuário:', error);
         this.salvando = false;
-        this.showToast('Erro ao atualizar perfil!');
-      }
+
+        // ✅ Mostra erro específico se houver
+        if (error.error?.message) {
+          this.showToast(error.error.message);
+        } else {
+          this.showToast('Erro ao atualizar perfil!');
+        }
+      },
     });
   }
 

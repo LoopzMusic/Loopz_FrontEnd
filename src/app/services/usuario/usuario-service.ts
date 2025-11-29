@@ -8,13 +8,13 @@ import { Usuario } from '../../shared/models/Usuario';
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8085/usuario'; 
+  private apiUrl = 'http://localhost:8085/usuario';
 
   buscarUsuarioPorId(cdCliente: number): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/buscar/${cdCliente}`);
   }
 
-  atualizarUsuario(cdCliente: number, usuario: Usuario): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.apiUrl}/update/${cdCliente}`, usuario);
+  atualizarUsuario(cdCliente: number, dados: any): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/${cdCliente}/perfil`, dados);
   }
 }

@@ -35,8 +35,15 @@ export class Card {
   adicionarFavorito() {
     const usuario = this.authService.getUsuarioLogado();
 
+    // ✅ VERIFICAR SE ESTÁ LOGADO
     if (!usuario || !usuario.cdUsuario) {
-      this.showToast('Você precisa estar logado!');
+      this.showToast('Você precisa estar logado!', 'error');
+      return;
+    }
+
+    // ✅ VERIFICAR SE PERFIL ESTÁ COMPLETO
+    if (!usuario.profileComplete) {
+      this.showToast('Complete seu perfil antes de favoritar produtos!', 'error');
       return;
     }
 
@@ -55,11 +62,11 @@ export class Card {
             this.router.navigate(['/produtos']);
           }
 
-          this.showToast('Removido dos favoritos!');
+          this.showToast('Removido dos favoritos!', 'error');
         },
         error: (error) => {
           console.error('Erro ao remover favorito:', error);
-          this.showToast('Erro ao remover dos favoritos!');
+          this.showToast('Erro ao remover dos favoritos!', 'error');
         },
       });
     } else {
@@ -76,7 +83,7 @@ export class Card {
         },
         error: (error) => {
           console.error('Erro ao adicionar favorito:', error);
-          this.showToast('Erro ao adicionar aos favoritos!');
+          this.showToast('Erro ao adicionar aos favoritos!', 'error');
         },
       });
     }
@@ -96,6 +103,18 @@ export class Card {
   adicionarAoCarrinho() {
     const usuario = this.authService.getUsuarioLogado();
 
+    // ✅ VERIFICAR SE ESTÁ LOGADO
+    if (!usuario || !usuario.cdUsuario) {
+      this.showToast('Você precisa estar logado para adicionar ao carrinho!', 'error');
+      return;
+    }
+
+    // ✅ VERIFICAR SE PERFIL ESTÁ COMPLETO
+    if (!usuario.profileComplete) {
+      this.showToast('Complete seu perfil antes de adicionar produtos ao carrinho!', 'error');
+      return;
+    }
+
     const item = {
       cdProduto: this.produto.cdProduto,
       nome: this.produto.nmProduto,
@@ -106,30 +125,14 @@ export class Card {
       imagem: `http://localhost:8085/produto/${this.produto.cdProduto}/imagem`,
     };
 
-    if (usuario && usuario.cdUsuario) {
-      
-      this.carrinhoService.adicionarItem(item).subscribe({
-        next: () => {
-          this.showToast('Produto adicionado ao carrinho!');
-        },
-        error: (error) => {
-          console.error('Erro ao adicionar ao carrinho:', error);
-          this.showToast('Erro ao adicionar ao carrinho!');
-        },
-      });
-    } else {
-      
-      let carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-      const itemExistente = carrinho.find((i: any) => i.cdProduto === item.cdProduto);
-
-      if (itemExistente) {
-        itemExistente.quantidade++;
-      } else {
-        carrinho.push(item);
-      }
-
-      localStorage.setItem('carrinho', JSON.stringify(carrinho));
-      this.showToast('Produto adicionado ao carrinho!');
-    }
+    this.carrinhoService.adicionarItem(item).subscribe({
+      next: () => {
+        this.showToast('Produto adicionado ao carrinho!');
+      },
+      error: (error) => {
+        console.error('Erro ao adicionar ao carrinho:', error);
+        this.showToast('Erro ao adicionar ao carrinho!', 'error');
+      },
+    });
   }
 }
