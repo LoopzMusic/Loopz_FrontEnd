@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
+import { ResumoAdministrativoService } from '../../../services/administrativo/administrativo';
 
 interface StatsCard {
   title: string;
@@ -9,6 +10,7 @@ interface StatsCard {
   subtitle: string;
   icon: string;
   color: string;
+  alert?: boolean; 
 }
 
 interface QuickAction {
@@ -33,46 +35,26 @@ interface RecentActivity {
 })
 export class Dashboard implements OnInit {
   private router = inject(Router);
+  private resumoService = inject(ResumoAdministrativoService);
 
-  stats: StatsCard[] = [
-    {
-      title: 'Total de Produtos',
-      value: 156,
-      subtitle: '+12 este mês',
-      icon: 'box-fill',
-      color: '#2196F3',
-    },
-    {
-      title: 'Pedidos Totais',
-      value: 342,
-      subtitle: '+23 esta semana',
-      icon: 'cart-fill',
-      color: '#4CAF50',
-    },
-    {
-      title: 'Avaliações',
-      value: 1234,
-      subtitle: '4.7 média geral',
-      icon: 'star-fill',
-      color: '#FF9800',
-    },
-  ];
+  stats: StatsCard[] = [];
+  carregandoStats = true;
 
   quickActions: QuickAction[] = [
     {
       title: 'Gerenciar Produtos',
       description: 'Visualizar, editar e excluir produtos',
-      route: '/admin/gerenciar-produtos',
+      route: '/admin/gerenciar-produto',
     },
     {
       title: 'Cadastrar Produto',
       description: 'Adicionar novo produto ao catálogo',
-      route: '/admin/cadastrar-produtos',
+      route: '/admin/cadastrar-produto',
     },
     {
       title: 'Produtos Vendidos',
       description: 'Visualizar pedidos e atualizar status',
-      route: '/admin/vendidos',
+      route: '/admin/produto-vendido',
     },
     {
       title: 'Avaliações',
@@ -102,7 +84,79 @@ export class Dashboard implements OnInit {
     },
   ];
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.carregarResumo();
+  }
+
+  carregarResumo(): void {
+  this.carregandoStats = true;
+
+  this.resumoService.getResumoCompleto().subscribe({
+    next: (resumo) => {
+      console.log('Resumo carregado:', resumo);
+      
+      const pedidosRecentes = resumo.pedidosEmAndamento || 0;
+      const temPedidosRecentes = pedidosRecentes > 0;
+      
+      this.stats = [
+        {
+          title: 'Total de Produtos',
+          value: resumo.totalProdutos,
+          subtitle: 'Produtos cadastrados',
+          icon: 'box-fill',
+          color: '#2196F3',
+        },
+        {
+          title: 'Pedidos Totais',
+          value: resumo.totalPedidos,
+          subtitle: temPedidosRecentes 
+            ? `${pedidosRecentes} pedido${pedidosRecentes > 1 ? 's' : ''} recentes, ${pedidosRecentes > 1 ? 'olhar auditoria' : ''}` 
+            : 'Pedidos realizados',
+          icon: 'cart-fill',
+          color: temPedidosRecentes ? '#FF9800' : '#4CAF50',
+          alert: temPedidosRecentes 
+        },
+        {
+          title: 'Avaliações',
+          value: resumo.totalFeedbacks,
+          subtitle: 'Feedbacks recebidos',
+          icon: 'star-fill',
+          color: '#FF9800',
+        },
+      ];
+
+      this.carregandoStats = false;
+    },
+    error: (error) => {
+      console.error('Erro ao carregar resumo:', error);
+      this.carregandoStats = false;
+      
+      this.stats = [
+        {
+          title: 'Total de Produtos',
+          value: 0,
+          subtitle: 'Erro ao carregar',
+          icon: 'box-fill',
+          color: '#2196F3',
+        },
+        {
+          title: 'Pedidos Totais',
+          value: 0,
+          subtitle: 'Erro ao carregar',
+          icon: 'cart-fill',
+          color: '#4CAF50',
+        },
+        {
+          title: 'Avaliações',
+          value: 0,
+          subtitle: 'Erro ao carregar',
+          icon: 'star-fill',
+          color: '#FF9800',
+        },
+      ];
+    }
+  });
+}
 
   navigateTo(route: string, item: string): void {
     this.router.navigate([route]);

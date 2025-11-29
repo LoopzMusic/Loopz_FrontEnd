@@ -27,8 +27,8 @@ export class PedidoService {
     return this.http.get<PedidoResumoAdminTodos[]>(this.apiUrlAdmin);
   }
 
-  atualizarStatusPedido(cdPedido: number, status: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/atualizar/${cdPedido}/status`, { status });
+  atualizarStatusPedido(cdPedido: number): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${cdPedido}/finalizado`, {});
   }
   
 }

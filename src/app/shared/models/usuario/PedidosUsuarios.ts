@@ -18,6 +18,7 @@ export interface PedidoResumo {
 export interface PedidoResumoAdminTodos {
   cdPedido: number;
   vlTotalPedido: number;
+  statusPedido: string;
   nmCliente: string;
   dtFinalizacao?: string;
   itens: ItemPedidoResponseDto[];

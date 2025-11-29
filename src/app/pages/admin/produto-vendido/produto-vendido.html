@@ -3,7 +3,7 @@
 
   <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
     <header class="page-header d-flex justify-content-between align-items-center mb-4">
-      <h1 class="fs-3 fw-bold text-dark-gray">Produtos Vendidos</h1>
+      <h1 class="fs-3 fw-bold text-dark-gray">Auditoria de Pedidos</h1>
 
       <!-- Filtro por Status (opcional) -->
       <div class="dropdown">
@@ -17,103 +17,117 @@
           Filtrar por Status
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('')">Todos</a></li>
+          <li>
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('')"
+              >Todos</a
+            >
+          </li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('aguardando')">Aguardando</a></li>
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('preparando')">Preparando</a></li>
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('enviado')">Enviado</a></li>
-          <li><a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('entregue')">Entregue</a></li>
+          <li>
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('ANDAMENTO')"
+              >Em Andamento</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
+              style="cursor: pointer"
+              (click)="filtrarPorStatus('FINALIZADO')"
+              >Finalizado</a
+            >
+          </li>
         </ul>
       </div>
     </header>
 
     <!-- Loading -->
     @if (carregando) {
-      <div class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Carregando...</span>
-        </div>
-        <p class="mt-3 text-muted">Carregando pedidos...</p>
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Carregando...</span>
       </div>
+      <p class="mt-3 text-muted">Carregando pedidos...</p>
+    </div>
     }
 
     <!-- Lista de Pedidos -->
     @if (!carregando) {
-      <div class="pedidos-list">
-        @for (pedido of pedidosFiltrados; track pedido.cdPedido) {
-          <div class="card pedido-card shadow-sm border-0 rounded-3 mb-3">
-            <div class="card-body p-4">
-              <div class="row align-items-center">
-                <div class="col-md-6">
-                  <div class="d-flex align-items-center gap-3 mb-2">
-                    <h3 class="fs-5 fw-bold mb-0">Pedido #{{ pedido.numero }}</h3>
-                    <span class="badge" [class]="getBadgeClass(pedido.status)">{{
-                      getStatusLabel(pedido.status)
-                    }}</span>
-                  </div>
-                  <p class="text-muted mb-1"><strong>Cliente:</strong> {{ pedido.nmCliente }}</p>
-                  <p class="text-muted mb-0">
-                    <small>{{ pedido.dataFormatada }} • {{ pedido.totalItens }} item{{ pedido.totalItens > 1 ? 's' : '' }}</small>
-                  </p>
+    <div class="pedidos-list">
+      @for (pedido of pedidosFiltrados; track pedido.cdPedido) {
+      <div class="card pedido-card shadow-sm border-0 rounded-3 mb-3">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-3 mb-2">
+                <h3 class="fs-5 fw-bold mb-0">Pedido #{{ pedido.numero }}</h3>
+                <span class="badge" [class]="getBadgeClass(pedido.status)">{{
+                  getStatusLabel(pedido.status)
+                }}</span>
+              </div>
+              <p class="text-muted mb-1"><strong>Cliente:</strong> {{ pedido.nmCliente }}</p>
+              <p class="text-muted mb-0">
+                <small
+                  >{{ pedido.dataFormatada }} • {{ pedido.totalItens }} item{{
+                    pedido.totalItens > 1 ? 's' : ''
+                  }}</small
+                >
+              </p>
+            </div>
+
+            <div class="col-md-6">
+              <div class="d-flex align-items-center justify-content-end gap-3">
+                <div class="text-end me-3">
+                  <h4 class="fs-4 fw-bold text-dark mb-0">
+                    {{ pedido.vlTotalPedido | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                  </h4>
                 </div>
 
-                <div class="col-md-6">
-                  <div class="d-flex align-items-center justify-content-end gap-3">
-                    <div class="text-end me-3">
-                      <h4 class="fs-4 fw-bold text-dark mb-0">
-                        {{ pedido.vlTotalPedido | currency : 'BRL' : 'symbol' : '1.2-2' }}
-                      </h4>
-                    </div>
-
-                    <div class="dropdown dropdown-status">
-                      <button
-                        class="btn btn-status dropdown-toggle"
-                        type="button"
-                        [id]="'dropdownStatus' + pedido.cdPedido"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
+                <div class="dropdown dropdown-status">
+                  <button
+                    class="btn btn-status dropdown-toggle"
+                    type="button"
+                    [id]="'dropdownStatus' + pedido.cdPedido"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    {{ getStatusLabel(pedido.status) }}
+                  </button>
+                  <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    [attr.aria-labelledby]="'dropdownStatus' + pedido.cdPedido"
+                  >
+                    <li>
+                      <a
+                        class="dropdown-item"
+                        style="cursor: pointer"
+                        (click)="alterarStatus(pedido.cdPedido, 'FINALIZADO')"
+                        >Finalizar</a
                       >
-                        {{ getStatusLabel(pedido.status) }}
-                      </button>
-                      <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        [attr.aria-labelledby]="'dropdownStatus' + pedido.cdPedido"
-                      >
-                        <li>
-                          <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedido.cdPedido, 'aguardando')">Aguardando</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedido.cdPedido, 'preparando')">Preparando</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedido.cdPedido, 'enviado')">Enviado</a>
-                        </li>
-                        <li>
-                          <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedido.cdPedido, 'entregue')">Entregue</a>
-                        </li>
-                      </ul>
-                    </div>
-
-                    <button
-                      class="btn btn-outline-secondary btn-sm"
-                      (click)="verDetalhes(pedido)"
-                      data-bs-toggle="modal"
-                      data-bs-target="#modalDetalhes"
-                    >
-                      <i class="bi bi-eye"></i>
-                    </button>
-                  </div>
+                    </li>
+                    <li></li>
+                  </ul>
                 </div>
+
+                <button
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="verDetalhes(pedido)"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalDetalhes"
+                >
+                  <i class="bi bi-eye"></i>
+                </button>
               </div>
             </div>
           </div>
-        } @empty {
-          <div class="text-center py-5">
-            <i class="bi bi-inbox fs-1 text-muted"></i>
-            <p class="text-muted mt-3">Nenhum pedido encontrado</p>
-          </div>
-        }
+        </div>
       </div>
+      } @empty {
+      <div class="text-center py-5">
+        <i class="bi bi-inbox fs-1 text-muted"></i>
+        <p class="text-muted mt-3">Nenhum pedido encontrado</p>
+      </div>
+      }
+    </div>
     }
   </main>
 </div>
@@ -149,42 +163,46 @@
       <div class="modal-body px-4 pb-4">
         <div class="mb-4">
           <p class="text-muted mb-1"><strong>Cliente:</strong> {{ pedidoSelecionado.nmCliente }}</p>
-          <p class="text-muted mb-0"><strong>Data:</strong> {{ pedidoSelecionado.dataFormatada }}</p>
+          <p class="text-muted mb-0">
+            <strong>Data:</strong> {{ pedidoSelecionado.dataFormatada }}
+          </p>
         </div>
 
         <div class="produtos-pedido">
           @for (item of pedidoSelecionado.itens; track item.cdProduto) {
-            <div class="card produto-item shadow-sm border rounded-3 mb-3">
-              <div class="card-body p-3">
-                <div class="row align-items-center">
-                  <div class="col-auto">
-                    <div class="produto-img bg-light rounded d-flex align-items-center justify-content-center">
-                      <img 
-                        [src]="'http://localhost:8085/produto/' + item.cdProduto + '/imagem'" 
-                        alt="{{ item.nmProduto }}"
-                        class="img-fluid"
-                        style="width: 60px; height: 60px; object-fit: cover;"
-                        onerror="this.src='assets/placeholder.png'"
-                      >
-                    </div>
+          <div class="card produto-item shadow-sm border rounded-3 mb-3">
+            <div class="card-body p-3">
+              <div class="row align-items-center">
+                <div class="col-auto">
+                  <div
+                    class="produto-img bg-light rounded d-flex align-items-center justify-content-center"
+                  >
+                    <img
+                      [src]="'http://localhost:8085/produto/' + item.cdProduto + '/imagem'"
+                      alt="{{ item.nmProduto }}"
+                      class="img-fluid"
+                      style="width: 60px; height: 60px; object-fit: cover"
+                      onerror="this.src='assets/placeholder.png'"
+                    />
                   </div>
-                  <div class="col">
-                    <h5 class="fw-bold mb-1">{{ item.nmProduto }}</h5>
-                    <p class="text-muted mb-0">
-                      <small>
-                        Quantidade: {{ item.quantidade }} • 
-                        Preço unitário: {{ item.precoPorProdutoUnidade | currency : 'BRL' : 'symbol' : '1.2-2' }}
-                      </small>
-                    </p>
-                  </div>
-                  <div class="col-auto">
-                    <h5 class="fw-bold mb-0">
-                      {{ item.total | currency : 'BRL' : 'symbol' : '1.2-2' }}
-                    </h5>
-                  </div>
+                </div>
+                <div class="col">
+                  <h5 class="fw-bold mb-1">{{ item.nmProduto }}</h5>
+                  <p class="text-muted mb-0">
+                    <small>
+                      Quantidade: {{ item.quantidade }} • Preço unitário:
+                      {{ item.precoPorProdutoUnidade | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </small>
+                  </p>
+                </div>
+                <div class="col-auto">
+                  <h5 class="fw-bold mb-0">
+                    {{ item.total | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                  </h5>
                 </div>
               </div>
             </div>
+          </div>
           }
         </div>
 
@@ -208,17 +226,13 @@
               {{ getStatusLabel(pedidoSelecionado.status) }}
             </button>
             <ul class="dropdown-menu w-100" aria-labelledby="dropdownStatusModal">
-              <li>
-                <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedidoSelecionado.cdPedido, 'aguardando')">Aguardando</a>
-              </li>
-              <li>
-                <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedidoSelecionado.cdPedido, 'preparando')">Preparando</a>
-              </li>
-              <li>
-                <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedidoSelecionado.cdPedido, 'enviado')">Enviado</a>
-              </li>
-              <li>
-                <a class="dropdown-item" style="cursor: pointer" (click)="alterarStatus(pedidoSelecionado.cdPedido, 'entregue')">Entregue</a>
+              <li *ngIf="pedidoSelecionado?.statusPedido !== 'FINALIZADO'">
+                <a
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="alterarStatus(pedidoSelecionado.cdPedido, 'FINALIZADO')"
+                  >Finalizar Pedido</a
+                >
               </li>
             </ul>
           </div>
