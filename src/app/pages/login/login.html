@@ -22,7 +22,7 @@
         <button
           class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
           [class.active-toggle]="!isAdmin"
-          (click)="isAdmin = false"
+          (click)="setAdminMode(false)"
           [disabled]="isLoggingIn"
         >
           Usuário
@@ -31,7 +31,7 @@
         <button
           class="btn flex-grow-1 py-2 border-0 fw-medium text-secondary toggle-btn-transition"
           [class.active-toggle]="isAdmin"
-          (click)="isAdmin = true"
+          (click)="setAdminMode(true)"
           [disabled]="isLoggingIn"
         >
           Administrador

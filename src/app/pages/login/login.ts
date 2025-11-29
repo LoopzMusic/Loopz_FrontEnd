@@ -158,6 +158,22 @@ export class Login implements OnInit, AfterViewInit {
   }
 
   /**
+   * Alterna o modo de login entre Usuário e Administrador
+   * @param isAdmin Novo estado do modo administrador
+   */
+  setAdminMode(isAdmin: boolean): void {
+    this.isAdmin = isAdmin;
+    // Força a re-renderização do botão do Google quando volta para o modo Usuário
+    if (!isAdmin) {
+      // O setTimeout é necessário para garantir que o DOM foi atualizado
+      // e o container do botão do Google está visível novamente.
+      setTimeout(() => {
+        this.oauth2Service.renderGoogleButton('google-button-container');
+      }, 0);
+    }
+  }
+
+  /**
    * Submete o formulário de login tradicional
    */
   onSubmit(): void {
