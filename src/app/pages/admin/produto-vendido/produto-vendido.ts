@@ -1,23 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Sidebar } from '../../../components/adm/sidebar/sidebar';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { PedidoService } from '../../../services/usuario/pedidos/pedido';
+import { PedidoResumoAdminTodos } from '../../../shared/models/usuario/PedidosUsuarios'; 
 
-interface Produto {
-  nome: string;
-  quantidade: number;
-  preco: number;
-}
-
-interface Pedido {
-  id: number;
+interface PedidoExibicao extends PedidoResumoAdminTodos {
   numero: string;
-  cliente: string;
-  data: string;
-  itens: number;
-  valor: number;
+  dataFormatada: string;
+  totalItens: number;
   status: 'aguardando' | 'preparando' | 'enviado' | 'entregue';
-  produtos: Produto[];  
 }
 
 @Component({
@@ -26,70 +18,50 @@ interface Pedido {
   templateUrl: './produto-vendido.html',
   styleUrl: './produto-vendido.scss',
 })
-export class ProdutoVendido {
-  pedidos: Pedido[] = [
-    {
-      id: 1,
-      numero: '001',
-      cliente: 'João Silva',
-      data: '14/01/2024',
-      itens: 1,
-      valor: 899.90,
-      status: 'entregue',
-      produtos: [  
-        {
-          nome: 'Violão Clássico Loopz Pro',
-          quantidade: 1,
-          preco: 899.90
-        }
-      ]
-    },
-    {
-      id: 2,
-      numero: '002',
-      cliente: 'Maria Santos',
-      data: '19/01/2024',
-      itens: 1,
-      valor: 2499.90,
-      status: 'enviado',
-      produtos: [  
-        {
-          nome: 'Guitarra Elétrica Stratocaster',
-          quantidade: 1,
-          preco: 2499.90
-        }
-      ]
-    },
-    {
-      id: 3,
-      numero: '003',
-      cliente: 'Pedro Costa',
-      data: '21/01/2024',
-      itens: 2,
-      valor: 3299.90,
-      status: 'preparando',
-      produtos: [  
-        {
-          nome: 'Bateria Acústica Pearl',
-          quantidade: 1,
-          preco: 2499.90
-        },
-        {
-          nome: 'Pedal de Sustain',
-          quantidade: 1,
-          preco: 800.00
-        }
-      ]
-    }
-  ];
+export class ProdutoVendido implements OnInit {
 
-  pedidosFiltrados: Pedido[] = [];
-  pedidoSelecionado: Pedido | null = null;
+  private pedidoService = inject(PedidoService);
+  private router = inject(Router);
 
-  constructor(private router: Router) {}
+  pedidos: PedidoExibicao[] = [];
+  pedidosFiltrados: PedidoExibicao[] = [];
+  pedidoSelecionado: PedidoExibicao | null = null;
+  carregando: boolean = true;
 
   ngOnInit(): void {
-    this.pedidosFiltrados = [...this.pedidos];
+    this.carregarPedidos();
+  }
+
+  carregarPedidos(): void {
+    this.carregando = true;
+
+    this.pedidoService.listarTodosPedidosAdmin().subscribe({
+      next: (data) => {
+        console.log('Pedidos recebidos:', data);
+        
+        
+        this.pedidos = data.map(pedido => ({
+          ...pedido,
+          numero: String(pedido.cdPedido).padStart(3, '0'),
+          dataFormatada: pedido.dtFinalizacao ? this.formatarData(pedido.dtFinalizacao) : 'Data não informada',
+          totalItens: pedido.itens.length,
+          status: 'entregue' as const 
+        }));
+
+        this.pedidosFiltrados = [...this.pedidos];
+        this.carregando = false;
+      },
+      error: (error) => {
+        console.error('Erro ao carregar pedidos:', error);
+        this.carregando = false;
+      }
+    });
+  }
+
+  formatarData(data: string): string {
+    
+    const [ano, mes, dia] = data.split('-');
+    return `${dia}/${mes}/${ano}`;
   }
 
   getStatusLabel(status: string): string {
@@ -112,26 +84,26 @@ export class ProdutoVendido {
     return classes[status] || 'badge-secondary';
   }
 
-  alterarStatus(pedidoId: number, novoStatus: 'aguardando' | 'preparando' | 'enviado' | 'entregue'): void {
-    const pedido = this.pedidos.find(p => p.id === pedidoId);
+  alterarStatus(cdPedido: number, novoStatus: 'aguardando' | 'preparando' | 'enviado' | 'entregue'): void {
+    const pedido = this.pedidos.find(p => p.cdPedido === cdPedido);
     if (pedido) {
       pedido.status = novoStatus;
-      console.log(`Status do pedido #${pedido.numero} alterado para: ${novoStatus}`);
       
-      // Aqui você deve chamar seu serviço para atualizar o status no backend
-      // Exemplo:
-      // this.pedidoService.atualizarStatus(pedidoId, novoStatus).subscribe({
-      //   next: (response) => {
-      //     console.log('Status atualizado com sucesso!', response);
-      //   },
-      //   error: (error) => {
-      //     console.error('Erro ao atualizar status:', error);
-      //   }
-      // });
+     
+      this.pedidoService.atualizarStatusPedido(cdPedido, novoStatus).subscribe({
+        next: (response) => {
+          console.log('Status atualizado com sucesso!', response);
+        },
+        error: (error) => {
+          console.error('Erro ao atualizar status:', error);
+          
+          this.carregarPedidos();
+        }
+      });
     }
   }
 
-  verDetalhes(pedido: Pedido): void {  // <-- CORRETO
+  verDetalhes(pedido: PedidoExibicao): void {
     this.pedidoSelecionado = pedido;
     console.log('Ver detalhes do pedido:', pedido);
   }

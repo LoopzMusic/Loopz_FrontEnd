@@ -24,6 +24,7 @@ export class AuthService {
         if (response.cdUsuario) {
           const usuario = {
             cdUsuario: response.cdUsuario,
+            nmCliente: response.nmCliente,
             dsEmail: response.dsEmail,
             userRole: response.userRole,
           };

@@ -3,10 +3,11 @@ import { Router, RouterLink } from '@angular/router';
 import { Usuario } from '../../shared/models/Usuario';
 import { AuthService } from '../../services/auth-service';
 import { ProdutoService } from '../../services/produto-service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
 })

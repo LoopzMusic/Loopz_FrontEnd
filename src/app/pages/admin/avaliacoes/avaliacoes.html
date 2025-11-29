@@ -1,7 +1,7 @@
 <div class="dashboard-container d-flex">
   <app-sidebar></app-sidebar>
 
-  <main class="main-content flex-grow-1 p-4 p-md-5 minimized">
+  <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
     <header class="page-header d-flex justify-content-between align-items-center mb-4">
       <h1 class="fs-3 fw-bold text-dark-gray">Avaliações</h1>
 
@@ -17,71 +17,84 @@
         </button>
         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(0)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 0"></i>Todas as notas</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(0)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 0"></i>Todas as notas
+            </a>
           </li>
           <li><hr class="dropdown-divider" /></li>
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(5)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 5"></i>5 estrelas</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(5)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 5"></i>5 estrelas
+            </a>
           </li>
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(4)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 4"></i>4 estrelas</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(4)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 4"></i>4 estrelas
+            </a>
           </li>
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(3)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 3"></i>3 estrelas</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(3)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 3"></i>3 estrelas
+            </a>
           </li>
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(2)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 2"></i>2 estrelas</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(2)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 2"></i>2 estrelas
+            </a>
           </li>
           <li>
-            <a class="dropdown-item" (click)="filtrarPorEstrelas(1)"
-              ><i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 1"></i>1 estrela</a
-            >
+            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorEstrelas(1)">
+              <i class="bi bi-check-lg me-2" *ngIf="filtroEstrelas === 1"></i>1 estrela
+            </a>
           </li>
         </ul>
       </div>
     </header>
 
-    <div class="avaliacoes-list">
-      <div
-        *ngFor="let avaliacao of avaliacoesFiltradas"
-        class="card avaliacao-card shadow-sm border-0 rounded-3 mb-3"
-      >
-        <div class="card-body p-4">
-          <div class="d-flex justify-content-between align-items-start mb-3">
-            <div>
-              <h3 class="fs-5 fw-bold mb-1">{{ avaliacao.produto }}</h3>
-              <p class="text-muted mb-0">{{ avaliacao.cliente }}</p>
-            </div>
-            <div class="text-end">
-              <div class="rating-display d-flex align-items-center justify-content-end gap-2">
-                <i class="bi bi-star-fill text-warning fs-5"></i>
-                <span class="fw-semibold text-muted"
-                  >{{ avaliacao.estrelas }} estrela{{ avaliacao.estrelas !== 1 ? 's' : '' }}</span
-                >
+    <!-- Loading -->
+    @if (carregando) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Carregando...</span>
+        </div>
+        <p class="mt-3 text-muted">Carregando avaliações...</p>
+      </div>
+    }
+
+    <!-- Lista de Avaliações -->
+    @if (!carregando) {
+      <div class="avaliacoes-list">
+        @for (avaliacao of avaliacoesFiltradas; track avaliacao.cdFeedBack) {
+          <div class="card avaliacao-card shadow-sm border-0 rounded-3 mb-3">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                  <h3 class="fs-5 fw-bold mb-1">{{ avaliacao.nmProduto }}</h3>
+                  <p class="text-muted mb-0">{{ avaliacao.nmCliente }}</p>
+                </div>
+                <div class="text-end">
+                  <div class="rating-display d-flex align-items-center justify-content-end gap-1">
+                    @for (estrela of getEstrelas(avaliacao.nuAvaliacao); track $index) {
+                      <i class="bi bi-star-fill text-warning"></i>
+                    }
+                    <span class="fw-semibold text-muted ms-2">
+                      {{ avaliacao.nuAvaliacao }} estrela{{ avaliacao.nuAvaliacao !== 1 ? 's' : '' }}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              <p class="text-muted mb-0">{{ avaliacao.dsComentario }}</p>
+              <p class="text-muted mb-0">{{ avaliacao.dtCriacao }}</p>
             </div>
           </div>
-
-          <p class="text-muted mb-2">{{ avaliacao.comentario }}</p>
-
-          <small class="text-muted">{{ avaliacao.data }}</small>
-        </div>
+        } @empty {
+          <div class="text-center py-5">
+            <i class="bi bi-star fs-1 text-muted"></i>
+            <p class="text-muted mt-3">Nenhuma avaliação encontrada</p>
+          </div>
+        }
       </div>
-
-      <div *ngIf="avaliacoesFiltradas.length === 0" class="text-center py-5">
-        <i class="bi bi-star fs-1 text-muted"></i>
-        <p class="text-muted mt-3">Nenhuma avaliação encontrada</p>
-      </div>
-    </div>
+    }
   </main>
 </div>

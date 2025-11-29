@@ -54,19 +54,10 @@
           <input
             class="form-control"
             [(ngModel)]="usuario.nuCPF"
-            [disabled]="!modoEdicao"
-            [class.is-invalid]="cpfInvalido && modoEdicao"
-            [class.is-valid]="!cpfInvalido && modoEdicao && usuario.nuCPF"
-            (input)="formatarCPF()"
-            (blur)="validarCPF()"
-            maxlength="14"
-            placeholder="000.000.000-00"
+            disabled
+            readonly
           />
-          @if (cpfInvalido && modoEdicao) {
-          <div class="invalid-feedback d-block">CPF inválido! Verifique os números digitados.</div>
-          } @if (!cpfInvalido && modoEdicao && usuario.nuCPF) {
-          <div class="valid-feedback d-block">CPF válido ✓</div>
-          }
+          <small class="text-muted">O CPF não pode ser alterado</small>
         </div>
       </div>
     </div>
@@ -82,7 +73,13 @@
       <div class="row g-3">
         <div class="col-md-6">
           <label class="form-label">E-mail</label>
-          <input class="form-control" [(ngModel)]="usuario.dsEmail" [disabled]="!modoEdicao" />
+          <input 
+            class="form-control" 
+            [(ngModel)]="usuario.dsEmail" 
+            disabled
+            readonly
+          />
+          <small class="text-muted">O e-mail não pode ser alterado</small>
         </div>
 
         <div class="col-md-6">

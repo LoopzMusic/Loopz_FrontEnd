@@ -12,6 +12,7 @@
         <div class="item-info ms-2">
           <div class="item-nome">{{ item.nmProduto }}</div>
           <div class="item-qtd-preco">x{{ item.quantidade }} - R$ {{ item.total | number:'1.2-2' }}</div>
+          <div class="item-qtd-preco">{{ pedido.dtFinalizacao }}</div>
         </div>
       </li>
     </ul>

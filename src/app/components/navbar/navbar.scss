@@ -10,13 +10,14 @@
   color: white !important;
 }
 
-.barra-pesquisa {
-  width: 400px;
-}
-
 .icons-navbar {
   text-decoration: none;
   color: white;
+  font-size: 20px;
+
+  @media (max-width: 576px) {
+    font-size: 16px;
+  }
 }
 
 .navbar-toggler {
@@ -27,6 +28,24 @@
   filter: invert(100%);
 }
 
-#perfilDropdown::after {
-  display: none;
+.icons-navbar span {
+  max-width: 120px; 
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+
+.barra-pesquisa {
+  width: 400px;
+
+  @media (max-width: 992px) {
+    width: 250px;
+  }
+
+  @media (max-width: 576px) {
+    width: 100%;
+  }
 }
