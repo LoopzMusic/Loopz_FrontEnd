@@ -14,7 +14,55 @@
     </header>
 
     <div class="card shadow-sm border-0 rounded-3">
-      <div class="card-body p-0">
+      <div class="card-body">
+        
+        <div class="d-flex gap-3 mb-4">
+          <!-- Filtro Nome do Produto -->
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar produto por nome..."
+            style="max-width: 220px"
+            [(ngModel)]="filtroNome"
+            (input)="filtrarProdutos()"
+          />
+
+          <!-- Filtro Categoria estilo dropdown status -->
+          <div class="dropdown">
+            <button
+              class="btn btn-outline-secondary dropdown-toggle"
+              type="button"
+              id="dropdownFiltroCategoria"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              {{ getLabelCategoriaFiltro() }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltroCategoria">
+              <li>
+                <a
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="filtroCategoria = ''; filtrarProdutos()"
+                >
+                  Todas as categorias
+                </a>
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li *ngFor="let c of categorias">
+                <a
+                  class="dropdown-item"
+                  style="cursor: pointer"
+                  (click)="filtroCategoria = c; filtrarProdutos()"
+                >
+                  {{ c }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- =================================================== -->
+
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
             <thead class="table">
@@ -27,8 +75,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (produto of produtos; track produto.cdProduto) {
-              <tr>
+              <tr *ngFor="let produto of produtosFiltrados">
                 <td class="px-4 py-3">
                   <div class="d-flex align-items-center gap-3">
                     <div
@@ -48,9 +95,9 @@
                 </td>
 
                 <td class="px-4 py-3">
-                  <span class="fw-semibold">{{
-                    produto.vlProduto | currency : 'BRL' : 'symbol' : '1.2-2'
-                  }}</span>
+                  <span class="fw-semibold">
+                    {{ produto.vlProduto | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                  </span>
                 </td>
 
                 <td class="px-4 py-3">
@@ -91,14 +138,14 @@
                   </div>
                 </td>
               </tr>
-              } @empty {
-              <tr>
+
+              <!-- linha vazia quando não houver resultados -->
+              <tr *ngIf="produtosFiltrados.length === 0">
                 <td colspan="5" class="text-center py-5">
                   <i class="bi bi-inbox fs-1 text-muted"></i>
-                  <p class="text-muted mt-3 mb-0">Nenhum produto cadastrado</p>
+                  <p class="text-muted mt-3 mb-0">Nenhum produto encontrado</p>
                 </td>
               </tr>
-              }
             </tbody>
           </table>
         </div>
@@ -107,6 +154,7 @@
   </main>
 </div>
 
+<!-- Modais: Excluir Produto -->
 <div
   class="modal fade"
   id="modalExcluir"
@@ -124,8 +172,7 @@
         @if (produtoParaExcluir) {
         <p class="mb-0">
           Tem certeza que deseja excluir o produto
-          <strong>{{ produtoParaExcluir.nmProduto }}</strong
-          >?
+          <strong>{{ produtoParaExcluir.nmProduto }}</strong>?
         </p>
         <p class="text-muted small mt-2 mb-0">Esta ação não pode ser desfeita.</p>
         }
@@ -145,6 +192,7 @@
   </div>
 </div>
 
+<!-- Modal Editar Produto -->
 <div
   class="modal fade"
   id="modalEditar"

@@ -26,6 +26,11 @@ export class GerenciarProduto implements OnInit {
   imagemSelecionada: File | null = null;
   imagemPreview: string | null = null;
   salvandoEdicao = false;
+  filtroNome: string = "";
+  filtroCategoria: string = "";
+  categorias: string[] = [];
+  produtosFiltrados: Produto[] = [];
+
 
   toast = {
     show: false,
@@ -40,16 +45,23 @@ export class GerenciarProduto implements OnInit {
   }
 
   carregarProdutos(): void {
-    this.produtoService.listarProdutos().subscribe({
-      next: (data) => {
-        this.produtos = data;
-      },
-      error: (err) => {
-        console.error('Erro ao listar produtos:', err);
-        this.showToast('Erro ao carregar produtos!', 'error');
-      },
-    });
-  }
+  this.produtoService.listarProdutos().subscribe({
+    next: (data) => {
+      this.produtos = data;
+
+      
+      this.categorias = [...new Set(data.map(p => p.dsCategoria))];
+
+      
+      this.produtosFiltrados = data;
+    },
+    error: (err) => {
+      console.error('Erro ao listar produtos:', err);
+      this.showToast('Erro ao carregar produtos!', 'error');
+    },
+  });
+}
+
 
   getEstoqueStatus(estoque: number): string {
     if (estoque === 0) return 'Esgotado';
@@ -188,6 +200,17 @@ export class GerenciarProduto implements OnInit {
 
     this.produtoParaExcluir = null;
   }
+
+  filtrarProdutos() {
+  this.produtosFiltrados = this.produtos.filter(p => {
+    const nomeOk = p.nmProduto.toLowerCase().includes(this.filtroNome.toLowerCase());
+    const categoriaOk = this.filtroCategoria ? p.dsCategoria === this.filtroCategoria : true;
+    return nomeOk && categoriaOk;
+  });
+}
+  getLabelCategoriaFiltro(): string {
+  return this.filtroCategoria === '' ? 'Todas as categorias' : this.filtroCategoria;
+}
 
   showToast(message: string, type: 'success' | 'error' = 'success') {
     this.toast = {

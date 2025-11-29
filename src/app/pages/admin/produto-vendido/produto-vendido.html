@@ -2,43 +2,66 @@
   <app-sidebar></app-sidebar>
 
   <main class="main-content flex-grow-1 p-4 p-md-5 bg-light-gray minimized">
-    <header class="page-header d-flex justify-content-between align-items-center mb-4">
-      <h1 class="fs-3 fw-bold text-dark-gray">Auditoria de Pedidos</h1>
+    <header class="page-header mb-4">
+  <h1 class="fs-3 fw-bold text-dark-gray">Auditoria de Pedidos</h1>
 
-      <!-- Filtro por Status (opcional) -->
-      <div class="dropdown">
-        <button
-          class="btn btn-outline-secondary dropdown-toggle"
-          type="button"
-          id="dropdownFiltro"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          Filtrar por Status
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
-          <li>
-            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('')"
-              >Todos</a
-            >
-          </li>
-          <li><hr class="dropdown-divider" /></li>
-          <li>
-            <a class="dropdown-item" style="cursor: pointer" (click)="filtrarPorStatus('ANDAMENTO')"
-              >Em Andamento</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item"
-              style="cursor: pointer"
-              (click)="filtrarPorStatus('FINALIZADO')"
-              >Finalizado</a
-            >
-          </li>
-        </ul>
-      </div>
-    </header>
+  <!-- FILTROS ABAIXO DO TÍTULO -->
+  <div class="d-flex gap-3 mt-3">
+    <!-- Filtro Nome do Cliente -->
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Buscar cliente..."
+      style="max-width: 220px"
+      [(ngModel)]="filtroNomeCliente"
+      (input)="filtrarPedidos()"
+    />
+
+    <!-- Filtro por Status -->
+    <div class="dropdown">
+      <button
+        class="btn btn-outline-secondary dropdown-toggle"
+        type="button"
+        id="dropdownFiltro"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ getLabelStatusFiltro() }}
+      </button>
+
+      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownFiltro">
+        <li>
+          <a
+            class="dropdown-item"
+            style="cursor: pointer"
+            (click)="filtroStatus = ''; filtrarPedidos()"
+          >
+            Todos
+          </a>
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+          <a
+            class="dropdown-item"
+            style="cursor: pointer"
+            (click)="filtroStatus = 'ANDAMENTO'; filtrarPedidos()"
+          >
+            Em Andamento
+          </a>
+        </li>
+        <li>
+          <a
+            class="dropdown-item"
+            style="cursor: pointer"
+            (click)="filtroStatus = 'FINALIZADO'; filtrarPedidos()"
+          >
+            Finalizado
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
 
     <!-- Loading -->
     @if (carregando) {
@@ -60,17 +83,17 @@
             <div class="col-md-6">
               <div class="d-flex align-items-center gap-3 mb-2">
                 <h3 class="fs-5 fw-bold mb-0">Pedido #{{ pedido.numero }}</h3>
-                <span class="badge" [class]="getBadgeClass(pedido.status)">{{
-                  getStatusLabel(pedido.status)
-                }}</span>
+                <span class="badge" [class]="getBadgeClass(pedido.status)">
+                  {{ getStatusLabel(pedido.status) }}
+                </span>
               </div>
               <p class="text-muted mb-1"><strong>Cliente:</strong> {{ pedido.nmCliente }}</p>
               <p class="text-muted mb-0">
-                <small
-                  >{{ pedido.dataFormatada }} • {{ pedido.totalItens }} item{{
+                <small>
+                  {{ pedido.dataFormatada }} • {{ pedido.totalItens }} item{{
                     pedido.totalItens > 1 ? 's' : ''
-                  }}</small
-                >
+                  }}
+                </small>
               </p>
             </div>
 
@@ -101,10 +124,10 @@
                         class="dropdown-item"
                         style="cursor: pointer"
                         (click)="alterarStatus(pedido.cdPedido, 'FINALIZADO')"
-                        >Finalizar</a
                       >
+                        Finalizar
+                      </a>
                     </li>
-                    <li></li>
                   </ul>
                 </div>
 
@@ -151,15 +174,11 @@
                 {{ getStatusLabel(pedidoSelecionado.status) }}
               </span>
             </div>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
         </div>
       </div>
+
       <div class="modal-body px-4 pb-4">
         <div class="mb-4">
           <p class="text-muted mb-1"><strong>Cliente:</strong> {{ pedidoSelecionado.nmCliente }}</p>
@@ -186,6 +205,7 @@
                     />
                   </div>
                 </div>
+
                 <div class="col">
                   <h5 class="fw-bold mb-1">{{ item.nmProduto }}</h5>
                   <p class="text-muted mb-0">
@@ -195,6 +215,7 @@
                     </small>
                   </p>
                 </div>
+
                 <div class="col-auto">
                   <h5 class="fw-bold mb-0">
                     {{ item.total | currency : 'BRL' : 'symbol' : '1.2-2' }}
@@ -225,14 +246,16 @@
             >
               {{ getStatusLabel(pedidoSelecionado.status) }}
             </button>
+
             <ul class="dropdown-menu w-100" aria-labelledby="dropdownStatusModal">
               <li *ngIf="pedidoSelecionado?.statusPedido !== 'FINALIZADO'">
                 <a
                   class="dropdown-item"
                   style="cursor: pointer"
                   (click)="alterarStatus(pedidoSelecionado.cdPedido, 'FINALIZADO')"
-                  >Finalizar Pedido</a
                 >
+                  Finalizar Pedido
+                </a>
               </li>
             </ul>
           </div>
