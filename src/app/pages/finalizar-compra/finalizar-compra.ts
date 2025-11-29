@@ -176,14 +176,19 @@ export class FinalizarCompra implements OnInit {
             vlTotalPedido: this.subtotal() + this.frete(),
           };
 
+          console.log('📤 Enviando pedido:', pedidoData);
+
           const pedidoResponse: any = await this.http
             .post('http://localhost:8085/pedido/criar', pedidoData)
             .toPromise();
+
+          console.log('📥 Resposta do pedido:', pedidoResponse);
 
           if (!pedidoResponse || !pedidoResponse.cdPedido) {
             throw new Error('Erro ao criar pedido');
           }
 
+          // Criar itens do pedido
           const itensPedido = this.itensCarrinho().map((item) => ({
             cdPedido: pedidoResponse.cdPedido,
             cdProduto: item.cdProduto,
@@ -195,27 +200,41 @@ export class FinalizarCompra implements OnInit {
             await this.http.post('http://localhost:8085/itempedido/criar', itemPedido).toPromise();
           }
 
-          await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
+          // ✅ Verifica se há URL de pagamento
+          console.log('🔍 URL de pagamento recebida:', pedidoResponse.urlPagamento);
 
-          this.carrinhoService.limparCarrinho().subscribe({
-            next: () => {
-              this.mostrarToast('Pedido confirmado com sucesso!', 'success');
-              this.router.navigate(['/meus-pedidos']);
-            },
-            error: (err) => {
-              console.error('Erro ao limpar carrinho:', err);
-              this.router.navigate(['/meus-pedidos']);
-            },
-          });
+          if (pedidoResponse.urlPagamento) {
+            console.log('✅ Redirecionando para pagamento...');
+            await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
+
+            // Pequeno delay para garantir que tudo foi salvo
+            setTimeout(() => {
+              window.location.href = pedidoResponse.urlPagamento;
+            }, 500);
+          } else {
+            console.log('ℹ️ Sem URL de pagamento, finalizando normalmente');
+            await this.carrinhoService.finalizarCarrinho(cdCarrinho).toPromise();
+
+            this.carrinhoService.limparCarrinho().subscribe({
+              next: () => {
+                this.mostrarToast('Pedido confirmado com sucesso!', 'success');
+                this.router.navigate(['/meus-pedidos']);
+              },
+              error: (err) => {
+                console.error('Erro ao limpar carrinho:', err);
+                this.router.navigate(['/meus-pedidos']);
+              },
+            });
+          }
         } catch (error) {
-          console.error('Erro ao processar pedido:', error);
+          console.error('❌ Erro ao processar pedido:', error);
           this.mostrarToast('Erro ao processar pedido. Tente novamente.', 'error');
         } finally {
           this.processando = false;
         }
       },
       error: (error) => {
-        console.error('Erro ao buscar carrinho:', error);
+        console.error('❌ Erro ao buscar carrinho:', error);
         this.mostrarToast('Erro ao processar carrinho!', 'error');
         this.processando = false;
       },
