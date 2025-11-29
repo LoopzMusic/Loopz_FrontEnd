@@ -92,32 +92,45 @@ export class OAuth2Service {
     // Envia o token para o backend para validação e criação/atualização do usuário
     this.validateGoogleToken(response.credential).subscribe({
       next: (backendResponse) => {
+        console.log('Token validado com sucesso:', backendResponse);
         onSuccess(backendResponse);
       },
       error: (error) => {
         console.error('Erro ao validar token no backend:', error);
+        // Mesmo com erro, tenta chamar onSuccess para não ficar preso
+        onSuccess(null);
       },
     });
   }
 
   /**
    * Valida o token do Google no backend
+   * Garante que o profileComplete seja sempre um booleano
    */
   validateGoogleToken(token: string): Observable<any> {
     return this.http.post(`${this.baseUrl}/google/validate`, { token }).pipe(
       tap((response: any) => {
+        console.log('Resposta do backend:', response);
+
         if (response.token) {
           localStorage.setItem('token', response.token);
         }
+
         if (response.cdUsuario) {
+          // Garante que profileComplete seja sempre um booleano
+          const profileComplete =
+            response.profileComplete === true || response.profileComplete === 'true';
+
           const usuario = {
             cdUsuario: response.cdUsuario,
             dsEmail: response.dsEmail,
             nmCliente: response.nmCliente,
             userRole: response.userRole,
             googleId: response.googleId,
-            profileComplete: response.profileComplete || false,
+            profileComplete: profileComplete,
           };
+
+          console.log('Usuário salvo no localStorage:', usuario);
           localStorage.setItem('usuario', JSON.stringify(usuario));
         }
       })

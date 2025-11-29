@@ -202,8 +202,16 @@ export class ProfileCompletionModal implements OnInit {
     profileData.nuCPF = profileData.nuCPF.replace(/\D/g, '');
     profileData.nuTelefone = profileData.nuTelefone.replace(/\D/g, '');
 
+    // Define um timeout de 15 segundos para evitar carregamento infinito
+    const timeoutId = setTimeout(() => {
+      console.warn('Timeout ao atualizar perfil');
+      this.isLoading = false;
+      this.showToast('Erro ao atualizar perfil. Tente novamente.', 'error');
+    }, 15000);
+
     this.http.put(`${this.baseUrl}/${usuarioData.cdUsuario}/perfil`, profileData).subscribe({
       next: (response: any) => {
+        clearTimeout(timeoutId);
         this.isLoading = false;
         this.showToast('Perfil atualizado com sucesso!', 'success');
 
@@ -215,12 +223,13 @@ export class ProfileCompletionModal implements OnInit {
         };
         localStorage.setItem('usuario', JSON.stringify(usuarioAtualizado));
 
-        // Emite evento de conclusão
+        // Emite evento de conclusão após um pequeno delay
         setTimeout(() => {
           this.profileCompleted.emit();
         }, 1500);
       },
       error: (error) => {
+        clearTimeout(timeoutId);
         this.isLoading = false;
         console.error('Erro ao atualizar perfil:', error);
         const errorMessage = error.error?.message || 'Erro ao atualizar perfil. Tente novamente.';
@@ -233,7 +242,9 @@ export class ProfileCompletionModal implements OnInit {
    * Fecha o modal sem salvar
    */
   closeModal(): void {
-    this.closed.emit();
+    if (!this.isLoading) {
+      this.closed.emit();
+    }
   }
 
   /**

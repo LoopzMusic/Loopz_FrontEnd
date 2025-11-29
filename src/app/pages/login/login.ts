@@ -71,52 +71,82 @@ export class Login implements OnInit, AfterViewInit {
 
   /**
    * Manipula o sucesso do login do Google
+   * Agora com melhor tratamento de erros e timeout
    */
   private handleGoogleSignInSuccess(response: any): void {
     this.isLoggingIn = true;
 
-    // O token já foi validado no backend pelo OAuth2Service
-    // Agora carregamos o carrinho e verificamos se o perfil está completo
-    this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
-      next: () => {
-        console.log('Carrinho carregado do backend');
+    // Define um timeout de 10 segundos para evitar carregamento infinito
+    const timeoutId = setTimeout(() => {
+      console.warn('Timeout ao processar login do Google');
+      this.isLoggingIn = false;
+      this.verificarPerfilCompleto();
+    }, 10000);
 
-        this.carrinhoService.sincronizarCarrinho().subscribe({
-          next: () => {
-            console.log('Carrinho sincronizado');
-            this.verificarPerfilCompleto();
-          },
-          error: (err) => {
-            console.error('Erro ao sincronizar carrinho:', err);
-            this.verificarPerfilCompleto();
-          },
-        });
-      },
-      error: (err) => {
-        console.error('Erro ao carregar carrinho:', err);
-        this.verificarPerfilCompleto();
-      },
+    // Primeiro, verifica se o perfil está completo
+    this.verificarPerfilCompleto().then(() => {
+      clearTimeout(timeoutId);
+
+      // Se o perfil não está completo, não carrega o carrinho
+      if (this.showProfileModal) {
+        this.isLoggingIn = false;
+        return;
+      }
+
+      // Se o perfil está completo, carrega o carrinho
+      this.carrinhoService.carregarCarrinhoDoBackend().subscribe({
+        next: () => {
+          console.log('Carrinho carregado do backend');
+
+          this.carrinhoService.sincronizarCarrinho().subscribe({
+            next: () => {
+              console.log('Carrinho sincronizado');
+              this.isLoggingIn = false;
+              this.router.navigate(['']);
+            },
+            error: (err) => {
+              console.error('Erro ao sincronizar carrinho:', err);
+              this.isLoggingIn = false;
+              this.router.navigate(['']);
+            },
+          });
+        },
+        error: (err) => {
+          console.error('Erro ao carregar carrinho:', err);
+          this.isLoggingIn = false;
+          this.router.navigate(['']);
+        },
+      });
     });
   }
 
   /**
    * Verifica se o perfil do usuário está completo
+   * Retorna uma Promise para melhor controle de fluxo
    */
-  private verificarPerfilCompleto(): void {
-    const usuario = localStorage.getItem('usuario');
-    if (usuario) {
-      const usuarioData = JSON.parse(usuario);
+  private verificarPerfilCompleto(): Promise<void> {
+    return new Promise((resolve) => {
+      const usuario = localStorage.getItem('usuario');
+      if (usuario) {
+        const usuarioData = JSON.parse(usuario);
 
-      // Se o perfil não está completo, mostra o modal
-      if (!usuarioData.profileComplete) {
-        this.isLoggingIn = false;
-        this.showProfileModal = true;
+        // Se o perfil não está completo, mostra o modal
+        if (!usuarioData.profileComplete) {
+          console.log('Perfil incompleto, exibindo modal');
+          this.showProfileModal = true;
+          resolve();
+        } else {
+          // Perfil já está completo
+          console.log('Perfil completo, redirecionando');
+          this.showProfileModal = false;
+          resolve();
+        }
       } else {
-        // Perfil já está completo, redireciona para a página inicial
+        console.warn('Usuário não encontrado no localStorage');
         this.isLoggingIn = false;
-        this.router.navigate(['']);
+        resolve();
       }
-    }
+    });
   }
 
   /**
@@ -186,6 +216,7 @@ export class Login implements OnInit, AfterViewInit {
 
     // Aguarda um pouco antes de redirecionar
     setTimeout(() => {
+      this.isLoggingIn = false;
       this.router.navigate(['']);
     }, 1500);
   }
@@ -195,6 +226,7 @@ export class Login implements OnInit, AfterViewInit {
    */
   onProfileModalClosed(): void {
     this.showProfileModal = false;
+    this.isLoggingIn = false;
     // ✅ IMPORTANTE: Não redireciona para home, mantém na tela de login
     this.showToast('Complete seu perfil para usar o e-commerce', 'error');
   }
