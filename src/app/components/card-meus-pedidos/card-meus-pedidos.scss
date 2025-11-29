@@ -80,3 +80,36 @@ hr {
   }
 }
 
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-top: 10px;
+  width: fit-content;
+}
+
+
+.status-badge.aberto {
+  background-color: #ffe8a6;
+  color: #b07d00;
+  border: 1px solid #ffda73;
+}
+
+
+.status-badge.andamento {
+  background-color: #cce4ff;
+  color: #0054a6;
+  border: 1px solid #9ac8ff;
+}
+
+
+.status-badge.finalizado {
+  background-color: #c7ffd1;
+  color: #1a7f33;
+  border: 1px solid #8bffac;
+}
+
+

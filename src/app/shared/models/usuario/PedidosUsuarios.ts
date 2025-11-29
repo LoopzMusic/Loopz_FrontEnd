@@ -11,6 +11,7 @@ export interface ItemPedido {
 export interface PedidoResumo {
   cdPedido: number;
   valorTotal: number;
+  statusPedido: string;
   dtFinalizacao?: string;
   itens: ItemPedidoResponseDto[];
 }

@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { Pedido } from '../../shared/models/Pedido';
 import { PedidoResumo } from '../../shared/models/usuario/PedidosUsuarios';
 import { CommonModule } from '@angular/common';
 
@@ -10,7 +9,16 @@ import { CommonModule } from '@angular/common';
   styleUrl: './card-meus-pedidos.scss',
 })
 export class CardMeusPedidos {
-   @Input() pedido!: PedidoResumo;
+  @Input() pedido!: PedidoResumo;
 
-
+  getStatusTexto(status: string): string {
+    switch (status) {
+      case 'ANDAMENTO':
+        return 'Aguardando envio';
+      case 'FINALIZADO':
+        return 'Enviado para entrega';
+      default:
+        return status;
+    }
+  }
 }

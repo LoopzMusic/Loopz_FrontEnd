@@ -1,21 +1,41 @@
 <div class="mb-2">
-<div class="card pedido-card h-100 shadow-sm">
-  <div class="card-body d-flex flex-column">
-    <h5 class="card-title">
-      Pedido #{{ pedido.cdPedido }}
-      <span class="valor-total">R$ {{ pedido.valorTotal | number:'1.2-2' }}</span>
-    </h5>
+  <div class="card pedido-card h-100 shadow-sm">
+    <div class="card-body d-flex flex-column">
+      <h5 class="card-title">
+        Pedido #{{ pedido.cdPedido }}
+        <span class="valor-total">R$ {{ pedido.valorTotal | number: '1.2-2' }}</span>
+      </h5>
 
-    <ul class="list-unstyled mt-3 mb-0 pedidos-itens">
-      <li *ngFor="let item of pedido.itens" class="item d-flex align-items-center">
-        <img [src]="`http://localhost:8085/produto/${item.cdProduto}/imagem`" alt="{{ item.nmProduto }}" class="item-imagem">
-        <div class="item-info ms-2">
-          <div class="item-nome">{{ item.nmProduto }}</div>
-          <div class="item-qtd-preco">x{{ item.quantidade }} - R$ {{ item.total | number:'1.2-2' }}</div>
-          <div class="item-qtd-preco">{{ pedido.dtFinalizacao }}</div>
+      <ul class="list-unstyled mt-3 mb-0 pedidos-itens">
+        <li *ngFor="let item of pedido.itens" class="item d-flex align-items-center">
+          <img
+            [src]="'http://localhost:8085/produto/' + item.cdProduto + '/imagem'"
+            alt="{{ item.nmProduto }}"
+            class="item-imagem"
+          />
+
+          <div class="item-info ms-2">
+            <div class="item-nome">{{ item.nmProduto }}</div>
+            <div class="item-qtd-preco">x{{ item.quantidade }} - R$ {{ item.total | number: '1.2-2' }}</div>
+
+            <div class="item-qtd-preco" *ngIf="pedido.dtFinalizacao">
+              {{ pedido.dtFinalizacao | date:'dd/MM/yyyy HH:mm' }}
+            </div>
+          </div>
+        </li>
+
+        <!-- STATUS ESTILIZADO -->
+        <div
+          class="item-qtd-preco status-badge"
+          [ngClass]="{
+            aberto: pedido.statusPedido === 'ABERTO',
+            andamento: pedido.statusPedido === 'ANDAMENTO',
+            finalizado: pedido.statusPedido === 'FINALIZADO'
+          }"
+        >
+          {{ getStatusTexto(pedido.statusPedido) }}
         </div>
-      </li>
-    </ul>
+      </ul>
+    </div>
   </div>
-</div>
 </div>
