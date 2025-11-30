@@ -1,8 +1,8 @@
 # 🛒 E-commerce Hardware - Frontend
 
-> Interface moderna e responsiva para e-commerce de hardware desenvolvida com Angular 19
+> Interface moderna e responsiva para e-commerce de hardware desenvolvida com Angular 20
 
-[![Angular](https://img.shields.io/badge/Angular-19-red?logo=angular)](https://angular.io/)
+[![Angular](https://img.shields.io/badge/Angular-20-red?logo=angular)](https://angular.io/)
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5-purple?logo=bootstrap)](https://getbootstrap.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -27,7 +27,7 @@ Este é o frontend de um e-commerce especializado em hardware, desenvolvido com 
 ## 🛠️ Tecnologias Utilizadas
 
 ### Core
-- **Angular 29** - Framework principal
+- **Angular 20** - Framework principal
 - **TypeScript 5** - Linguagem de programação
 - **RxJS** - Programação reativa
 - **Angular Router** - Navegação SPA
@@ -50,7 +50,7 @@ Antes de começar, certifique-se de ter instalado:
 
 - [Node.js](https://nodejs.org/) v18 ou superior
 - [npm](https://www.npmjs.com/) v9 ou superior
-- [Angular CLI](https://angular.io/cli) v19
+- [Angular CLI](https://angular.io/cli) v20
 - [Git](https://git-scm.com/)
 
 ```bash
