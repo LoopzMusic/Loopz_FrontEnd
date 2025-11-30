@@ -1,0 +1,61 @@
+<div class="container-404 d-flex flex-column justify-content-center align-items-center text-center">
+  <div class="content-404">
+    
+    <div class="icon-404 mb-4">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="120"
+        height="120"
+        fill="currentColor"
+        class="bi bi-music-note-list text-muted"
+        viewBox="0 0 16 16"
+      >
+        <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2" />
+        <path fill-rule="evenodd" d="M12 3v10h-1V3z" />
+        <path d="M11 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 16 2.22V4l-5 1z" />
+        <path
+          fill-rule="evenodd"
+          d="M0 11.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m0-4A.5.5 0 0 1 .5 7H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m0-4A.5.5 0 0 1 .5 3H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"
+        />
+      </svg>
+    </div>
+
+    
+    <h1 class="display-1 fw-bold text-muted mb-3">404</h1>
+
+    
+    <h2 class="h3 mb-3">Ops! Página não encontrada</h2>
+    <p class="lead text-muted mb-4">
+      Parece que essa nota está fora do tom... 🎵<br />
+      A página que você procura não existe ou foi movida.
+    </p>
+
+    
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <button class="btn btn-primary btn-lg px-4" routerLink="/">
+        <i class="bi bi-house-door me-2"></i>
+        Voltar para Home
+      </button>
+      <button class="btn btn-outline-secondary btn-lg px-4" routerLink="/filtro/todos">
+        <i class="bi bi-grid me-2"></i>
+        Ver Catálogo
+      </button>
+    </div>
+
+    
+    <div class="mt-5">
+      <p class="text-muted mb-2">Ou navegue por:</p>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <a routerLink="/filtro/cordas" class="text-decoration-none">Cordas</a>
+        <span class="text-muted">|</span>
+        <a routerLink="/filtro/teclas" class="text-decoration-none">Teclas</a>
+        <span class="text-muted">|</span>
+        <a routerLink="/filtro/percussao" class="text-decoration-none">Percussão</a>
+        <span class="text-muted">|</span>
+        <a routerLink="/filtro/sopro" class="text-decoration-none">Sopro</a>
+        <span class="text-muted">|</span>
+        <a routerLink="/filtro/acessorios" class="text-decoration-none">Acessórios</a>
+      </div>
+    </div>
+  </div>
+</div>

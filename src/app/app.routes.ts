@@ -21,6 +21,7 @@ import { FinalizarCompra } from './pages/finalizar-compra/finalizar-compra';
 import { perfilGuardGuard } from './guards/perfil-guard-guard';
 import { MeusPedidos } from './pages/meus-pedidos/meus-pedidos';
 import { CadastrarEmpresa } from './pages/admin/cadastrar-empresa/cadastrar-empresa';
+import { Error404 } from './components/error404/error404';
 
 
 export const routes: Routes = [
@@ -44,6 +45,7 @@ export const routes: Routes = [
   { path: 'admin/avaliacoes', component: Avaliacoes, canActivate: [perfilGuardGuard] },
   { path: 'admin/gerenciar-produto', component: GerenciarProduto, canActivate: [perfilGuardGuard] },
   {path: 'admin/cadastrar-empresa', component: CadastrarEmpresa, canActivate: [perfilGuardGuard] },
+  {path: '**', component: Error404},
   {
     path: 'carrinho',
     loadComponent: () => import('./pages/carrinho/carrinho')
