@@ -2,6 +2,20 @@
   background-color: #54392b;
 }
 
+.navbar-topo {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2000;
+}
+
+.navbar-categorias {
+  position: fixed;
+  top: 70px; 
+  width: 100%;
+  z-index: 1999;
+}
+
 #borda {
   border-color: #805c4b !important;
 }
