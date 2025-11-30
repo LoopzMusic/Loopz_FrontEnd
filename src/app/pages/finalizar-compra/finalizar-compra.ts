@@ -48,27 +48,27 @@ export class FinalizarCompra implements OnInit {
   processando = false;
 
   ngOnInit() {
-    // 1. Verifica se há parâmetros de retorno de pagamento na URL
+    
     const urlParams = new URLSearchParams(window.location.search);
     const externalId = urlParams.get('externalId');
     const sucesso = urlParams.get('sucesso');
 
     if (externalId && sucesso) {
-      // 2. Processa o retorno do pagamento
+      
       this.processarRetornoPagamento(externalId, sucesso === 'true');
       return;
     }
 
     const usuario = this.authService.getUsuarioLogado();
 
-    // ✅ BLOQUEIA SE USUÁRIO NÃO ESTÁ LOGADO
+    
     if (!usuario || !usuario.cdUsuario) {
       this.mostrarToast('Você precisa estar logado para finalizar a compra!', 'error');
       this.router.navigate(['/login']);
       return;
     }
 
-    // ✅ BLOQUEIA SE PERFIL ESTÁ INCOMPLETO
+    
     if (!usuario.profileComplete) {
       this.mostrarToast('Complete seu perfil antes de finalizar a compra!', 'error');
       setTimeout(() => {
@@ -77,20 +77,20 @@ export class FinalizarCompra implements OnInit {
       return;
     }
 
-    // ✅ TUDO OK, CARREGA O CHECKOUT
+    
     this.carregarCarrinho();
     this.calcularSubtotal();
   }
 
   processarRetornoPagamento(externalId: string, sucesso: boolean) {
-    // Limpa os parâmetros da URL para evitar reprocessamento
+    
     this.router.navigate([], {
       queryParams: { externalId: null, sucesso: null },
       queryParamsHandling: 'merge',
     });
 
     if (sucesso) {
-      // Pagamento bem-sucedido, limpa o carrinho e redireciona para meus-pedidos
+      
       this.carrinhoService.limparCarrinho().subscribe({
         next: () => {
           this.mostrarToast('Pagamento confirmado! Seu pedido está a caminho.', 'success');
@@ -106,9 +106,8 @@ export class FinalizarCompra implements OnInit {
         },
       });
     } else {
-      // Pagamento cancelado/falhou, mantém o carrinho e redireciona para a tela inicial
-      // Removendo a mensagem de erro conforme solicitado pelo usuário.
-      this.router.navigate(['/']); // Redireciona para a raiz, que deve ser a página inicial
+      
+      this.router.navigate(['/']); 
     }
   }
 
@@ -163,16 +162,14 @@ export class FinalizarCompra implements OnInit {
   }
 
   calcularFretePorCep(cep: string) {
-    const prefixo = Number(cep.substring(0, 2));
-    let valorFrete = 0;
+  this.http.get<number>('http://localhost:8085/frete/calcular', {
+    params: { destino: cep } 
+  }).subscribe({
+    next: (valor) => this.frete.set(valor),
+    error: () => this.mostrarToast('Erro ao calcular frete', 'error')
+  });
+}
 
-    if (prefixo >= 80 && prefixo <= 89) valorFrete = 10;
-    else if (prefixo >= 90 && prefixo <= 99) valorFrete = 15;
-    else if (prefixo >= 0 && prefixo <= 29) valorFrete = 20;
-    else valorFrete = 30;
-
-    this.frete.set(valorFrete);
-  }
 
   calcularSubtotal() {
     const total = this.itensCarrinho().reduce((acc, item) => acc + item.preco * item.quantidade, 0);
@@ -229,7 +226,6 @@ export class FinalizarCompra implements OnInit {
             throw new Error('Erro ao criar pedido');
           }
 
-          // Criar itens do pedido
           const itensPedido = this.itensCarrinho().map((item) => ({
             cdPedido: pedidoResponse.cdPedido,
             cdProduto: item.cdProduto,
@@ -241,16 +237,12 @@ export class FinalizarCompra implements OnInit {
             await this.http.post('http://localhost:8085/itempedido/criar', itemPedido).toPromise();
           }
 
-          // ✅ Verifica se há URL de pagamento
+        
           console.log('🔍 URL de pagamento recebida:', pedidoResponse.urlPagamento);
 
           if (pedidoResponse.urlPagamento) {
             console.log('✅ Redirecionando para pagamento...');
-            // Não finaliza o carrinho aqui, pois o status final do pedido
-            // será determinado pelo retorno do AbacatePay.
-            // O carrinho só será limpo após a confirmação de sucesso.
-
-            // Pequeno delay para garantir que tudo foi salvo
+            
             setTimeout(() => {
               window.location.href = pedidoResponse.urlPagamento;
             }, 500);

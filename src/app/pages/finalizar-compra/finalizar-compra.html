@@ -172,28 +172,27 @@
       </div>
     </div>
 
-    
     <div class="col-lg-4">
       <div class="card p-4 sticky-top">
         <h5><i class="bi bi-box"></i> Resumo do Pedido</h5>
 
         <div class="border-bottom pb-2 mb-2">
-  @for (item of itensCarrinho(); track item.cdProduto) {
-    <div class="item-card mb-3 p-2">
-      <img 
-        [src]="`http://localhost:8085/produto/${item.cdProduto}/imagem`" 
-        class="item-imagem"
-        alt="{{ item.nome }}"
-      >
-      <div class="item-info">
-        <div class="item-nome">{{ item.nome }}</div>
-        <div class="item-quantidade-preco">
-          x{{ item.quantidade }} - R$ {{ item.preco * item.quantidade }}
+          @for (item of itensCarrinho(); track item.cdProduto) {
+          <div class="item-card mb-3 p-2">
+            <img
+              [src]="`http://localhost:8085/produto/${item.cdProduto}/imagem`"
+              class="item-imagem"
+              alt="{{ item.nome }}"
+            />
+            <div class="item-info">
+              <div class="item-nome">{{ item.nome }}</div>
+              <div class="item-quantidade-preco">
+                x{{ item.quantidade }} - R$ {{ item.preco * item.quantidade }}
+              </div>
+            </div>
+          </div>
+          }
         </div>
-      </div>
-    </div>
-  }
-</div>
 
         <div class="d-flex justify-content-between">
           <span>Subtotal</span>
@@ -203,7 +202,7 @@
         <div class="d-flex justify-content-between">
           <span>Frete</span>
           <strong>
-            @if (frete() === 0) { Grátis } @else { R$ {{ frete() }}
+            @if (frete() === 0) { A calcular } @else { R$ {{ frete() }}
             }
           </strong>
         </div>
@@ -211,8 +210,8 @@
         <hr />
 
         <div class="d-flex justify-content-between">
-          <strong>Total</strong>
-          <strong>R$ {{ subtotal() + frete() }}</strong>
+          <span>Total:</span>
+          <strong> </strong>
         </div>
 
         <button class="btn btn-dark w-100 mt-3" (click)="confirmarPedido()">
