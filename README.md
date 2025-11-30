@@ -60,7 +60,7 @@ npm --version
 ng version
 ```
 
-> ⚠️ **Backend Necessário**: Certifique-se de que o [backend Spring Boot](./backend/README.md) está instalado e rodando em `http://localhost:8080`
+> ⚠️ **Backend Necessário**: Certifique-se de que o [backend Spring Boot](./backend/README.md) está instalado e rodando em `http://localhost:8085`
 
 ## 🚀 Instalação e Configuração
 
@@ -88,7 +88,7 @@ export const environment = {
   production: false,
   
   // URL do backend Spring Boot
-  apiUrl: 'http://localhost:8080/api',
+  apiUrl: 'http://localhost:8085/api',
   
   // Google Maps API
   googleMapsApiKey: 'SUA_GOOGLE_MAPS_API_KEY',
@@ -101,7 +101,7 @@ export const environment = {
     clientId: 'SEU_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
     redirectUri: 'http://localhost:4200/auth/callback',
     authorizationEndpoint: 'https://accounts.google.com/o/oauth2/v2/auth',
-    tokenEndpoint: 'http://localhost:8080/api/auth/google',
+    tokenEndpoint: 'http://localhost:8085/api/auth/google',
     scope: 'openid profile email'
   },
   
@@ -341,7 +341,7 @@ npm run build:prod
 
 ```bash
 npm install -g http-server
-http-server dist/ecommerce-frontend -p 8080
+http-server dist/ecommerce-frontend -p 8085
 ```
 ## 🤝 Contribuindo
 
