@@ -27,7 +27,7 @@ Este é o frontend de um e-commerce especializado em hardware, desenvolvido com 
 ## 🛠️ Tecnologias Utilizadas
 
 ### Core
-- **Angular 19** - Framework principal
+- **Angular 29** - Framework principal
 - **TypeScript 5** - Linguagem de programação
 - **RxJS** - Programação reativa
 - **Angular Router** - Navegação SPA
