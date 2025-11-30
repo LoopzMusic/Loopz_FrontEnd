@@ -40,10 +40,12 @@ export class Perfil implements OnInit {
         this.usuarioOriginal = { ...this.usuario };
         this.carregando = false;
 
+        
         const usuarioAtualizado = {
           ...user,
           ...usuarioCompleto,
         };
+
         this.authService.setUsuario(usuarioAtualizado);
       },
       error: (error) => {
@@ -100,7 +102,7 @@ export class Perfil implements OnInit {
       return;
     }
 
-    // ✅ VALIDAR CPF
+    
     if (!CpfValidator.validarCPF(this.usuario.nuCPF)) {
       this.cpfInvalido = true;
       this.showToast('CPF inválido!');
@@ -109,11 +111,11 @@ export class Perfil implements OnInit {
 
     this.salvando = true;
 
-    // ✅ ENVIAR SOMENTE OS CAMPOS QUE O BACKEND ESPERA (UsuarioCriarDto)
+    // Dados enviados ao backend
     const dadosAtualizar = {
       nmCliente: this.usuario.nmCliente,
       dsEmail: this.usuario.dsEmail,
-      dsSenha: '', // ✅ IMPORTANTE: Backend espera senha (mesmo que não mude)
+      dsSenha: '', 
       nuCPF: this.usuario.nuCPF,
       nuTelefone: this.usuario.nuTelefone,
       dsCidade: this.usuario.dsCidade,
@@ -126,12 +128,14 @@ export class Perfil implements OnInit {
       next: (response) => {
         console.log('Usuário atualizado:', response);
 
-        // ✅ Atualiza localStorage
+        
         const usuarioAtualizado = {
-          cdUsuario: this.usuario!.cdUsuario,
-          ...dadosAtualizar,
-          profileComplete: true, // ✅ Marca como completo após salvar
+          ...this.authService.getUsuarioLogado(), 
+          ...dadosAtualizar,                      
+          profileComplete: true,
         };
+
+        
         this.authService.setUsuario(usuarioAtualizado);
 
         this.usuarioOriginal = { ...this.usuario! };
@@ -144,7 +148,6 @@ export class Perfil implements OnInit {
         console.error('Erro ao atualizar usuário:', error);
         this.salvando = false;
 
-        // ✅ Mostra erro específico se houver
         if (error.error?.message) {
           this.showToast(error.error.message);
         } else {
