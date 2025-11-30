@@ -215,7 +215,7 @@ Este frontend consome a API REST do backend Spring Boot. Certifique-se de que o 
 
 ### Principais Endpoints Consumidos
 
-> 📖 Para detalhes completos da API, consulte o [README do Backend](./backend/README.md) ou acesse a documentação Swagger em `http://localhost:8080/swagger-ui.html`
+> 📖 Para detalhes completos da API, consulte o [README do Backend](./backend/README.md) ou acesse a documentação Swagger em `http://localhost:8085/swagger-ui.html`
 
 
 ## 📱 Funcionalidades Detalhadas
@@ -376,6 +376,6 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 🔗 **Links Relacionados**:
 - [📦 Backend Spring Boot](./backend/README.md)
-- [📖 Documentação da API](http://localhost:8080/swagger-ui.html)
+- [📖 Documentação da API](http://localhost:8085/swagger-ui.html)
 
 ⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
