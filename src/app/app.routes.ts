@@ -27,6 +27,7 @@ import { Error404 } from './components/error404/error404';
 export const routes: Routes = [
   { path: '', component: TelaInicial },
   { path: 'favoritos', component: Favoritos },
+  { path: 'produtos', component: Favoritos },
   { path: 'perfil', component: Perfil },
   { path: 'carrinho', component: Carrinho },
   { path: 'meus-pedidos', component: MeusPedidos },
@@ -45,6 +46,7 @@ export const routes: Routes = [
   { path: 'admin/avaliacoes', component: Avaliacoes, canActivate: [perfilGuardGuard] },
   { path: 'admin/gerenciar-produto', component: GerenciarProduto, canActivate: [perfilGuardGuard] },
   {path: 'admin/cadastrar-empresa', component: CadastrarEmpresa, canActivate: [perfilGuardGuard] },
+  {path: 'finalizar-compra', component: FinalizarCompra },
   {path: '**', component: Error404},
   {
     path: 'carrinho',
