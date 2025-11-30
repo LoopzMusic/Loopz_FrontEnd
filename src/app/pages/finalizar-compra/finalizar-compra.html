@@ -38,14 +38,15 @@
                   viewBox="0 0 16 16"
                 >
                   <path
-                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 
+                 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 
+                 5.5 5.5 0 0 1 11 0"
                   />
                 </svg>
               </button>
             </div>
           </div>
 
-          <!-- Logradouro -->
           <div class="col-md-8">
             <label class="form-label">Endereço</label>
             <input
@@ -118,6 +119,7 @@
               type="radio"
               name="pagamento"
               value="credito"
+              [checked]="pagamento() === 'credito'"
               (change)="selecionarPagamento('credito')"
             />
             <label class="form-check-label">Cartão de Crédito</label>
@@ -129,6 +131,7 @@
               type="radio"
               name="pagamento"
               value="debito"
+              [checked]="pagamento() === 'debito'"
               (change)="selecionarPagamento('debito')"
             />
             <label class="form-check-label">Cartão de Débito</label>
@@ -140,9 +143,13 @@
               type="radio"
               name="pagamento"
               value="pix"
+              [checked]="pagamento() === 'pix'"
               (change)="selecionarPagamento('pix')"
             />
-            <label class="form-check-label">PIX</label>
+            <label class="form-check-label">
+              PIX 
+              <span class="badge bg-success ms-2">-10% de desconto</span>
+            </label>
           </div>
 
           @if (pagamento() !== 'pix') {
@@ -187,7 +194,7 @@
             <div class="item-info">
               <div class="item-nome">{{ item.nome }}</div>
               <div class="item-quantidade-preco">
-                x{{ item.quantidade }} - R$ {{ item.preco * item.quantidade }}
+                x{{ item.quantidade }} - R$ {{ (item.preco * item.quantidade).toFixed(2) }}
               </div>
             </div>
           </div>
@@ -196,23 +203,43 @@
 
         <div class="d-flex justify-content-between">
           <span>Subtotal</span>
-          <strong>R$ {{ subtotal() }}</strong>
+          <strong>R$ {{ subtotal().toFixed(2) }}</strong>
         </div>
+
+        <!-- Desconto PIX -->
+        @if (pagamento() === 'pix' && descontoPix() > 0) {
+        <div class="d-flex justify-content-between text-success">
+          <span>
+            <i class="bi bi-tag-fill"></i> Desconto PIX (10%)
+          </span>
+          <strong>- R$ {{ descontoPix().toFixed(2) }}</strong>
+        </div>
+        }
 
         <div class="d-flex justify-content-between">
           <span>Frete</span>
           <strong>
-            @if (frete() === 0) { A calcular } @else { R$ {{ frete() }}
+            @if (frete() === 0) { 
+              A calcular 
+            } @else { 
+              R$ {{ frete().toFixed(2) }}
             }
           </strong>
         </div>
 
         <hr />
 
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between fs-5">
           <span>Total:</span>
-          <strong> </strong>
+          <strong class="text-primary">R$ {{ totalComDesconto().toFixed(2) }}</strong>
         </div>
+
+        @if (pagamento() === 'pix' && descontoPix() > 0) {
+        <div class="alert alert-success mt-2 py-2 px-3 small">
+          <i class="bi bi-check-circle-fill"></i>
+          Você está economizando R$ {{ descontoPix().toFixed(2) }} pagando com PIX!
+        </div>
+        }
 
         <button class="btn btn-dark w-100 mt-3" (click)="confirmarPedido()">
           Confirmar Pedido
